@@ -1,0 +1,2985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0520">
+<title>SILLY GLOOP!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --green:#7dff8f;--purple:#a78bfa;--gold:#ffe066;--pink:#ff6b9d;
+  --red:#ff4d6d;--blue:#60d0ff;--orange:#ff8c32;
+  --bg:#0d0520;--panel:rgba(20,8,45,0.96);--border:rgba(167,139,250,0.22);
+  --text:#e8e0ff;--dim:rgba(255,255,255,0.38);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+/* iPhone safe areas */
+.bottom-nav{padding-bottom:max(10px, env(safe-area-inset-bottom));}
+.top-bar{padding-top:max(10px, env(safe-area-inset-top));}
+body{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;user-select:none;-webkit-user-select:none;
+  touch-action:manipulation;
+}
+
+/* ══════════════════════════════════════════
+   SCREEN SYSTEM
+══════════════════════════════════════════ */
+.screen{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;align-items:center;
+  overflow-y:auto;overflow-x:hidden;
+  z-index:10;
+  background:var(--bg);
+  transition:opacity .25s, transform .25s;
+}
+.screen.hidden{display:none!important;}
+.screen-enter{animation:screenIn .25s ease forwards;}
+@keyframes screenIn{from{opacity:0;transform:scale(0.97);}to{opacity:1;transform:scale(1);}}
+
+/* ══════════════════════════════════════════
+   GLOBAL TOP BAR (currency bar)
+══════════════════════════════════════════ */
+.top-bar{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 6px;flex-shrink:0;
+  background:rgba(13,5,32,0.9);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.currency-group{display:flex;gap:8px;align-items:center;}
+.cur-pill{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.14);
+  border-radius:20px;padding:3px 10px 3px 6px;
+  font-size:14px;color:#fff;font-family:'Fredoka One',cursive;
+}
+.cur-pill .icon{font-size:16px;}
+.cur-pill .val{min-width:36px;text-align:right;}
+.cur-pill .add-btn{
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;margin-left:2px;color:#fff;
+  transition:background .15s;
+}
+.cur-pill .add-btn:hover{background:rgba(125,255,143,0.28);}
+.top-bar-right{display:flex;gap:8px;align-items:center;}
+.icon-btn{
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,0.06);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:background .15s;color:#fff;
+}
+.icon-btn:hover{background:rgba(255,255,255,0.14);}
+
+/* ══════════════════════════════════════════
+   BOTTOM NAV BAR
+══════════════════════════════════════════ */
+.bottom-nav{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;justify-content:space-around;
+  padding:6px 4px 10px;
+  background:rgba(13,5,32,0.95);
+  border-top:1px solid var(--border);
+  position:sticky;bottom:0;z-index:50;flex-shrink:0;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  cursor:pointer;padding:4px 8px;border-radius:10px;
+  transition:background .15s;min-width:52px;
+  position:relative;
+}
+.nav-item:hover,.nav-item.active{background:rgba(125,255,143,0.1);}
+.nav-item .nav-icon{font-size:22px;line-height:1;}
+.nav-item .nav-label{font-size:10px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.nav-item.active .nav-label{color:var(--green);}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px var(--green));}
+.nav-badge{
+  position:absolute;top:0;right:4px;
+  background:var(--red);color:#fff;
+  border-radius:10px;font-size:10px;
+  padding:1px 5px;font-family:'Nunito',sans-serif;font-weight:900;
+  border:1.5px solid var(--bg);
+}
+
+/* ══════════════════════════════════════════
+   SECTION HEADERS
+══════════════════════════════════════════ */
+.screen-header{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px 8px;flex-shrink:0;
+}
+.screen-header .back-btn{
+  width:32px;height:32px;border-radius:9px;
+  background:rgba(255,255,255,0.07);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;color:var(--text);flex-shrink:0;
+}
+.screen-header h2{
+  font-size:22px;color:var(--text);letter-spacing:1px;flex:1;
+}
+.screen-header .header-icon{font-size:22px;}
+
+/* ══════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════ */
+.btn{
+  font-family:'Fredoka One',cursive;font-size:16px;
+  padding:8px 22px;border-radius:12px;
+  border:2px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.06);color:#fff;
+  cursor:pointer;transition:all .14s;letter-spacing:.5px;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{background:rgba(255,255,255,0.14);transform:scale(1.03);}
+.btn:active{transform:scale(0.97);}
+.btn.primary{background:rgba(125,255,143,0.14);border-color:var(--green);color:var(--green);font-size:18px;padding:10px 32px;}
+.btn.primary:hover{background:rgba(125,255,143,0.26);}
+.btn.gold{background:rgba(255,224,102,0.14);border-color:var(--gold);color:var(--gold);}
+.btn.gold:hover{background:rgba(255,224,102,0.26);}
+.btn.purple{background:rgba(167,139,250,0.14);border-color:var(--purple);color:var(--purple);}
+.btn.purple:hover{background:rgba(167,139,250,0.26);}
+.btn.pink{background:rgba(255,107,157,0.14);border-color:var(--pink);color:var(--pink);}
+.btn.pink:hover{background:rgba(255,107,157,0.26);}
+.btn.danger{border-color:var(--red);color:var(--red);}
+.btn.danger:hover{background:rgba(255,77,109,0.14);}
+.btn.full{width:100%;justify-content:center;}
+.btn.sm{font-size:13px;padding:5px 14px;border-radius:9px;}
+.btn.selected{background:rgba(125,255,143,0.16);border-color:var(--green);color:var(--green);}
+
+/* ══════════════════════════════════════════
+   CARDS & PANELS
+══════════════════════════════════════════ */
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:14px;
+  width:100%;
+}
+.card.glow-green{border-color:rgba(125,255,143,0.3);box-shadow:0 0 18px rgba(125,255,143,0.08);}
+.card.glow-gold{border-color:rgba(255,224,102,0.3);box-shadow:0 0 18px rgba(255,224,102,0.08);}
+.card.glow-purple{border-color:rgba(167,139,250,0.3);box-shadow:0 0 18px rgba(167,139,250,0.08);}
+
+.scroll-content{
+  width:100%;max-width:520px;
+  padding:0 14px 80px;
+  display:flex;flex-direction:column;gap:12px;
+  flex:1;
+}
+
+/* ══════════════════════════════════════════
+   PROGRESS BAR
+══════════════════════════════════════════ */
+.prog-bar{
+  width:100%;height:10px;border-radius:5px;
+  background:rgba(255,255,255,0.08);overflow:hidden;
+  position:relative;
+}
+.prog-fill{
+  height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--green),#a8ff78);
+  transition:width .4s ease;
+}
+.prog-fill.gold{background:linear-gradient(90deg,var(--gold),#ffb347);}
+.prog-fill.purple{background:linear-gradient(90deg,var(--purple),#c084fc);}
+.prog-fill.blue{background:linear-gradient(90deg,var(--blue),#818cf8);}
+
+/* ══════════════════════════════════════════
+   TOGGLE
+══════════════════════════════════════════ */
+.toggle{position:relative;width:46px;height:24px;cursor:pointer;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;border:1.5px solid rgba(255,255,255,0.18);transition:background .2s;}
+.toggle input:checked+.toggle-track{background:rgba(125,255,143,0.28);border-color:var(--green);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
+.toggle input:checked~.toggle-thumb{left:25px;background:var(--green);}
+
+/* ══════════════════════════════════════════
+   ★ HUB SCREEN
+══════════════════════════════════════════ */
+#hub-screen{
+  background:linear-gradient(180deg,#0d0520 0%,#1a0840 100%);
+}
+.hub-hero{
+  width:100%;max-width:520px;
+  position:relative;overflow:hidden;
+  height:200px;flex-shrink:0;
+}
+.hub-hero canvas{width:100%;height:100%;display:block;}
+.hub-hero-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:0 16px 14px;
+  background:linear-gradient(0deg,rgba(13,5,32,0.85) 0%,transparent 60%);
+}
+.hub-title{
+  font-size:52px;color:var(--green);
+  text-shadow:0 0 30px var(--green),0 3px 0 #2a7a38;
+  letter-spacing:4px;
+  animation:blobTitle 1.4s ease-in-out infinite alternate;
+}
+@keyframes blobTitle{from{transform:scaleX(1.08)scaleY(0.92);}to{transform:scaleX(0.93)scaleY(1.1);}}
+.hub-sub{font-size:13px;color:var(--purple);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;}
+
+.player-row{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;flex-shrink:0;
+}
+.player-avatar{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,#2a0a5e,#4a1a8e);
+  border:2px solid var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+  box-shadow:0 0 14px rgba(167,139,250,0.3);
+}
+.player-info{flex:1;}
+.player-name{font-size:18px;color:#fff;letter-spacing:.5px;}
+.player-level{font-size:12px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:700;}
+.xp-bar-wrap{margin-top:4px;}
+.xp-label{font-size:10px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-bottom:2px;}
+
+.hub-grid{
+  width:100%;max-width:520px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;padding:0 14px;flex-shrink:0;
+}
+.hub-tile{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:14px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;transition:all .18s;
+  position:relative;overflow:hidden;
+}
+.hub-tile:hover,.hub-tile:active{background:rgba(255,255,255,0.09);transform:scale(0.98);}
+.hub-tile .tile-icon{font-size:32px;line-height:1;}
+.hub-tile .tile-label{font-size:14px;color:var(--text);letter-spacing:.5px;}
+.hub-tile .tile-sub{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.hub-tile .tile-badge{
+  position:absolute;top:8px;right:8px;
+  background:var(--red);color:#fff;border-radius:8px;
+  font-size:10px;padding:1px 6px;font-family:'Nunito',sans-serif;font-weight:900;
+}
+.hub-tile.featured{
+  grid-column:1/-1;
+  flex-direction:row;gap:14px;
+  background:linear-gradient(135deg,rgba(125,255,143,0.08),rgba(167,139,250,0.08));
+  border-color:rgba(125,255,143,0.3);
+}
+.hub-tile.featured .tile-icon{font-size:48px;}
+.hub-tile.featured .tile-info{flex:1;}
+.hub-tile.featured .tile-label{font-size:18px;color:var(--green);}
+
+.event-banner{
+  width:100%;max-width:520px;
+  margin:0 14px;
+  background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(167,139,250,0.15));
+  border:1.5px solid rgba(255,107,157,0.35);
+  border-radius:14px;padding:12px 16px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;flex-shrink:0;
+  width:calc(100% - 28px);
+}
+.event-banner .ev-icon{font-size:36px;}
+.event-banner .ev-info{flex:1;}
+.event-banner .ev-title{font-size:16px;color:var(--pink);letter-spacing:.5px;}
+.event-banner .ev-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.event-banner .ev-timer{font-size:13px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
+
+/* ══════════════════════════════════════════
+   ★ GAME SCREEN (canvas wrapper)
+══════════════════════════════════════════ */
+#game-screen{
+  background:#0d0520;
+  justify-content:flex-start;
+}
+#game-wrap{
+  position:relative;width:100%;max-width:520px;
+  flex:1;display:flex;flex-direction:column;
+}
+#game-canvas{
+  width:100%;flex:1;display:block;
+  touch-action:none;
+}
+#game-hud{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;z-index:10;pointer-events:none;
+}
+.hud-pill{
+  background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);
+  border-radius:12px;padding:3px 14px;color:#fff;font-size:20px;
+  letter-spacing:1px;text-shadow:0 0 10px var(--purple);
+}
+.hud-pill.hi{color:var(--purple);font-size:14px;}
+#game-pause-btn{
+  pointer-events:all;cursor:pointer;
+  background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);
+  border-radius:10px;padding:3px 12px;color:#fff;font-size:18px;
+  font-family:'Fredoka One',cursive;transition:background .15s;
+}
+#game-pause-btn:hover{background:rgba(255,255,255,0.18);}
+
+/* In-game overlays */
+.game-overlay{
+  position:absolute;inset:0;
+  background:rgba(10,4,28,0.94);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:30;gap:10px;padding:20px 16px;
+}
+.game-overlay.hidden{display:none;}
+.game-overlay h2{font-size:40px;color:var(--green);text-shadow:0 0 24px var(--green),0 3px 0 #2a7a38;letter-spacing:3px;}
+.game-overlay .sub-text{font-size:14px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.sep{width:90%;height:1.5px;background:rgba(255,255,255,0.07);border-radius:2px;margin:4px 0;}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:center;}
+
+/* Menu overlay on canvas */
+#menu-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:20;pointer-events:none;gap:4px;
+}
+#menu-overlay.hidden{display:none;}
+#menu-overlay h1{
+  font-size:64px;color:var(--green);
+  text-shadow:0 0 30px var(--green),0 4px 0 #2a7a38;
+  letter-spacing:4px;animation:blobTitle 1.3s ease-in-out infinite alternate;
+}
+#menu-overlay .prompt{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  color:#fff;font-size:17px;margin-top:6px;
+  animation:pulse 1s ease-in-out infinite alternate;pointer-events:none;
+}
+@keyframes pulse{from{opacity:.5;}to{opacity:1;}}
+#menu-overlay .sub{font-size:12px;color:var(--purple);margin-top:2px;font-family:'Nunito',sans-serif;font-weight:700;}
+
+/* Death screen */
+#death-overlay{
+  position:absolute;inset:0;
+  background:rgba(10,4,28,0.96);backdrop-filter:blur(10px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:35;gap:8px;padding:20px;
+}
+#death-overlay.hidden{display:none;}
+#death-overlay h2{font-size:44px;color:var(--red);text-shadow:0 0 20px var(--red);letter-spacing:2px;}
+.death-score-big{font-size:56px;color:#fff;text-shadow:0 0 20px var(--purple);}
+.death-score-label{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.death-best{font-size:16px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
+.ad-reward-box{
+  background:rgba(255,224,102,0.08);border:1.5px solid rgba(255,224,102,0.3);
+  border-radius:14px;padding:12px 20px;text-align:center;width:100%;
+}
+.ad-reward-box .ad-title{font-size:15px;color:var(--gold);}
+.ad-reward-box .ad-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+
+/* ══════════════════════════════════════════
+   ★ CAMPAIGN SCREEN
+══════════════════════════════════════════ */
+#campaign-screen{background:linear-gradient(180deg,#0d0520 0%,#0a1a2e 100%);}
+.chapter-header{
+  width:100%;max-width:520px;
+  text-align:center;padding:16px 16px 8px;flex-shrink:0;
+}
+.chapter-header .ch-num{font-size:12px;color:var(--dim);letter-spacing:3px;font-family:'Nunito',sans-serif;font-weight:900;text-transform:uppercase;}
+.chapter-header .ch-name{font-size:28px;color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px rgba(255,224,102,0.4);}
+.chapter-header .ch-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+
+.stage-map{
+  width:100%;max-width:520px;
+  padding:8px 14px;display:flex;flex-direction:column;gap:0;flex-shrink:0;
+}
+.stage-row{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  position:relative;
+}
+.stage-node{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+  border:2.5px solid rgba(255,255,255,0.15);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .18s;flex-shrink:0;
+  position:relative;
+}
+.stage-node:hover{transform:scale(1.08);}
+.stage-node.completed{
+  background:rgba(125,255,143,0.1);
+  border-color:var(--green);
+}
+.stage-node.current{
+  background:rgba(167,139,250,0.15);
+  border-color:var(--purple);
+  box-shadow:0 0 20px rgba(167,139,250,0.4);
+  animation:nodePulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes nodePulse{from{box-shadow:0 0 14px rgba(167,139,250,0.3);}to{box-shadow:0 0 28px rgba(167,139,250,0.6);}}
+.stage-node.locked{
+  opacity:0.5;cursor:not-allowed;
+}
+.stage-node.boss{
+  width:72px;height:72px;
+  background:rgba(255,77,109,0.1);
+  border-color:var(--red);
+}
+.stage-node .node-label{font-size:12px;color:#fff;letter-spacing:.5px;}
+.stage-node .node-stars{font-size:11px;letter-spacing:1px;}
+.stage-node .lock-icon{font-size:20px;}
+.stage-connector{
+  flex:1;height:2px;
+  background:rgba(255,255,255,0.1);
+  position:relative;
+}
+.stage-connector.done{background:rgba(125,255,143,0.4);}
+
+.chapter-nav{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;flex-shrink:0;
+}
+.chapter-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:8px 14px;border-radius:12px;
+  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  transition:all .15s;
+}
+.chapter-btn:hover{background:rgba(255,255,255,0.1);}
+.chapter-btn .cb-icon{font-size:24px;}
+.chapter-btn .cb-label{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+
+/* Stage detail modal */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  display:flex;align-items:flex-end;justify-content:center;
+  z-index:100;
+}
+.modal-backdrop.hidden{display:none;}
+.modal-sheet{
+  width:100%;max-width:520px;
+  background:linear-gradient(180deg,#1a0840,#0d0520);
+  border:1.5px solid var(--border);
+  border-radius:20px 20px 0 0;
+  padding:20px 20px 32px;
+  display:flex;flex-direction:column;gap:12px;
+  animation:sheetUp .25s ease;
+}
+@keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-sheet h3{font-size:24px;color:#fff;letter-spacing:1px;}
+.modal-sheet .modal-sub{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.reward-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.reward-chip{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  border-radius:20px;padding:4px 12px;
+  font-size:13px;color:var(--text);
+}
+
+/* ══════════════════════════════════════════
+   ★ QUEST SCREEN
+══════════════════════════════════════════ */
+#quest-screen{background:linear-gradient(180deg,#0d0520 0%,#0a1a0a 100%);}
+.quest-tabs{
+  width:100%;max-width:520px;
+  display:flex;gap:0;padding:0 14px 10px;flex-shrink:0;
+}
+.quest-tab{
+  flex:1;padding:8px;text-align:center;
+  font-size:14px;color:var(--dim);
+  border-bottom:2px solid transparent;
+  cursor:pointer;transition:all .15s;
+  font-family:'Fredoka One',cursive;letter-spacing:.5px;
+}
+.quest-tab.active{color:var(--green);border-bottom-color:var(--green);}
+
+.quest-item{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all .15s;
+}
+.quest-item:hover{background:rgba(255,255,255,0.07);}
+.quest-item.claimable{
+  border-color:rgba(125,255,143,0.4);
+  background:rgba(125,255,143,0.05);
+  animation:questGlow .8s ease-in-out infinite alternate;
+}
+@keyframes questGlow{from{box-shadow:0 0 8px rgba(125,255,143,0.1);}to{box-shadow:0 0 18px rgba(125,255,143,0.25);}}
+.quest-item .qi-icon{font-size:28px;flex-shrink:0;}
+.quest-item .qi-info{flex:1;}
+.quest-item .qi-title{font-size:15px;color:var(--text);letter-spacing:.3px;}
+.quest-item .qi-prog-text{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.quest-item .qi-reward{
+  display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;
+}
+.quest-item .qi-reward-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(255,224,102,0.1);border:1.5px solid rgba(255,224,102,0.3);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+}
+.quest-item .qi-reward-val{font-size:12px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
+.quest-item .claim-btn{
+  padding:6px 14px;border-radius:9px;font-size:13px;
+  background:rgba(125,255,143,0.18);border:1.5px solid var(--green);
+  color:var(--green);cursor:pointer;font-family:'Fredoka One',cursive;
+  transition:all .14s;
+}
+.quest-item .claim-btn:hover{background:rgba(125,255,143,0.32);}
+.quest-item .claim-btn.claimed{
+  background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.14);
+  color:var(--dim);cursor:default;
+}
+
+/* ══════════════════════════════════════════
+   ★ SHOP SCREEN
+══════════════════════════════════════════ */
+#shop-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0a2e 100%);}
+.shop-tabs{
+  width:100%;max-width:520px;
+  display:flex;gap:6px;padding:0 14px 10px;overflow-x:auto;flex-shrink:0;
+  scrollbar-width:none;
+}
+.shop-tabs::-webkit-scrollbar{display:none;}
+.shop-tab{
+  flex-shrink:0;padding:6px 16px;border-radius:20px;
+  font-size:13px;color:var(--dim);
+  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  cursor:pointer;transition:all .15s;font-family:'Fredoka One',cursive;
+  white-space:nowrap;
+}
+.shop-tab.active{background:rgba(167,139,250,0.14);border-color:var(--purple);color:var(--purple);}
+
+.shop-grid{
+  width:100%;max-width:520px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;padding:0 14px;flex-shrink:0;
+}
+.shop-item{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:14px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;transition:all .18s;position:relative;
+}
+.shop-item:hover{background:rgba(255,255,255,0.08);transform:scale(0.98);}
+.shop-item .si-icon{
+  width:64px;height:64px;border-radius:12px;
+  background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.25);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  position:relative;
+}
+.si-qty{
+  position:absolute;bottom:-4px;right:-4px;
+  background:var(--gold);color:#000;
+  border-radius:8px;font-size:10px;padding:1px 5px;
+  font-family:'Nunito',sans-serif;font-weight:900;
+}
+.shop-item .si-name{font-size:13px;color:var(--text);text-align:center;letter-spacing:.3px;}
+.shop-item .si-price{
+  display:flex;align-items:center;gap:4px;
+  font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;
+}
+.shop-item .si-price .price-icon{font-size:16px;}
+.shop-item.video-item{
+  border-color:rgba(255,224,102,0.3);
+  background:rgba(255,224,102,0.04);
+}
+.shop-item.video-item .si-icon{
+  background:rgba(255,224,102,0.1);border-color:rgba(255,224,102,0.3);
+}
+.shop-item .video-badge{
+  position:absolute;top:8px;right:8px;
+  background:var(--gold);color:#000;
+  border-radius:6px;font-size:9px;padding:1px 5px;
+  font-family:'Nunito',sans-serif;font-weight:900;
+}
+.shop-refresh{
+  width:100%;max-width:520px;
+  padding:8px 14px;
+  text-align:center;font-size:12px;color:var(--dim);
+  font-family:'Nunito',sans-serif;font-weight:700;flex-shrink:0;
+}
+.shop-refresh span{color:var(--gold);}
+
+/* ══════════════════════════════════════════
+   ★ BATTLE PASS SCREEN
+══════════════════════════════════════════ */
+#pass-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0a1a 100%);}
+.pass-header-card{
+  width:100%;max-width:520px;
+  padding:14px;flex-shrink:0;
+}
+.pass-level-row{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  border-radius:14px;padding:14px;
+}
+.pass-level-badge{
+  width:52px;height:52px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),#ff8c32);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#000;flex-shrink:0;
+  box-shadow:0 0 14px rgba(255,224,102,0.4);
+}
+.pass-level-info{flex:1;}
+.pass-level-label{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.pass-level-num{font-size:24px;color:var(--gold);}
+.pass-xp-text{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.pass-season{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:6px;text-align:right;}
+.pass-season span{color:var(--gold);}
+
+.pass-tabs{
+  width:100%;max-width:520px;
+  display:flex;padding:0 14px 10px;flex-shrink:0;
+}
+.pass-tab{
+  flex:1;padding:8px;text-align:center;
+  font-size:14px;color:var(--dim);
+  border-bottom:2px solid transparent;
+  cursor:pointer;transition:all .15s;
+  font-family:'Fredoka One',cursive;
+}
+.pass-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+.pass-track{
+  width:100%;max-width:520px;
+  padding:0 14px;flex-shrink:0;
+}
+.pass-row{
+  display:flex;gap:8px;align-items:stretch;
+  margin-bottom:8px;
+}
+.pass-row-label{
+  width:100px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:rgba(255,255,255,0.03);border:1.5px solid var(--border);
+  border-radius:12px;padding:8px;
+}
+.pass-row-label .prl-icon{font-size:24px;}
+.pass-row-label .prl-name{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
+.pass-row-label.premium{
+  background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.3);
+}
+.pass-row-label.premium .prl-name{color:var(--purple);}
+.pass-rewards-scroll{
+  flex:1;display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none;
+}
+.pass-rewards-scroll::-webkit-scrollbar{display:none;}
+.pass-reward-cell{
+  flex-shrink:0;width:68px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.pass-reward-box{
+  width:64px;height:64px;border-radius:12px;
+  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:22px;position:relative;cursor:pointer;transition:all .15s;
+}
+.pass-reward-box:hover{background:rgba(255,255,255,0.1);}
+.pass-reward-box.claimed{
+  background:rgba(125,255,143,0.08);border-color:rgba(125,255,143,0.3);
+}
+.pass-reward-box.claimed::after{
+  content:'✓';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(125,255,143,0.25);border-radius:10px;
+  font-size:24px;color:var(--green);
+}
+.pass-reward-box.locked{opacity:0.45;}
+.pass-reward-box .prb-qty{
+  font-size:11px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;
+}
+.pass-reward-cell .prb-level{
+  font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;
+}
+.pass-unlock-row{
+  width:100%;max-width:520px;
+  display:flex;gap:10px;padding:10px 14px;flex-shrink:0;
+}
+
+/* ══════════════════════════════════════════
+   ★ VIDEO AD MODAL
+══════════════════════════════════════════ */
+#video-modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;
+  padding:20px;
+}
+#video-modal.hidden{display:none;}
+.video-modal-inner{
+  width:100%;max-width:480px;
+  background:linear-gradient(180deg,#1a0840,#0d0520);
+  border:2px solid rgba(255,224,102,0.35);
+  border-radius:20px;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.video-player-area{
+  width:100%;aspect-ratio:16/9;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.video-fake-player{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;
+  background:linear-gradient(135deg,#0a0a1a,#1a0a2e);
+}
+.video-play-icon{font-size:64px;animation:videoPulse 1s ease-in-out infinite alternate;}
+@keyframes videoPulse{from{transform:scale(1);}to{transform:scale(1.1);}}
+.video-fake-title{font-size:16px;color:var(--gold);letter-spacing:.5px;}
+.video-fake-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.video-progress-bar{
+  position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:rgba(255,255,255,0.1);
+}
+.video-progress-fill{
+  height:100%;background:var(--gold);
+  transition:width .1s linear;
+}
+.video-skip-btn{
+  position:absolute;top:10px;right:10px;
+  background:rgba(0,0,0,0.6);border:1.5px solid rgba(255,255,255,0.3);
+  border-radius:8px;padding:4px 10px;color:#fff;font-size:12px;
+  cursor:pointer;font-family:'Fredoka One',cursive;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.video-skip-btn.visible{opacity:1;pointer-events:all;}
+.video-modal-info{
+  padding:16px 20px;display:flex;flex-direction:column;gap:10px;
+}
+.video-modal-title{font-size:18px;color:var(--gold);letter-spacing:.5px;}
+.video-modal-sub{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.video-reward-preview{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,224,102,0.08);border:1.5px solid rgba(255,224,102,0.25);
+  border-radius:12px;padding:10px 14px;
+}
+.video-reward-preview .vrp-icon{font-size:28px;}
+.video-reward-preview .vrp-info{flex:1;}
+.video-reward-preview .vrp-title{font-size:14px;color:var(--gold);}
+.video-reward-preview .vrp-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.video-interact-row{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.interact-btn{
+  flex:1;padding:8px;border-radius:10px;
+  background:rgba(255,255,255,0.05);border:1.5px solid var(--border);
+  color:var(--text);font-size:13px;cursor:pointer;
+  font-family:'Fredoka One',cursive;text-align:center;
+  transition:all .15s;
+}
+.interact-btn:hover{background:rgba(255,255,255,0.12);}
+.interact-btn.active{background:rgba(125,255,143,0.14);border-color:var(--green);color:var(--green);}
+.video-timer{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
+.video-timer span{color:var(--gold);}
+
+/* ══════════════════════════════════════════
+   ★ TOAST NOTIFICATIONS
+══════════════════════════════════════════ */
+#toast-container{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%);
+  z-index:300;display:flex;flex-direction:column;gap:8px;
+  pointer-events:none;width:90%;max-width:400px;
+}
+.toast{
+  background:rgba(20,8,45,0.95);border:1.5px solid var(--border);
+  border-radius:12px;padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+  animation:toastIn .3s ease, toastOut .3s ease 2.5s forwards;
+  pointer-events:none;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;}to{opacity:0;}}
+.toast .t-icon{font-size:20px;}
+.toast .t-text{font-size:14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;}
+.toast.green{border-color:rgba(125,255,143,0.4);}
+.toast.gold{border-color:rgba(255,224,102,0.4);}
+.toast.purple{border-color:rgba(167,139,250,0.4);}
+
+/* ══════════════════════════════════════════
+   ★ DIFF BUTTONS
+══════════════════════════════════════════ */
+.diff-btn{font-size:13px;padding:5px 13px;border-radius:9px;}
+.diff-btn[data-d="easy"].selected{background:rgba(125,255,143,0.18);border-color:var(--green);color:var(--green);}
+.diff-btn[data-d="normal"].selected{background:rgba(255,224,102,0.18);border-color:var(--gold);color:var(--gold);}
+.diff-btn[data-d="hard"].selected{background:rgba(255,140,50,0.18);border-color:var(--orange);color:var(--orange);}
+.diff-btn[data-d="impossible"].selected{background:rgba(255,70,70,0.18);border-color:var(--red);color:var(--red);}
+
+/* ══════════════════════════════════════════
+   ★ SETTINGS SCREEN
+══════════════════════════════════════════ */
+#settings-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0840 100%);}
+.settings-section{
+  width:100%;max-width:520px;
+  padding:0 14px;flex-shrink:0;
+}
+.settings-label{
+  font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:900;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;
+  padding:0 2px;
+}
+.settings-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  border-radius:12px;padding:12px 14px;margin-bottom:8px;
+}
+.settings-row-left{display:flex;flex-direction:column;gap:2px;}
+.settings-row-left .sr-title{font-size:15px;color:var(--text);}
+.settings-row-left .sr-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+
+/* ══════════════════════════════════════════
+   ★ LEVEL UP MODAL
+══════════════════════════════════════════ */
+#levelup-modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;padding:20px;
+}
+#levelup-modal.hidden{display:none;}
+.levelup-inner{
+  width:100%;max-width:380px;
+  background:linear-gradient(180deg,#2a0a5e,#0d0520);
+  border:2px solid var(--purple);border-radius:20px;
+  padding:30px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  text-align:center;
+  box-shadow:0 0 40px rgba(167,139,250,0.3);
+}
+.levelup-badge{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),#c084fc);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  box-shadow:0 0 30px rgba(167,139,250,0.5);
+  animation:levelBounce .5s ease;
+}
+@keyframes levelBounce{0%{transform:scale(0.5);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.levelup-title{font-size:32px;color:var(--purple);text-shadow:0 0 20px var(--purple);}
+.levelup-num{font-size:56px;color:#fff;text-shadow:0 0 20px var(--purple);}
+.levelup-rewards{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.lu-reward{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.06);border:1.5px solid var(--border);
+  border-radius:12px;padding:10px 14px;
+}
+.lu-reward .lur-icon{font-size:24px;}
+.lu-reward .lur-val{font-size:13px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
+
+/* ══════════════════════════════════════════
+   ★ MISC UTILS
+══════════════════════════════════════════ */
+.flex-row{display:flex;align-items:center;gap:8px;}
+.flex-col{display:flex;flex-direction:column;gap:6px;}
+.text-gold{color:var(--gold);}
+.text-green{color:var(--green);}
+.text-purple{color:var(--purple);}
+.text-dim{color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;}
+.text-sm{font-size:13px;}
+.mt-4{margin-top:4px;}
+.mt-8{margin-top:8px;}
+.spacer{flex:1;}
+.divider{width:100%;height:1px;background:rgba(255,255,255,0.07);margin:4px 0;}
+
+/* Scrollbar hide */
+.screen::-webkit-scrollbar{display:none;}
+.screen{scrollbar-width:none;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     TOAST CONTAINER
+═══════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     LEVEL UP MODAL
+═══════════════════════════════════════════════════════ -->
+<div id="levelup-modal" class="hidden">
+  <div class="levelup-inner">
+    <div class="levelup-badge">⬆</div>
+    <div class="levelup-title">LEVEL UP!</div>
+    <div class="levelup-num" id="lu-num">2</div>
+    <div class="levelup-rewards">
+      <div class="lu-reward"><div class="lur-icon">💎</div><div class="lur-val">+50</div></div>
+      <div class="lu-reward"><div class="lur-icon">🪙</div><div class="lur-val">+5,000</div></div>
+      <div class="lu-reward"><div class="lur-icon">⚡</div><div class="lur-val">+1 Energy</div></div>
+    </div>
+    <button class="btn primary" onclick="closeLevelUp()">AWESOME!</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     VIDEO AD MODAL
+═══════════════════════════════════════════════════════ -->
+<div id="video-modal" class="hidden">
+  <div class="video-modal-inner">
+    <div class="video-player-area">
+      <div class="video-fake-player" id="video-player">
+        <div class="video-play-icon" id="vid-play-icon">▶</div>
+        <div class="video-fake-title" id="vid-title">Loading...</div>
+        <div class="video-fake-sub" id="vid-sub">Your reward is waiting!</div>
+      </div>
+      <div class="video-progress-bar">
+        <div class="video-progress-fill" id="vid-progress" style="width:0%"></div>
+      </div>
+      <button class="video-skip-btn" id="vid-skip-btn" onclick="skipVideo()">Skip ▶▶</button>
+    </div>
+    <div class="video-modal-info">
+      <div class="video-modal-title" id="vid-reward-title">Watch to earn your reward!</div>
+      <div class="video-reward-preview">
+        <div class="vrp-icon" id="vid-reward-icon">🎁</div>
+        <div class="vrp-info">
+          <div class="vrp-title" id="vid-reward-name">Mystery Reward</div>
+          <div class="vrp-sub" id="vid-reward-desc">Watch the full video to claim</div>
+        </div>
+      </div>
+      <div class="video-interact-row">
+        <div class="interact-btn" id="int-like" onclick="interactVideo('like')">👍 Like</div>
+        <div class="interact-btn" id="int-share" onclick="interactVideo('share')">🔗 Share</div>
+        <div class="interact-btn" id="int-save" onclick="interactVideo('save')">🔖 Save</div>
+      </div>
+      <div class="video-timer" id="vid-timer">Watch for <span id="vid-secs">30</span>s to unlock reward</div>
+      <button class="btn gold full" id="vid-claim-btn" onclick="claimVideoReward()" style="display:none">🎁 CLAIM REWARD!</button>
+      <button class="btn danger full" onclick="closeVideo()" style="margin-top:0">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     STAGE MODAL
+═══════════════════════════════════════════════════════ -->
+<div id="stage-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeStageModal()">
+  <div class="modal-sheet">
+    <div class="flex-row">
+      <div style="font-size:28px" id="sm-icon">🌊</div>
+      <div>
+        <h3 id="sm-title">Stage 1-1</h3>
+        <div class="modal-sub" id="sm-sub">Gloopy Swamp • Easy</div>
+      </div>
+      <div class="spacer"></div>
+      <div id="sm-stars" style="font-size:20px">⭐⭐⭐</div>
+    </div>
+    <div class="divider"></div>
+    <div class="text-dim">Rewards</div>
+    <div class="reward-chips" id="sm-rewards">
+      <div class="reward-chip">🪙 1,200</div>
+      <div class="reward-chip">💎 10</div>
+    </div>
+    <div class="divider"></div>
+    <div class="flex-row">
+      <button class="btn purple" onclick="watchAdForBonus()">📺 Watch Ad → 2x Rewards</button>
+      <button class="btn primary" id="sm-play-btn" onclick="playStage()">▶ PLAY</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     HUB SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="hub-screen" class="screen">
+  <!-- Currency Bar -->
+  <div class="top-bar">
+    <div class="currency-group">
+      <div class="cur-pill">
+        <span class="icon">⚡</span>
+        <span class="val" id="hub-energy">5/5</span>
+        <div class="add-btn" onclick="openVideoForEnergy()">+</div>
+      </div>
+      <div class="cur-pill">
+        <span class="icon">🪙</span>
+        <span class="val" id="hub-gold">247,009</span>
+        <div class="add-btn" onclick="openVideoForGold()">+</div>
+      </div>
+      <div class="cur-pill">
+        <span class="icon">💎</span>
+        <span class="val" id="hub-gems">3,344</span>
+        <div class="add-btn" onclick="openVideoForGems()">+</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <div class="icon-btn" onclick="showToast('📬','Inbox coming soon!','purple')">🔔</div>
+      <div class="icon-btn" onclick="showScreen('settings-screen')">⚙</div>
+    </div>
+  </div>
+
+  <!-- Hero Canvas Area -->
+  <div class="hub-hero">
+    <canvas id="hub-canvas"></canvas>
+    <div class="hub-hero-overlay">
+      <div class="hub-title">GLOOP!</div>
+      <div class="hub-sub">The Silliest Game Ever Made</div>
+    </div>
+  </div>
+
+  <!-- Player Row -->
+  <div class="player-row">
+    <div class="player-avatar">🫧</div>
+    <div class="player-info">
+      <div class="player-name">GloopMaster</div>
+      <div class="player-level">Lv <span id="player-lv">7</span> · <span id="player-title">Wobbly Apprentice</span></div>
+      <div class="xp-bar-wrap">
+        <div class="xp-label">XP: <span id="xp-cur">2,340</span> / <span id="xp-max">3,000</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="xp-bar" style="width:78%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Banner -->
+  <div class="event-banner" onclick="showToast('🎉','Gloop Festival event coming soon!','purple')">
+    <div class="ev-icon">🎪</div>
+    <div class="ev-info">
+      <div class="ev-title">GLOOP FESTIVAL!</div>
+      <div class="ev-sub">Limited time event — earn exclusive skins</div>
+      <div class="ev-timer">⏱ 13h 22m remaining</div>
+    </div>
+    <div style="font-size:20px;color:var(--dim)">›</div>
+  </div>
+
+  <!-- Hub Grid -->
+  <div class="hub-grid" style="margin-top:4px;">
+    <div class="hub-tile featured" onclick="showScreen('game-screen')">
+      <div class="tile-icon">🫧</div>
+      <div class="tile-info">
+        <div class="tile-label">PLAY NOW</div>
+        <div class="tile-sub">Quick Match · Endless Run</div>
+      </div>
+    </div>
+    <div class="hub-tile" onclick="showScreen('campaign-screen')">
+      <div class="tile-icon">🗺️</div>
+      <div class="tile-label">Campaign</div>
+      <div class="tile-sub">Chapter 3</div>
+      <div class="tile-badge">NEW</div>
+    </div>
+    <div class="hub-tile" onclick="showScreen('quest-screen')">
+      <div class="tile-icon">📜</div>
+      <div class="tile-label">Quests</div>
+      <div class="tile-sub">3 claimable</div>
+      <div class="tile-badge">3</div>
+    </div>
+    <div class="hub-tile" onclick="showScreen('shop-screen')">
+      <div class="tile-icon">🏪</div>
+      <div class="tile-label">Shop</div>
+      <div class="tile-sub">Refresh in 11h</div>
+    </div>
+    <div class="hub-tile" onclick="showScreen('pass-screen')">
+      <div class="tile-icon">🏆</div>
+      <div class="tile-label">Battle Pass</div>
+      <div class="tile-sub">Lv 1 · 980/1000</div>
+      <div class="tile-badge">!</div>
+    </div>
+    <div class="hub-tile" onclick="showLeaderboard()">
+      <div class="tile-icon">🥇</div>
+      <div class="tile-label">Leaderboard</div>
+      <div class="tile-sub">Rank #142</div>
+    </div>
+  </div>
+
+  <!-- Daily Ad Bonus -->
+  <div style="width:100%;max-width:520px;padding:8px 14px;flex-shrink:0;">
+    <div class="card glow-gold" style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openVideoForDailyBonus()">
+      <div style="font-size:36px;">📺</div>
+      <div style="flex:1;">
+        <div style="font-size:16px;color:var(--gold);">Daily Video Bonus</div>
+        <div class="text-dim">Watch a short video · Get 500 Gold + 30 Gems</div>
+      </div>
+      <button class="btn gold sm">WATCH</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showScreen('hub-screen')">
+      <div class="nav-icon">🏠</div><div class="nav-label">Hub</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('campaign-screen')">
+      <div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('game-screen')">
+      <div class="nav-icon">🫧</div><div class="nav-label">Play</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('shop-screen')">
+      <div class="nav-icon">🏪</div><div class="nav-label">Shop</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('pass-screen')">
+      <div class="nav-icon">🏆</div><div class="nav-label">Pass</div>
+      <div class="nav-badge">!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     GAME SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="game-screen" class="screen hidden">
+  <div id="game-wrap">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="game-hud">
+      <div class="hud-pill">SCORE: <span id="g-score">0</span></div>
+      <button id="game-pause-btn">⏸</button>
+      <div class="hud-pill hi">BEST: <span id="g-hi">0</span></div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div id="menu-overlay">
+      <h1 id="menu-title">GLOOP!</h1>
+      <div class="prompt" id="menu-prompt">TAP or PRESS SPACE to play</div>
+      <div class="sub" id="ctrl-hint">Left = SQUISH · Right = STRETCH</div>
+      <div style="display:flex;gap:8px;margin-top:8px;pointer-events:all;">
+        <button class="btn sm" onclick="showScreen('hub-screen')">🏠 Hub</button>
+        <button class="btn sm" onclick="openGameSettings()">⚙ Settings</button>
+      </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div class="game-overlay hidden" id="pause-overlay">
+      <h2>⏸ PAUSED</h2>
+      <div class="sub-text">Score: <span id="pause-score">0</span></div>
+      <div class="sep"></div>
+      <span style="font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase;">Difficulty</span>
+      <div class="row">
+        <button class="btn diff-btn" data-d="easy" onclick="setDiff('easy',this)">🌿 Easy</button>
+        <button class="btn diff-btn selected" data-d="normal" onclick="setDiff('normal',this)">⭐ Normal</button>
+        <button class="btn diff-btn" data-d="hard" onclick="setDiff('hard',this)">🔥 Hard</button>
+        <button class="btn diff-btn" data-d="impossible" onclick="setDiff('impossible',this)">💀 Impossible</button>
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn primary" onclick="resumeGame()">▶ RESUME</button>
+        <button class="btn danger" onclick="quitToMenu()">✕ QUIT</button>
+      </div>
+    </div>
+
+    <!-- Death Overlay -->
+    <div id="death-overlay" class="hidden">
+      <h2>SPLORP!</h2>
+      <div class="death-score-label">YOUR SCORE</div>
+      <div class="death-score-big" id="death-score">0</div>
+      <div class="death-best" id="death-best"></div>
+      <div class="sep" style="width:90%;"></div>
+      <div class="ad-reward-box">
+        <div class="ad-title">📺 Watch a video → Continue with 2x score!</div>
+        <div class="ad-sub">Or watch for a free score boost on next run</div>
+        <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">
+          <button class="btn gold sm" onclick="watchAdForContinue()">📺 CONTINUE (Watch Ad)</button>
+          <button class="btn sm danger" onclick="retryGame()">↺ Retry</button>
+        </div>
+      </div>
+      <button class="btn sm" onclick="quitToMenu()" style="margin-top:4px;">🏠 Hub</button>
+    </div>
+
+    <!-- Settings Overlay -->
+    <div class="game-overlay hidden" id="game-settings-overlay">
+      <button onclick="closeGameSettings()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.14);border-radius:9px;color:#999;font-size:18px;padding:2px 10px;cursor:pointer;font-family:'Fredoka One',cursive;">✕</button>
+      <h2 style="font-size:28px;">⚙ SETTINGS</h2>
+      <span style="font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase;">Touch Controls</span>
+      <div class="row">
+        <button class="btn selected" data-ctrl="normal" onclick="setCtrl('normal',this)">Left=SQUISH · Right=STRETCH</button>
+        <button class="btn" data-ctrl="flipped" onclick="setCtrl('flipped',this)">Left=STRETCH · Right=SQUISH</button>
+      </div>
+      <div class="sep"></div>
+      <span style="font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase;">Difficulty</span>
+      <div class="row">
+        <button class="btn diff-btn" data-d="easy" onclick="setDiff('easy',this)">🌿 Easy</button>
+        <button class="btn diff-btn selected" data-d="normal" onclick="setDiff('normal',this)">⭐ Normal</button>
+        <button class="btn diff-btn" data-d="hard" onclick="setDiff('hard',this)">🔥 Hard</button>
+        <button class="btn diff-btn" data-d="impossible" onclick="setDiff('impossible',this)">💀 Impossible</button>
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn primary" onclick="closeGameSettings()">✓ DONE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     CAMPAIGN SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="campaign-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">CAMPAIGN</span>
+    </div>
+    <div class="currency-group">
+      <div class="cur-pill"><span class="icon">⚡</span><span class="val" id="camp-energy">5/5</span></div>
+      <div class="cur-pill"><span class="icon">💎</span><span class="val" id="camp-gems">3,344</span></div>
+    </div>
+    <div class="icon-btn" onclick="showScreen('settings-screen')">⚙</div>
+  </div>
+
+  <div class="chapter-header">
+    <div class="ch-num">Chapter 3</div>
+    <div class="ch-name">🌊 GLOOPY SWAMP</div>
+    <div class="ch-sub">Survive the wobbly marshlands</div>
+  </div>
+
+  <!-- Stage Map -->
+  <div class="stage-map">
+    <div class="stage-row">
+      <div class="stage-node completed" onclick="openStage(1,'3-1','Gloopy Entrance','🌿')">
+        <div class="node-label">3-1</div>
+        <div class="node-stars">⭐⭐⭐</div>
+      </div>
+      <div class="stage-connector done"></div>
+      <div class="stage-node completed" onclick="openStage(2,'3-2','Bubble Bog','🫧')">
+        <div class="node-label">3-2</div>
+        <div class="node-stars">⭐⭐⭐</div>
+      </div>
+      <div class="stage-connector done"></div>
+      <div class="stage-node completed" onclick="openStage(3,'3-3','Slime Falls','💧')">
+        <div class="node-label">3-3</div>
+        <div class="node-stars">⭐⭐⭐</div>
+      </div>
+      <div class="stage-connector done"></div>
+      <div class="stage-node current" onclick="openStage(4,'3-4','Ooze Canyon','🟢')">
+        <div class="node-label">3-4</div>
+        <div class="node-stars">⭐⭐☆</div>
+      </div>
+    </div>
+    <div style="height:20px;"></div>
+    <div class="stage-row">
+      <div class="stage-node locked">
+        <div class="lock-icon">🔒</div>
+        <div class="node-label" style="font-size:10px;">3-5</div>
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-node locked">
+        <div class="lock-icon">🔒</div>
+        <div class="node-label" style="font-size:10px;">3-6</div>
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-node locked">
+        <div class="lock-icon">🔒</div>
+        <div class="node-label" style="font-size:10px;">3-7</div>
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-node boss locked">
+        <div class="lock-icon">💀</div>
+        <div class="node-label" style="font-size:10px;">BOSS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chapter Nav -->
+  <div class="chapter-nav">
+    <div class="chapter-btn" onclick="showToast('📖','Chapter 2 complete!','green')">
+      <div class="cb-icon">‹</div>
+      <div class="cb-label">Ch. 2</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;">Progress</div>
+      <div style="font-size:18px;color:var(--gold);">4 / 8</div>
+      <div class="prog-bar" style="width:160px;margin-top:4px;"><div class="prog-fill gold" style="width:50%"></div></div>
+    </div>
+    <div class="chapter-btn" onclick="showToast('🔒','Complete Chapter 3 to unlock!','purple')">
+      <div class="cb-icon">›</div>
+      <div class="cb-label">Ch. 4</div>
+    </div>
+  </div>
+
+  <!-- Sidebar buttons -->
+  <div style="width:100%;max-width:520px;padding:0 14px;display:flex;gap:10px;flex-shrink:0;">
+    <div class="hub-tile" style="flex:1;" onclick="showToast('🧙','Merchant coming soon!','purple')">
+      <div class="tile-icon">🧙</div>
+      <div class="tile-label">Merchant</div>
+    </div>
+    <div class="hub-tile" style="flex:1;" onclick="showToast('📖','All chapters view coming soon!','purple')">
+      <div class="tile-icon">📖</div>
+      <div class="tile-label">Chapters</div>
+    </div>
+    <div class="hub-tile" style="flex:1;" onclick="showToast('👹','Boss Mode coming soon!','red')">
+      <div class="tile-icon">👹</div>
+      <div class="tile-label">Boss Mode</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="showScreen('hub-screen')"><div class="nav-icon">🏠</div><div class="nav-label">Hub</div></div>
+    <div class="nav-item active" onclick="showScreen('campaign-screen')"><div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div></div>
+    <div class="nav-item" onclick="showScreen('game-screen')"><div class="nav-icon">🫧</div><div class="nav-label">Play</div></div>
+    <div class="nav-item" onclick="showScreen('shop-screen')"><div class="nav-icon">🏪</div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="showScreen('pass-screen')"><div class="nav-icon">🏆</div><div class="nav-label">Pass</div><div class="nav-badge">!</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUEST SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="quest-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">QUESTS</span>
+    </div>
+    <div class="cur-pill"><span class="icon">💎</span><span class="val">3,344</span></div>
+  </div>
+
+  <div class="quest-tabs">
+    <div class="quest-tab active" id="qtab-daily" onclick="switchQuestTab('daily')">Daily Tasks</div>
+    <div class="quest-tab" id="qtab-main" onclick="switchQuestTab('main')">Main Quest</div>
+    <div class="quest-tab" id="qtab-event" onclick="switchQuestTab('event')">Event</div>
+  </div>
+
+  <div class="scroll-content" id="quest-list">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="showScreen('hub-screen')"><div class="nav-icon">🏠</div><div class="nav-label">Hub</div></div>
+    <div class="nav-item" onclick="showScreen('campaign-screen')"><div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div></div>
+    <div class="nav-item" onclick="showScreen('game-screen')"><div class="nav-icon">🫧</div><div class="nav-label">Play</div></div>
+    <div class="nav-item" onclick="showScreen('shop-screen')"><div class="nav-icon">🏪</div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="showScreen('pass-screen')"><div class="nav-icon">🏆</div><div class="nav-label">Pass</div><div class="nav-badge">!</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SHOP SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="shop-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">SHOP</span>
+    </div>
+    <div class="currency-group">
+      <div class="cur-pill"><span class="icon">⚡</span><span class="val" id="shop-energy">5/5</span></div>
+      <div class="cur-pill"><span class="icon">💎</span><span class="val" id="shop-gems">3,344</span></div>
+      <div class="cur-pill"><span class="icon">🪙</span><span class="val" id="shop-gold">247k</span></div>
+    </div>
+  </div>
+
+  <div class="shop-tabs">
+    <div class="shop-tab active" id="stab-video" onclick="switchShopTab('video')">📺 Video</div>
+    <div class="shop-tab" id="stab-gems" onclick="switchShopTab('gems')">💎 Gems</div>
+    <div class="shop-tab" id="stab-normal" onclick="switchShopTab('normal')">📦 Normal Pack</div>
+    <div class="shop-tab" id="stab-select" onclick="switchShopTab('select')">🎯 Select Pack</div>
+    <div class="shop-tab" id="stab-fragment" onclick="switchShopTab('fragment')">🔮 Fragment</div>
+  </div>
+
+  <div id="shop-content" class="scroll-content" style="padding-top:0;">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="shop-refresh">Items refresh in: <span id="shop-timer">11h 9m</span></div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="showScreen('hub-screen')"><div class="nav-icon">🏠</div><div class="nav-label">Hub</div></div>
+    <div class="nav-item" onclick="showScreen('campaign-screen')"><div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div></div>
+    <div class="nav-item" onclick="showScreen('game-screen')"><div class="nav-icon">🫧</div><div class="nav-label">Play</div></div>
+    <div class="nav-item active" onclick="showScreen('shop-screen')"><div class="nav-icon">🏪</div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="showScreen('pass-screen')"><div class="nav-icon">🏆</div><div class="nav-label">Pass</div><div class="nav-badge">!</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     BATTLE PASS SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="pass-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">BATTLE PASS</span>
+    </div>
+    <div class="cur-pill"><span class="icon">💎</span><span class="val">3,344</span></div>
+  </div>
+
+  <div class="pass-header-card">
+    <div class="pass-level-row">
+      <div class="pass-level-badge" id="pass-lv-badge">1</div>
+      <div class="pass-level-info">
+        <div class="pass-level-label">Battle Pass Level</div>
+        <div class="pass-level-num">Level <span id="pass-lv-num">1</span></div>
+        <div class="prog-bar" style="margin-top:6px;"><div class="prog-fill gold" id="pass-xp-bar" style="width:98%"></div></div>
+        <div class="pass-xp-text">980 / 1,000 XP · (Max weekly: 1,980 / 20,000)</div>
+      </div>
+    </div>
+    <div class="pass-season">Season ends in: <span>18 days 13 hours</span></div>
+  </div>
+
+  <div class="pass-tabs">
+    <div class="pass-tab active" id="ptab-reward" onclick="switchPassTab('reward')">Rewards</div>
+    <div class="pass-tab" id="ptab-quest" onclick="switchPassTab('quest')">Pass Quests</div>
+  </div>
+
+  <div class="pass-track" id="pass-track">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="pass-unlock-row">
+    <button class="btn purple full" onclick="showToast('🔒','Unlock Battle Pass for premium rewards!','purple')">🔓 Unlock Battle Pass</button>
+    <button class="btn gold" onclick="claimAllPass()">Claim All</button>
+  </div>
+
+  <div style="height:80px;"></div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="showScreen('hub-screen')"><div class="nav-icon">🏠</div><div class="nav-label">Hub</div></div>
+    <div class="nav-item" onclick="showScreen('campaign-screen')"><div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div></div>
+    <div class="nav-item" onclick="showScreen('game-screen')"><div class="nav-icon">🫧</div><div class="nav-label">Play</div></div>
+    <div class="nav-item" onclick="showScreen('shop-screen')"><div class="nav-icon">🏪</div><div class="nav-label">Shop</div></div>
+    <div class="nav-item active" onclick="showScreen('pass-screen')"><div class="nav-icon">🏆</div><div class="nav-label">Pass</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SETTINGS SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="settings-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">SETTINGS</span>
+    </div>
+  </div>
+
+  <div class="scroll-content">
+    <div class="settings-label">Touch Controls</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="sr-title">Control Scheme</div>
+        <div class="sr-sub">Which side stretches Gloop up?</div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:12px;">
+      <button class="btn selected" data-ctrl="normal" onclick="setCtrl('normal',this)">Left=SQUISH · Right=STRETCH</button>
+      <button class="btn" data-ctrl="flipped" onclick="setCtrl('flipped',this)">Left=STRETCH · Right=SQUISH</button>
+    </div>
+
+    <div class="settings-label">Difficulty</div>
+    <div class="row" style="margin-bottom:12px;">
+      <button class="btn diff-btn" data-d="easy" onclick="setDiff('easy',this)">🌿 Easy</button>
+      <button class="btn diff-btn selected" data-d="normal" onclick="setDiff('normal',this)">⭐ Normal</button>
+      <button class="btn diff-btn" data-d="hard" onclick="setDiff('hard',this)">🔥 Hard</button>
+      <button class="btn diff-btn" data-d="impossible" onclick="setDiff('impossible',this)">💀 Impossible</button>
+    </div>
+
+    <div class="settings-label">Visual Effects</div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Stars</div><div class="sr-sub">Background star field</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-stars" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Ground Glow</div><div class="sr-sub">Purple ground line glow</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-glow" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Particles</div><div class="sr-sub">Splat and pop effects</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-particles" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Pop Words</div><div class="sr-sub">SPLORP! BLOOP! etc.</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-words" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Screen Flash</div><div class="sr-sub">Red flash on death</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-flash" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left"><div class="sr-title">Touch Hints</div><div class="sr-sub">Show SQUISH/STRETCH labels</div></div>
+      <label class="toggle"><input type="checkbox" id="tog-hints" checked onchange="saveTogs()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+
+    <div class="settings-label" style="margin-top:8px;">Account</div>
+    <div class="settings-row" style="cursor:pointer;" onclick="showToast('🔗','Account linking coming soon!','purple')">
+      <div class="settings-row-left"><div class="sr-title">Link Account</div><div class="sr-sub">Save progress to cloud</div></div>
+      <div style="font-size:18px;color:var(--dim);">›</div>
+    </div>
+    <div class="settings-row" style="cursor:pointer;" onclick="showToast('🗑️','Progress reset! (not really 😅)','red')">
+      <div class="settings-row-left"><div class="sr-title" style="color:var(--red);">Reset Progress</div><div class="sr-sub">Start fresh (cannot undo)</div></div>
+      <div style="font-size:18px;color:var(--dim);">›</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ══════════════════════════════════════════
+//  GLOBAL STATE
+// ══════════════════════════════════════════
+const STATE = {
+  gold: 247009,
+  gems: 3344,
+  energy: 5,
+  maxEnergy: 5,
+  playerLevel: 7,
+  xp: 2340,
+  xpMax: 3000,
+  hiScore: 0,
+  questProgress: {},
+  passLevel: 1,
+  passXP: 980,
+  claimedRewards: new Set(),
+  questClaimed: new Set(),
+  videoWatched: 0,
+  interactions: { like:false, share:false, save:false },
+};
+
+const PLAYER_TITLES = ['Gloopy Newbie','Wobbly Apprentice','Slime Squire','Ooze Knight','Blob Baron','Gloop Lord','Supreme Sploosh'];
+
+// ══════════════════════════════════════════
+//  SCREEN NAVIGATION
+// ══════════════════════════════════════════
+let currentScreen = 'hub-screen';
+let prevScreen = 'hub-screen';
+
+function showScreen(id) {
+  if (id === currentScreen) return;
+  const prev = document.getElementById(currentScreen);
+  const next = document.getElementById(id);
+  if (!next) return;
+  prev.classList.add('hidden');
+  next.classList.remove('hidden');
+  next.classList.add('screen-enter');
+  setTimeout(() => next.classList.remove('screen-enter'), 300);
+  prevScreen = currentScreen;
+  currentScreen = id;
+
+  // Update nav bars
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  // Screen-specific init
+  if (id === 'game-screen') initGameScreen();
+  if (id === 'quest-screen') renderQuests('daily');
+  if (id === 'shop-screen') renderShop('video');
+  if (id === 'pass-screen') renderPassTrack();
+  updateCurrencyDisplays();
+}
+
+function updateCurrencyDisplays() {
+  const g = STATE.gold >= 1000 ? Math.floor(STATE.gold/1000)+'k' : STATE.gold;
+  document.querySelectorAll('#hub-gold').forEach(el => el.textContent = STATE.gold.toLocaleString());
+  document.querySelectorAll('#hub-gems,#camp-gems,#shop-gems').forEach(el => el.textContent = STATE.gems.toLocaleString());
+  document.querySelectorAll('#hub-energy,#camp-energy,#shop-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
+  document.querySelectorAll('#shop-gold').forEach(el => el.textContent = g);
+  document.getElementById('player-lv').textContent = STATE.playerLevel;
+  document.getElementById('player-title').textContent = PLAYER_TITLES[Math.min(STATE.playerLevel-1, PLAYER_TITLES.length-1)];
+  const xpPct = Math.round((STATE.xp / STATE.xpMax) * 100);
+  document.getElementById('xp-bar').style.width = xpPct + '%';
+  document.getElementById('xp-cur').textContent = STATE.xp.toLocaleString();
+  document.getElementById('xp-max').textContent = STATE.xpMax.toLocaleString();
+}
+
+function earnGold(amount) {
+  STATE.gold += amount;
+  updateCurrencyDisplays();
+  saveGame();
+}
+function earnGems(amount) {
+  STATE.gems += amount;
+  updateCurrencyDisplays();
+  saveGame();
+}
+function earnXP(amount) {
+  STATE.xp += amount;
+  if (STATE.xp >= STATE.xpMax) {
+    STATE.xp -= STATE.xpMax;
+    STATE.playerLevel++;
+    STATE.xpMax = Math.floor(STATE.xpMax * 1.25);
+    updateCurrencyDisplays();
+    showLevelUp(STATE.playerLevel);
+  }
+  updateCurrencyDisplays();
+}
+
+// ══════════════════════════════════════════
+//  TOAST SYSTEM
+// ══════════════════════════════════════════
+function showToast(icon, text, type='green') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="t-icon">${icon}</span><span class="t-text">${text}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ══════════════════════════════════════════
+//  LEVEL UP MODAL
+// ══════════════════════════════════════════
+function showLevelUp(lv) {
+  document.getElementById('lu-num').textContent = lv;
+  document.getElementById('levelup-modal').classList.remove('hidden');
+}
+function closeLevelUp() {
+  document.getElementById('levelup-modal').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════
+//  LEADERBOARD (placeholder)
+// ══════════════════════════════════════════
+function showLeaderboard() {
+  showToast('🥇','Leaderboard: You are #142 globally!','gold');
+}
+
+// ══════════════════════════════════════════
+//  QUEST DATA & RENDERING
+// ══════════════════════════════════════════
+const QUESTS = {
+  daily: [
+    { id:'d1', icon:'🫧', title:'Play 3 Rounds', desc:'Run the endless gloop', cur:3, max:3, reward:'🪙', rewardVal:'500', rewardType:'gold', rewardAmt:500 },
+    { id:'d2', icon:'⭐', title:'Score 50 Points', desc:'In a single run', cur:50, max:50, reward:'💎', rewardVal:'20', rewardType:'gems', rewardAmt:20 },
+    { id:'d3', icon:'📺', title:'Watch 2 Videos', desc:'Support the game!', cur:STATE.videoWatched, max:2, reward:'🪙', rewardVal:'1,000', rewardType:'gold', rewardAmt:1000 },
+    { id:'d4', icon:'🔥', title:'Survive 30 Seconds', desc:'Without hitting anything', cur:0, max:30, reward:'💎', rewardVal:'15', rewardType:'gems', rewardAmt:15 },
+    { id:'d5', icon:'🏆', title:'Beat Your High Score', desc:'New personal best!', cur:0, max:1, reward:'🪙', rewardVal:'2,000', rewardType:'gold', rewardAmt:2000 },
+  ],
+  main: [
+    { id:'m1', icon:'🪙', title:'Accumulate 400,000 Gold', desc:'Total lifetime gold', cur:381190, max:400000, reward:'🪙', rewardVal:'15,000', rewardType:'gold', rewardAmt:15000 },
+    { id:'m2', icon:'⬆', title:'Reach Player Level 10', desc:'Keep playing to level up!', cur:STATE.playerLevel, max:10, reward:'💎', rewardVal:'50', rewardType:'gems', rewardAmt:50 },
+    { id:'m3', icon:'🗺️', title:'Complete Chapter 3', desc:'Finish all stages', cur:4, max:8, reward:'💎', rewardVal:'100', rewardType:'gems', rewardAmt:100 },
+    { id:'m4', icon:'📺', title:'Watch 10 Videos Total', desc:'Lifetime video watches', cur:STATE.videoWatched, max:10, reward:'🪙', rewardVal:'5,000', rewardType:'gold', rewardAmt:5000 },
+    { id:'m5', icon:'🏆', title:'Score 200 Points', desc:'In a single run', cur:STATE.hiScore, max:200, reward:'💎', rewardVal:'60', rewardType:'gems', rewardAmt:60 },
+  ],
+  event: [
+    { id:'e1', icon:'🎪', title:'Play During Festival', desc:'Any run counts!', cur:1, max:1, reward:'💎', rewardVal:'30', rewardType:'gems', rewardAmt:30 },
+    { id:'e2', icon:'🎉', title:'Share the Festival', desc:'Watch a share video', cur:0, max:1, reward:'🪙', rewardVal:'3,000', rewardType:'gold', rewardAmt:3000 },
+    { id:'e3', icon:'🌟', title:'Score 100 in Festival Mode', desc:'Special event run', cur:0, max:100, reward:'💎', rewardVal:'75', rewardType:'gems', rewardAmt:75 },
+  ],
+};
+
+let currentQuestTab = 'daily';
+
+function switchQuestTab(tab) {
+  currentQuestTab = tab;
+  document.querySelectorAll('.quest-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('qtab-'+tab).classList.add('active');
+  renderQuests(tab);
+}
+
+function renderQuests(tab) {
+  const list = document.getElementById('quest-list');
+  const quests = QUESTS[tab] || [];
+  list.innerHTML = '';
+
+  quests.forEach(q => {
+    const pct = Math.min(100, Math.round((q.cur / q.max) * 100));
+    const done = q.cur >= q.max;
+    const claimed = STATE.questClaimed.has(q.id);
+    const claimable = done && !claimed;
+
+    const item = document.createElement('div');
+    item.className = 'quest-item' + (claimable ? ' claimable' : '');
+    item.innerHTML = `
+      <div class="qi-icon">${q.icon}</div>
+      <div class="qi-info">
+        <div class="qi-title">${q.title}</div>
+        <div class="qi-prog-text">${q.cur.toLocaleString()} / ${q.max.toLocaleString()}</div>
+        <div class="prog-bar" style="margin-top:6px;"><div class="prog-fill${done?' gold':''}" style="width:${pct}%"></div></div>
+      </div>
+      <div class="qi-reward">
+        <div class="qi-reward-icon">${q.reward}</div>
+        <div class="qi-reward-val">${q.rewardVal}</div>
+        ${claimable
+          ? `<button class="claim-btn" onclick="claimQuest('${q.id}','${tab}')">CLAIM</button>`
+          : claimed
+            ? `<button class="claim-btn claimed" disabled>✓ Done</button>`
+            : `<div style="font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;">In progress</div>`
+        }
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  // Claim all button
+  const hasClaimable = quests.some(q => q.cur >= q.max && !STATE.questClaimed.has(q.id));
+  if (hasClaimable) {
+    const claimAll = document.createElement('button');
+    claimAll.className = 'btn primary full';
+    claimAll.textContent = '🎁 CLAIM ALL';
+    claimAll.onclick = () => claimAllQuests(tab);
+    list.appendChild(claimAll);
+  }
+}
+
+function claimQuest(id, tab) {
+  if (STATE.questClaimed.has(id)) return;
+  STATE.questClaimed.add(id);
+  const q = QUESTS[tab].find(x => x.id === id);
+  if (!q) return;
+  if (q.rewardType === 'gold') { earnGold(q.rewardAmt); showToast('🪙', `+${q.rewardVal} Gold claimed!`, 'gold'); }
+  if (q.rewardType === 'gems') { earnGems(q.rewardAmt); showToast('💎', `+${q.rewardVal} Gems claimed!`, 'purple'); }
+  earnXP(50);
+  renderQuests(tab);
+}
+
+function claimAllQuests(tab) {
+  const quests = QUESTS[tab] || [];
+  quests.forEach(q => {
+    if (q.cur >= q.max && !STATE.questClaimed.has(q.id)) claimQuest(q.id, tab);
+  });
+}
+
+// ══════════════════════════════════════════
+//  SHOP DATA & RENDERING
+// ══════════════════════════════════════════
+const SHOP_ITEMS = {
+  video: [
+    { icon:'📦', name:'Mystic Video Chest 1', qty:null, price:'📺 1 Video', type:'video', reward:'gems', amt:50 },
+    { icon:'💎', name:'Diamond', qty:20, price:'📺 1 Video', type:'video', reward:'gems', amt:20 },
+    { icon:'📦', name:'Mystic Video Chest 2', qty:null, price:'📺 1 Video', type:'video', reward:'gold', amt:5000 },
+    { icon:'📦', name:'Mystic Video Chest 3', qty:null, price:'📺 1 Video', type:'video', reward:'gems', amt:100 },
+    { icon:'🧪', name:'Epic HP Potion', qty:1, price:'📺 1 Video', type:'video', reward:'gold', amt:2000 },
+    { icon:'🛡️', name:'Epic Shield Potion', qty:1, price:'📺 1 Video', type:'video', reward:'gold', amt:2000 },
+    { icon:'🪙', name:'Gold', qty:'10,000', price:'📺 1 Video', type:'video', reward:'gold', amt:10000 },
+    { icon:'✨', name:'Dust', qty:'1,000', price:'📺 1 Video', type:'video', reward:'gems', amt:30 },
+  ],
+  gems: [
+    { icon:'💎', name:'Small Gem Pack', qty:50, price:'🪙 5,000', type:'gold', reward:'gems', amt:50 },
+    { icon:'💎', name:'Medium Gem Pack', qty:200, price:'🪙 18,000', type:'gold', reward:'gems', amt:200 },
+    { icon:'💎', name:'Large Gem Pack', qty:500, price:'🪙 40,000', type:'gold', reward:'gems', amt:500 },
+    { icon:'💎', name:'Mega Gem Pack', qty:1500, price:'🪙 100,000', type:'gold', reward:'gems', amt:1500 },
+  ],
+  normal: [
+    { icon:'🎁', name:'Normal Pack x1', qty:1, price:'💎 100', type:'gems', reward:'gold', amt:5000 },
+    { icon:'🎁', name:'Normal Pack x10', qty:10, price:'💎 900', type:'gems', reward:'gold', amt:50000 },
+  ],
+  select: [
+    { icon:'🎯', name:'Select Pack x1', qty:1, price:'💎 200', type:'gems', reward:'gold', amt:10000 },
+    { icon:'🎯', name:'Select Pack x10', qty:10, price:'💎 1800', type:'gems', reward:'gold', amt:100000 },
+  ],
+  fragment: [
+    { icon:'🔮', name:'Fragment Pack', qty:5, price:'💎 50', type:'gems', reward:'gold', amt:2000 },
+    { icon:'🔮', name:'Fragment Bundle', qty:20, price:'💎 180', type:'gems', reward:'gold', amt:8000 },
+  ],
+};
+
+let currentShopTab = 'video';
+
+function switchShopTab(tab) {
+  currentShopTab = tab;
+  document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('stab-'+tab).classList.add('active');
+  renderShop(tab);
+}
+
+function renderShop(tab) {
+  const content = document.getElementById('shop-content');
+  const items = SHOP_ITEMS[tab] || [];
+  
+  let html = '<div class="shop-grid">';
+  items.forEach((item, i) => {
+    const isVideo = item.type === 'video';
+    html += `
+      <div class="shop-item${isVideo?' video-item':''}" onclick="buyShopItem(${i},'${tab}')">
+        ${isVideo ? '<div class="video-badge">FREE</div>' : ''}
+        <div class="si-icon">
+          ${item.icon}
+          ${item.qty ? `<div class="si-qty">${item.qty}</div>` : ''}
+        </div>
+        <div class="si-name">${item.name}</div>
+        <div class="si-price"><span class="price-icon">${item.price.split(' ')[0]}</span>${item.price.split(' ').slice(1).join(' ')}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function buyShopItem(index, tab) {
+  const item = SHOP_ITEMS[tab][index];
+  if (!item) return;
+  if (item.type === 'video') {
+    openVideo({
+      title: `Earn ${item.name}!`,
+      rewardIcon: item.icon,
+      rewardName: item.name,
+      rewardDesc: `Watch the full video to claim your ${item.name}`,
+      onClaim: () => {
+        if (item.reward === 'gems') { earnGems(item.amt); showToast('💎', `+${item.amt} Gems from ${item.name}!`, 'purple'); }
+        if (item.reward === 'gold') { earnGold(item.amt); showToast('🪙', `+${item.amt} Gold from ${item.name}!`, 'gold'); }
+        earnXP(30);
+      }
+    });
+  } else {
+    showToast('🛒', `${item.name} purchased!`, 'green');
+    if (item.reward === 'gems') earnGems(item.amt);
+    if (item.reward === 'gold') earnGold(item.amt);
+    earnXP(20);
+  }
+}
+
+// ══════════════════════════════════════════
+//  BATTLE PASS RENDERING
+// ══════════════════════════════════════════
+const PASS_REWARDS = [
+  { lv:1,  free:'✅', freeQty:300,  prem:'🪨',  premQty:1200 },
+  { lv:2,  free:'💎', freeQty:50,   prem:'💎',  premQty:200 },
+  { lv:3,  free:'⚡', freeQty:1,    prem:'⚡',  premQty:4 },
+  { lv:4,  free:'🪙', freeQty:12500,prem:'🪙',  premQty:50000 },
+  { lv:5,  free:'📜', freeQty:3,    prem:'📜',  premQty:3 },
+  { lv:6,  free:'💎', freeQty:75,   prem:'💎',  premQty:300 },
+  { lv:7,  free:'⚡', freeQty:2,    prem:'⚡',  premQty:8 },
+  { lv:8,  free:'🪙', freeQty:20000,prem:'🪙',  premQty:80000 },
+  { lv:9,  free:'📜', freeQty:5,    prem:'📜',  premQty:5 },
+  { lv:10, free:'🎁', freeQty:'KEY',prem:'🎁',  premQty:'GOLD KEY' },
+];
+
+function renderPassTrack() {
+  const track = document.getElementById('pass-track');
+  let html = '';
+
+  html += `
+    <div class="pass-row">
+      <div class="pass-row-label">
+        <div class="prl-icon">🏅</div>
+        <div class="prl-name">Free Track</div>
+      </div>
+      <div class="pass-rewards-scroll">
+  `;
+  PASS_REWARDS.forEach(r => {
+    const claimed = STATE.claimedRewards.has('free-'+r.lv);
+    const locked = r.lv > STATE.passLevel;
+    html += `
+      <div class="pass-reward-cell">
+        <div class="pass-reward-box${claimed?' claimed':locked?' locked':''}" onclick="claimPassReward('free',${r.lv})">
+          <div>${r.free}</div>
+          <div class="prb-qty">${r.freeQty}</div>
+        </div>
+        <div class="prb-level">${r.lv}</div>
+      </div>
+    `;
+  });
+  html += `</div></div>`;
+
+  html += `
+    <div class="pass-row">
+      <div class="pass-row-label premium">
+        <div class="prl-icon">👑</div>
+        <div class="prl-name">Premium</div>
+      </div>
+      <div class="pass-rewards-scroll">
+  `;
+  PASS_REWARDS.forEach(r => {
+    const claimed = STATE.claimedRewards.has('prem-'+r.lv);
+    html += `
+      <div class="pass-reward-cell">
+        <div class="pass-reward-box locked" onclick="showToast('🔒','Unlock Battle Pass to claim premium rewards!','purple')">
+          <div>${r.prem}</div>
+          <div class="prb-qty">${r.premQty}</div>
+        </div>
+        <div class="prb-level">${r.lv}</div>
+      </div>
+    `;
+  });
+  html += `</div></div>`;
+
+  track.innerHTML = html;
+}
+
+function claimPassReward(type, lv) {
+  const key = type+'-'+lv;
+  if (STATE.claimedRewards.has(key)) { showToast('✅','Already claimed!','green'); return; }
+  if (lv > STATE.passLevel) { showToast('🔒','Reach Battle Pass level '+lv+' first!','purple'); return; }
+  STATE.claimedRewards.add(key);
+  earnGold(5000);
+  showToast('🎁', `Level ${lv} reward claimed! +5,000 Gold`, 'gold');
+  renderPassTrack();
+}
+
+function claimAllPass() {
+  let claimed = 0;
+  PASS_REWARDS.forEach(r => {
+    if (r.lv <= STATE.passLevel && !STATE.claimedRewards.has('free-'+r.lv)) {
+      STATE.claimedRewards.add('free-'+r.lv);
+      earnGold(5000);
+      claimed++;
+    }
+  });
+  if (claimed > 0) { showToast('🎁', `Claimed ${claimed} rewards!`, 'gold'); renderPassTrack(); }
+  else showToast('✅', 'All available rewards claimed!', 'green');
+}
+
+function switchPassTab(tab) {
+  document.querySelectorAll('.pass-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ptab-'+tab).classList.add('active');
+  if (tab === 'quest') showToast('📜','Pass quests: Play daily to earn XP!','gold');
+}
+
+// ══════════════════════════════════════════
+//  CAMPAIGN / STAGE MODAL
+// ══════════════════════════════════════════
+let currentStageData = null;
+
+function openStage(num, id, name, icon) {
+  currentStageData = { num, id, name, icon };
+  document.getElementById('sm-icon').textContent = icon;
+  document.getElementById('sm-title').textContent = 'Stage ' + id;
+  document.getElementById('sm-sub').textContent = name + ' · Chapter 3';
+  const stars = num <= 3 ? '⭐⭐⭐' : num === 4 ? '⭐⭐☆' : '☆☆☆';
+  document.getElementById('sm-stars').textContent = stars;
+  document.getElementById('sm-rewards').innerHTML = `
+    <div class="reward-chip">🪙 ${(num * 800).toLocaleString()}</div>
+    <div class="reward-chip">💎 ${num * 8}</div>
+    <div class="reward-chip">⭐ ${stars}</div>
+  `;
+  document.getElementById('stage-modal').classList.remove('hidden');
+}
+
+function closeStageModal() {
+  document.getElementById('stage-modal').classList.add('hidden');
+}
+
+function playStage() {
+  closeStageModal();
+  showScreen('game-screen');
+  showToast('🎮', 'Starting stage ' + (currentStageData?.id || '') + '!', 'green');
+}
+
+function watchAdForBonus() {
+  closeStageModal();
+  openVideo({
+    title: 'Watch for 2x Stage Rewards!',
+    rewardIcon: '✨',
+    rewardName: '2x Stage Rewards',
+    rewardDesc: 'Double all rewards from this stage run',
+    onClaim: () => {
+      showToast('✨', '2x rewards activated for next stage!', 'gold');
+      earnXP(40);
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+//  VIDEO AD SYSTEM
+// ══════════════════════════════════════════
+let videoTimer = null;
+let videoSecsLeft = 30;
+let videoCallback = null;
+let videoInteracted = 0;
+
+const VIDEO_ADS = [
+  { title:'🎮 Try Gloop Galaxy!', sub:'The next evolution of gloop gaming', color:'#1a0840' },
+  { title:'🍕 Gloop Pizza Delivery', sub:'Watch the silliest pizza ad ever made', color:'#1a0a0a' },
+  { title:'🧪 Gloop Science Lab', sub:'What happens when gloop meets science?', color:'#0a1a0a' },
+  { title:'🚀 Gloop in Space!', sub:'Zero gravity glooping — coming soon', color:'#0a0a1a' },
+  { title:'🎵 The Gloop Song', sub:'You will not be able to stop humming this', color:'#1a0a1a' },
+];
+
+function openVideo(config) {
+  videoCallback = config.onClaim;
+  videoSecsLeft = 30;
+  videoInteracted = 0;
+
+  // Reset interactions
+  STATE.interactions = { like:false, share:false, save:false };
+  ['like','share','save'].forEach(k => {
+    document.getElementById('int-'+k).classList.remove('active');
+  });
+
+  // Pick random ad
+  const ad = VIDEO_ADS[Math.floor(Math.random() * VIDEO_ADS.length)];
+  document.getElementById('vid-title').textContent = ad.title;
+  document.getElementById('vid-sub').textContent = ad.sub;
+  document.getElementById('vid-play-icon').textContent = '▶';
+  document.getElementById('video-player').style.background = `linear-gradient(135deg, ${ad.color}, #0d0520)`;
+
+  document.getElementById('vid-reward-title').textContent = config.title;
+  document.getElementById('vid-reward-icon').textContent = config.rewardIcon;
+  document.getElementById('vid-reward-name').textContent = config.rewardName;
+  document.getElementById('vid-reward-desc').textContent = config.rewardDesc;
+
+  document.getElementById('vid-progress').style.width = '0%';
+  document.getElementById('vid-secs').textContent = videoSecsLeft;
+  document.getElementById('vid-claim-btn').style.display = 'none';
+  document.getElementById('vid-skip-btn').classList.remove('visible');
+  document.getElementById('vid-timer').style.display = '';
+
+  document.getElementById('video-modal').classList.remove('hidden');
+
+  // Start countdown
+  let elapsed = 0;
+  const totalSecs = 30;
+  clearInterval(videoTimer);
+  videoTimer = setInterval(() => {
+    elapsed++;
+    videoSecsLeft = totalSecs - elapsed;
+    const pct = (elapsed / totalSecs) *
+ 100;
+    document.getElementById('vid-progress').style.width = pct + '%';
+    document.getElementById('vid-secs').textContent = Math.max(0, videoSecsLeft);
+
+    // Show skip after 5s
+    if (elapsed === 5) document.getElementById('vid-skip-btn').classList.add('visible');
+
+    // Animate play icon
+    if (elapsed % 8 === 0) {
+      const icons = ['▶','🎬','📺','🎥'];
+      document.getElementById('vid-play-icon').textContent = icons[Math.floor(elapsed/8) % icons.length];
+    }
+
+    if (elapsed >= totalSecs) {
+      clearInterval(videoTimer);
+      document.getElementById('vid-timer').style.display = 'none';
+      document.getElementById('vid-claim-btn').style.display = '';
+      document.getElementById('vid-play-icon').textContent = '🎁';
+      STATE.videoWatched++;
+      // Update quest progress
+      QUESTS.daily.find(q=>q.id==='d3').cur = Math.min(2, STATE.videoWatched);
+      QUESTS.main.find(q=>q.id==='m4').cur = STATE.videoWatched;
+      showToast('📺', 'Video complete! Claim your reward!', 'gold');
+    }
+  }, 1000);
+}
+
+function interactVideo(type) {
+  if (STATE.interactions[type]) return;
+  STATE.interactions[type] = true;
+  document.getElementById('int-'+type).classList.add('active');
+  videoInteracted++;
+  const bonuses = { like:'👍 Liked! +50 Bonus Gold', share:'🔗 Shared! +100 Bonus Gold', save:'🔖 Saved! +75 Bonus Gold' };
+  const amounts = { like:50, share:100, save:75 };
+  earnGold(amounts[type]);
+  showToast('🎉', bonuses[type], 'gold');
+}
+
+function skipVideo() {
+  clearInterval(videoTimer);
+  document.getElementById('video-modal').classList.add('hidden');
+  showToast('⏭️', 'Video skipped — no reward this time', 'purple');
+}
+
+function claimVideoReward() {
+  clearInterval(videoTimer);
+  document.getElementById('video-modal').classList.add('hidden');
+  if (videoCallback) { videoCallback(); videoCallback = null; }
+  earnXP(60);
+  // Interaction bonus
+  if (videoInteracted >= 3) {
+    earnGems(10);
+    showToast('🌟', 'Full interaction bonus! +10 Gems!', 'purple');
+  }
+}
+
+function closeVideo() {
+  clearInterval(videoTimer);
+  document.getElementById('video-modal').classList.add('hidden');
+}
+
+// Video shortcuts
+function openVideoForEnergy() {
+  openVideo({
+    title: 'Watch for +2 Energy!',
+    rewardIcon: '⚡',
+    rewardName: '+2 Energy',
+    rewardDesc: 'Refill 2 energy to keep playing!',
+    onClaim: () => {
+      STATE.energy = Math.min(STATE.maxEnergy, STATE.energy + 2);
+      updateCurrencyDisplays();
+      showToast('⚡', '+2 Energy refilled!', 'green');
+    }
+  });
+}
+function openVideoForGold() {
+  openVideo({
+    title: 'Watch for 5,000 Gold!',
+    rewardIcon: '🪙',
+    rewardName: '5,000 Gold',
+    rewardDesc: 'Free gold just for watching!',
+    onClaim: () => { earnGold(5000); showToast('🪙', '+5,000 Gold earned!', 'gold'); }
+  });
+}
+function openVideoForGems() {
+  openVideo({
+    title: 'Watch for 25 Gems!',
+    rewardIcon: '💎',
+    rewardName: '25 Gems',
+    rewardDesc: 'Premium currency — free!',
+    onClaim: () => { earnGems(25); showToast('💎', '+25 Gems earned!', 'purple'); }
+  });
+}
+function openVideoForDailyBonus() {
+  openVideo({
+    title: 'Daily Video Bonus!',
+    rewardIcon: '🎁',
+    rewardName: '500 Gold + 30 Gems',
+    rewardDesc: 'Daily bonus — comes back tomorrow!',
+    onClaim: () => {
+      earnGold(500); earnGems(30);
+      showToast('🎁', 'Daily bonus claimed! +500 Gold +30 Gems', 'gold');
+    }
+  });
+}
+function watchAdForContinue() {
+  openVideo({
+    title: 'Continue with 2x Score!',
+    rewardIcon: '↺',
+    rewardName: '2x Score Continue',
+    rewardDesc: 'Resume your run with double score!',
+    onClaim: () => {
+      document.getElementById('death-overlay').classList.add('hidden');
+      // Double the score and continue
+      score = score * 2;
+      document.getElementById('g-score').textContent = score;
+      startGame(true);
+      showToast('✨', '2x Score activated! Keep going!', 'gold');
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+//  GAME ENGINE
+// ══════════════════════════════════════════
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+let GW = 0, GH = 0;
+
+function initGameScreen() {
+  const wrap = document.getElementById('game-wrap');
+  GW = wrap.clientWidth || window.innerWidth;
+  GH = wrap.clientHeight || window.innerHeight;
+  canvas.width = GW;
+  canvas.height = GH;
+  buildGrads();
+  if (gameState === 'menu' || gameState === 'dead') {
+    document.getElementById('menu-overlay').classList.remove('hidden');
+    document.getElementById('game-pause-btn').style.display = 'none';
+  }
+}
+
+// Config
+let ctrlScheme = 'normal';
+let difficulty = 'normal';
+const env = { stars:true, glow:true, particles:true, words:true, flash:true, hints:true };
+
+const DIFF = {
+  easy:       { base:2.2, scale:0.04, grav:0.52, force:-8.0,  spawnBase:155, spawnMin:88 },
+  normal:     { base:3.0, scale:0.06, grav:0.72, force:-9.5,  spawnBase:128, spawnMin:54 },
+  hard:       { base:3.9, scale:0.09, grav:0.90, force:-10.8, spawnBase:96,  spawnMin:38 },
+  impossible: { base:5.2, scale:0.14, grav:1.08, force:-12.5, spawnBase:68,  spawnMin:26 },
+};
+const cfg = () => DIFF[difficulty];
+
+let GROUND_Y = 0;
+const GLOOP_X_RATIO = 0.18;
+const MAX_FALL = 18;
+const TARGET_FPS = 60;
+
+let gameState = 'menu';
+let score = 0;
+let frameCount = 0, lastTime = 0, dt = 1;
+let speed = 3;
+let inputHeld = false;
+let lastWordTime = 0, scoreAccum = 0;
+let nextObstacleIn = 100, deathFlash = 0, idleTime = 0, dotOffset = 0;
+let obstacles = [], particles = [], floatingWords = [], bgStars = [];
+
+function buildStars() {
+  bgStars = [];
+  for (let i = 0; i < 80; i++) {
+    bgStars.push({
+      x: Math.random() * GW, y: Math.random() * (GROUND_Y - 40),
+      r: Math.random() * 1.5 + 0.3, twinkle: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+let skyGrd, groundGrd;
+function buildGrads() {
+  GROUND_Y = GH - Math.floor(GH * 0.14);
+  if (!ctx) return;
+  skyGrd = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  skyGrd.addColorStop(0, '#0d0520'); skyGrd.addColorStop(1, '#1e0a40');
+  groundGrd = ctx.createLinearGradient(0, GROUND_Y, 0, GH);
+  groundGrd.addColorStop(0, '#3b1a6b'); groundGrd.addColorStop(1, '#1a0a2e');
+  buildStars();
+}
+
+const FALL_W    = ['SPLAT!','SQUISH!','BLOOP!','GLOB!','OOZE!','PLOP!','SQUELCH!','GLOOP!'];
+const STRETCH_W = ['STRREEETCH!','ELONGATE!','GOING UP!','WHEEE!','ZOOOM!','SPRANG!'];
+const HIT_W     = ['OOF!','BONK!','SPLORP!','NOPE!','DENIED!','BLOCKED!'];
+
+// Gloop character
+const gloop = {
+  x: 0, y: 0, vy: 0,
+  bw: 46, bh: 46, w: 46, h: 46,
+  wobble: 0, wobbleV: 0,
+  grounded: true, stretchTimer: 0, squishTimer: 0,
+  eyeX: 0, eyeY: 0,
+  get top()    { return this.y - this.h; },
+  get bottom() { return this.y; },
+  get left()   { return this.x - this.w / 2; },
+  get right()  { return this.x + this.w / 2; },
+
+  reset() {
+    this.x = Math.floor(GW * GLOOP_X_RATIO);
+    this.y = GROUND_Y; this.vy = 0;
+    this.w = this.bw; this.h = this.bh;
+    this.wobble = 0; this.wobbleV = 0;
+    this.grounded = true; this.stretchTimer = 0; this.squishTimer = 0;
+    this.eyeX = 0; this.eyeY = 0;
+  },
+
+  update() {
+    const c = cfg();
+    if (inputHeld && gameState === 'playing') {
+      this.vy += (c.force - this.vy) * 0.28 * dt;
+      this.stretchTimer = Math.min(this.stretchTimer + dt, 40);
+    }
+    this.vy = Math.min(this.vy + c.grav * dt, MAX_FALL);
+    this.y += this.vy * dt;
+
+    if (this.y >= GROUND_Y) {
+      if (this.vy > 3) {
+        this.squishTimer = 10;
+        if (env.words) spawnWord(this.x, this.y - 20, FALL_W, '#7dff8f');
+        if (env.particles) spawnSplat(this.x, this.y);
+      }
+      this.y = GROUND_Y; this.vy = 0; this.grounded = true; this.stretchTimer = 0;
+    } else { this.grounded = false; }
+
+    const sa = Math.max(0, this.stretchTimer / 40);
+    const sq = Math.max(0, this.squishTimer / 10);
+    if (this.squishTimer > 0) this.squishTimer -= dt;
+
+    this.wobbleV += (-this.wobble * 0.18 - this.wobbleV * 0.22) * dt;
+    this.wobble += this.wobbleV * dt;
+    if (inputHeld && !this.grounded) this.wobbleV += 0.4 * dt;
+
+    const baseW = this.bw, baseH = this.bh;
+    const stretchFactor = 1 + sa * 0.55;
+    const squishFactor  = 1 + sq * 0.38;
+    const wobbleFactor  = 1 + this.wobble * 0.12;
+    this.h = baseH * stretchFactor / squishFactor * wobbleFactor;
+    this.w = baseW / (stretchFactor * 0.7) * squishFactor / wobbleFactor;
+
+    const targetEyeX = inputHeld ? 4 : (this.vy > 0 ? 2 : -1);
+    const targetEyeY = inputHeld ? -6 : (this.vy > 3 ? 5 : 0);
+    this.eyeX += (targetEyeX - this.eyeX) * 0.18 * dt;
+    this.eyeY += (targetEyeY - this.eyeY) * 0.18 * dt;
+  },
+
+  draw() {
+    const cx = this.x, cy = this.y - this.h / 2;
+    ctx.save();
+    // Shadow
+    ctx.shadowColor = '#7dff8f'; ctx.shadowBlur = 18;
+    // Body gradient
+    const grd = ctx.createRadialGradient(cx - this.w * 0.15, cy - this.h * 0.18, 2, cx, cy, Math.max(this.w, this.h) * 0.7);
+    grd.addColorStop(0, '#b8ffb8'); grd.addColorStop(0.5, '#7dff8f'); grd.addColorStop(1, '#2a7a38');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, this.w / 2, this.h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Shine
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.beginPath();
+    ctx.ellipse(cx - this.w * 0.18, cy - this.h * 0.22, this.w * 0.18, this.h * 0.12, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eyes
+    const eyeSpacing = this.w * 0.22;
+    for (let s of [-1, 1]) {
+      const ex = cx + s * eyeSpacing + this.eyeX;
+      const ey = cy - this.h * 0.08 + this.eyeY;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.ellipse(ex, ey, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#1a0520';
+      ctx.beginPath(); ctx.ellipse(ex + 1.5, ey + 1, 4, 5, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(ex + 2.5, ey - 1, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Mouth
+    const mouthY = cy + this.h * 0.22;
+    const happy = !inputHeld || this.grounded;
+    ctx.strokeStyle = '#1a0520'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    ctx.beginPath();
+    if (happy) {
+      ctx.arc(cx, mouthY, this.w * 0.2, 0.1, Math.PI - 0.1);
+    } else {
+      ctx.moveTo(cx - this.w * 0.18, mouthY + 4);
+      ctx.quadraticCurveTo(cx, mouthY - 4, cx + this.w * 0.18, mouthY + 4);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+// Obstacles
+function spawnObstacle() {
+  const types = ['spike','wall','floater','bouncer'];
+  const type = types[Math.floor(Math.random() * types.length)];
+  const minH = GROUND_Y * 0.12, maxH = GROUND_Y * 0.42;
+  const h = minH + Math.random() * (maxH - minH);
+  const w = 18 + Math.random() * 16;
+  const colors = { spike:'#ff4d6d', wall:'#a78bfa', floater:'#60d0ff', bouncer:'#ffe066' };
+  const yPos = type === 'floater'
+    ? GROUND_Y - h * 0.5 - Math.random() * (GROUND_Y * 0.3)
+    : GROUND_Y;
+  obstacles.push({ x: GW + 30, y: yPos, w, h, type, color: colors[type], bounceDir: 1 });
+}
+
+function updateObstacles() {
+  for (let o of obstacles) {
+    o.x -= speed * dt;
+    if (o.type === 'floater') {
+      o.y += Math.sin(frameCount * 0.04) * 0.8 * dt;
+    }
+    if (o.type === 'bouncer') {
+      o.y -= o.bounceDir * 2.5 * dt;
+      if (o.y < GROUND_Y * 0.4 || o.y > GROUND_Y) o.bounceDir *= -1;
+    }
+  }
+  obstacles = obstacles.filter(o => o.x > -60);
+}
+
+function drawObstacles() {
+  for (let o of obstacles) {
+    ctx.save();
+    ctx.shadowColor = o.color; ctx.shadowBlur = 14;
+    ctx.fillStyle = o.color;
+
+    if (o.type === 'spike') {
+      // Triangle spike
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y);
+      ctx.lineTo(o.x - o.w / 2, o.y - o.h);
+      ctx.lineTo(o.x + o.w / 2, o.y - o.h);
+      ctx.lineTo(o.x + o.w, o.y);
+      ctx.closePath(); ctx.fill();
+      // Highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y - 4);
+      ctx.lineTo(o.x - o.w * 0.3, o.y - o.h * 0.8);
+      ctx.lineTo(o.x + o.w * 0.1, o.y - o.h * 0.9);
+      ctx.closePath(); ctx.fill();
+    } else if (o.type === 'wall') {
+      ctx.beginPath();
+      ctx.roundRect(o.x - o.w / 2, o.y - o.h, o.w, o.h, 4);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.beginPath();
+      ctx.roundRect(o.x - o.w / 2 + 3, o.y - o.h + 3, o.w * 0.4, o.h * 0.3, 3);
+      ctx.fill();
+    } else if (o.type === 'floater') {
+      ctx.beginPath();
+      ctx.ellipse(o.x, o.y - o.h / 2, o.w * 0.7, o.h * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.beginPath();
+      ctx.ellipse(o.x - o.w * 0.15, o.y - o.h * 0.65, o.w * 0.2, o.h * 0.15, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (o.type === 'bouncer') {
+      ctx.beginPath();
+      ctx.arc(o.x, o.y - o.h / 2, o.w * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.arc(o.x - o.w * 0.15, o.y - o.h * 0.65, o.w * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function checkCollisions() {
+  const gl = gloop;
+  for (let o of obstacles) {
+    const margin = 5;
+    const ol = o.x - o.w / 2 + margin;
+    const or = o.x + o.w / 2 - margin;
+    const ot = o.y - o.h + margin;
+    const ob = o.y - margin;
+    if (gl.right > ol && gl.left < or && gl.bottom > ot && gl.top < ob) return true;
+  }
+  return false;
+}
+
+// Particles
+function spawnSplat(x, y) {
+  const colors = ['#7dff8f', '#a8ff78', '#b8ffb8', '#2a7a38'];
+  for (let i = 0; i < 12; i++) {
+    const angle = (Math.PI * 2 * i) / 12 + Math.random() * 0.5;
+    const spd = 2 + Math.random() * 4;
+    particles.push({
+      x, y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 3,
+      r: 3 + Math.random() * 4, alpha: 1, color: colors[Math.floor(Math.random() * colors.length)],
+      gravity: 0.25
+    });
+  }
+}
+
+function spawnHitParticles(x, y) {
+  const colors = ['#ff4d6d', '#ff8c32', '#ffe066', '#ff6b9d'];
+  for (let i = 0; i < 18; i++) {
+    const angle = (Math.PI * 2 * i) / 18 + Math.random() * 0.3;
+    const spd = 3 + Math.random() * 6;
+    particles.push({
+      x, y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 4,
+      r: 4 + Math.random() * 5, alpha: 1, color: colors[Math.floor(Math.random() * colors.length)],
+      gravity: 0.3
+    });
+  }
+}
+
+function updateParticles() {
+  for (let p of particles) {
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.vy += p.gravity * dt;
+    p.alpha -= 0.025 * dt;
+  }
+  particles = particles.filter(p => p.alpha > 0);
+}
+
+function drawParticles() {
+  for (let p of particles) {
+    ctx.save(); ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function spawnWord(x, y, bank, color) {
+  if (!env.words) return;
+  const now = performance.now();
+  if (now - lastWordTime < 300) return;
+  lastWordTime = now;
+  floatingWords.push({ x, y, word: bank[Math.floor(Math.random() * bank.length)], color, alpha: 1, dy: -1.5, age: 0 });
+}
+
+function updateWords() {
+  for (let w of floatingWords) { w.y += w.dy * dt; w.age += dt; if (w.age > 20) w.alpha -= 0.05 * dt; }
+  floatingWords = floatingWords.filter(w => w.alpha > 0);
+}
+
+function drawWords() {
+  if (!env.words) return;
+  for (let w of floatingWords) {
+    ctx.save(); ctx.globalAlpha = w.alpha; ctx.fillStyle = w.color;
+    ctx.shadowColor = w.color; ctx.shadowBlur = 16;
+    ctx.font = `bold 24px 'Fredoka One',cursive`; ctx.textAlign = 'center';
+    ctx.fillText(w.word, w.x, w.y); ctx.restore();
+  }
+}
+
+function drawBg() {
+  ctx.fillStyle = skyGrd; ctx.fillRect(0, 0, GW, GH);
+  if (env.stars) {
+    for (let s of bgStars) {
+      s.twinkle += 0.04 * dt;
+      ctx.globalAlpha = 0.4 + Math.sin(s.twinkle) * 0.4; ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+      s.x -= speed * dt * 0.08; if (s.x < 0) { s.x = GW; s.y = Math.random() * (GROUND_Y - 40); }
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.fillStyle = groundGrd; ctx.fillRect(0, GROUND_Y, GW, GH - GROUND_Y);
+  if (env.glow) {
+    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
+    ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2; ctx.shadowColor = '#a78bfa'; ctx.shadowBlur = 10;
+    ctx.stroke(); ctx.shadowBlur = 0;
+  } else {
+    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
+    ctx.strokeStyle = 'rgba(167,139,250,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  const ds = 40; dotOffset = (dotOffset + speed * dt * 0.5) % ds;
+  ctx.fillStyle = 'rgba(167,139,250,0.25)';
+  for (let i = -ds; i < GW + ds; i += ds) { ctx.beginPath(); ctx.arc(i + dotOffset, GROUND_Y + 14, 3, 0, Math.PI * 2); ctx.fill(); }
+}
+
+function drawTouchHints() {
+  if (!env.hints || gameState !== 'playing') return;
+  const ls = ctrlScheme === 'normal' ? '⬇ SQUISH' : '⬆ STRETCH';
+  const rs = ctrlScheme === 'normal' ? '⬆ STRETCH' : '⬇ SQUISH';
+  ctx.save();
+  ctx.font = `bold 11px 'Nunito',sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.textAlign = 'center';
+  ctx.fillText(ls, GW * 0.17, GH - 8);
+  ctx.fillText(rs, GW * 0.83, GH - 8);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1; ctx.setLineDash([6, 8]);
+  ctx.beginPath(); ctx.moveTo(GW / 2, GH - 40); ctx.lineTo(GW / 2, GH);
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// ══════════════════════════════════════════
+//  GAME FLOW
+// ══════════════════════════════════════════
+function startGame(continueRun = false) {
+  if (!continueRun) {
+    score = 0; scoreAccum = 0;
+  }
+  gameState = 'playing';
+  speed = cfg().base;
+  frameCount = 0; obstacles = []; particles = []; floatingWords = [];
+  nextObstacleIn = 100; idleTime = 0; deathFlash = 0;
+  gloop.reset();
+  document.getElementById('menu-overlay').classList.add('hidden');
+  document.getElementById('death-overlay').classList.add('hidden');
+  document.getElementById('game-pause-btn').style.display = '';
+  document.getElementById('g-score').textContent = score;
+}
+
+function die() {
+  gameState = 'dead';
+  if (env.particles) spawnHitParticles(gloop.x, gloop.y - gloop.h / 2);
+  if (env.words) spawnWord(gloop.x, gloop.y - gloop.h - 20, HIT_W, '#ff4d6d');
+  if (env.flash) deathFlash = 14;
+
+  if (score > STATE.hiScore) {
+    STATE.hiScore = score;
+    document.getElementById('g-hi').textContent = STATE.hiScore;
+    // Update quest
+    QUESTS.main.find(q => q.id === 'm5').cur = STATE.hiScore;
+  }
+
+  // Earn XP and gold from run
+  const goldEarned = score * 12;
+  const xpEarned = Math.floor(score * 0.8) + 10;
+  earnGold(goldEarned);
+  earnXP(xpEarned);
+
+  // Update daily quest
+  QUESTS.daily.find(q => q.id === 'd1').cur = Math.min(3, (QUESTS.daily.find(q => q.id === 'd1').cur || 0) + 1);
+  QUESTS.daily.find(q => q.id === 'd2').cur = Math.max(QUESTS.daily.find(q => q.id === 'd2').cur || 0, score);
+  saveGame();
+
+  setTimeout(() => {
+    document.getElementById('death-score').textContent = score;
+    const isNew = score >= STATE.hiScore && score > 0;
+    document.getElementById('death-best').textContent = isNew ? '🌟 NEW BEST!' : `Best: ${STATE.hiScore}`;
+    document.getElementById('death-overlay').classList.remove('hidden');
+    document.getElementById('game-pause-btn').style.display = 'none';
+  }, 900);
+}
+
+function retryGame() {
+  document.getElementById('death-overlay').classList.add('hidden');
+  startGame();
+}
+
+function pauseGame() {
+  if (gameState !== 'playing') return;
+  gameState = 'paused';
+  document.getElementById('pause-score').textContent = score;
+  syncAllDiffBtns();
+  document.getElementById('pause-overlay').classList.remove('hidden');
+}
+
+function resumeGame() {
+  document.getElementById('pause-overlay').classList.add('hidden');
+  gameState = 'playing'; lastTime = 0;
+}
+
+function quitToMenu() {
+  document.getElementById('pause-overlay').classList.add('hidden');
+  document.getElementById('death-overlay').classList.add('hidden');
+  gameState = 'menu';
+  document.getElementById('menu-title').textContent = 'GLOOP!';
+  document.getElementById('menu-prompt').textContent = 'TAP or PRESS SPACE to play';
+  document.getElementById('menu-overlay').classList.remove('hidden');
+  document.getElementById('game-pause-btn').style.display = 'none';
+}
+
+function openGameSettings() {
+  if (gameState === 'playing') pauseGame();
+  document.getElementById('pause-overlay').classList.add('hidden');
+  syncAllDiffBtns();
+  document.getElementById('game-settings-overlay').classList.remove('hidden');
+}
+
+function closeGameSettings() {
+  document.getElementById('game-settings-overlay').classList.add('hidden');
+  if (gameState === 'paused') document.getElementById('pause-overlay').classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS HELPERS
+// ══════════════════════════════════════════
+function setCtrl(scheme, el) {
+  ctrlScheme = scheme;
+  document.querySelectorAll('[data-ctrl]').forEach(b => b.classList.toggle('selected', b.dataset.ctrl === scheme));
+  updateHints();
+}
+
+function setDiff(d, el) {
+  difficulty = d;
+  syncAllDiffBtns();
+  if (gameState === 'playing') speed = Math.max(cfg().base, speed);
+}
+
+function syncAllDiffBtns() {
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('selected', b.dataset.d === difficulty));
+}
+
+function saveTogs() {
+  env.stars     = document.getElementById('tog-stars').checked;
+  env.glow      = document.getElementById('tog-glow').checked;
+  env.particles = document.getElementById('tog-particles').checked;
+  env.words     = document.getElementById('tog-words').checked;
+  env.flash     = document.getElementById('tog-flash').checked;
+  env.hints     = document.getElementById('tog-hints').checked;
+  updateHints();
+}
+
+function updateHints() {
+  document.getElementById('ctrl-hint').textContent =
+    ctrlScheme === 'normal' ? 'Left = SQUISH · Right = STRETCH' : 'Left = STRETCH · Right = SQUISH';
+}
+
+// ══════════════════════════════════════════
+//  INPUT
+// ══════════════════════════════════════════
+function isStretchSide(canvasX) {
+  return ctrlScheme === 'normal' ? canvasX >= GW / 2 : canvasX < GW / 2;
+}
+
+function pressStretch() {
+  if (gameState === 'menu' || gameState === 'dead') { startGame(); return; }
+  if (gameState !== 'playing') return;
+  const c = cfg();
+  if (gloop.vy > c.force * 0.5) gloop.vy = c.force * 0.72;
+  inputHeld = true;
+}
+function releaseStretch() { inputHeld = false; }
+function pressSquish() {
+  if (gameState === 'menu' || gameState === 'dead') { startGame(); return; }
+  if (gameState !== 'playing') return;
+  inputHeld = false;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Escape' || e.code === 'KeyP') {
+    e.preventDefault();
+    if (currentScreen !== 'game-screen') return;
+    if (!document.getElementById('game-settings-overlay').classList.contains('hidden')) { closeGameSettings(); return; }
+    if (gameState === 'playing') pauseGame();
+    else if (gameState === 'paused') resumeGame();
+    return;
+  }
+  if (currentScreen !== 'game-screen') return;
+  if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); pressStretch(); }
+  if (e.code === 'ArrowDown') { e.preventDefault(); pressSquish(); }
+});
+document.addEventListener('keyup', e => {
+  if (['Space', 'ArrowUp', 'ArrowDown'].includes(e.code)) releaseStretch();
+});
+
+const activeTouches = new Map();
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (currentScreen !== 'game-screen') return;
+  if (gameState === 'menu' || gameState === 'dead') { startGame(); return; }
+  if (gameState !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  for (let t of e.changedTouches) {
+    const tx = t.clientX - rect.left;
+    activeTouches.set(t.identifier, isStretchSide(tx));
+  }
+  const anyStretch = [...activeTouches.values()].some(v => v);
+  if (anyStretch) pressStretch(); else pressSquish();
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let t of e.changedTouches) activeTouches.delete(t.identifier);
+  const anyStretch = [...activeTouches.values()].some(v => v);
+  if (anyStretch) pressStretch(); else releaseStretch();
+}, { passive: false });
+
+canvas.addEventListener('touchcancel', e => {
+  for (let t of e.changedTouches) activeTouches.delete(t.identifier);
+  if ([...activeTouches.values()].every(v => !v)) releaseStretch();
+}, { passive: false });
+
+canvas.addEventListener('mousedown', e => {
+  if (currentScreen !== 'game-screen') return;
+  const rect = canvas.getBoundingClientRect();
+  if (isStretchSide(e.clientX - rect.left)) pressStretch(); else pressSquish();
+});
+canvas.addEventListener('mouseup', releaseStretch);
+
+document.getElementById('game-pause-btn').addEventListener('click', () => {
+  if (gameState === 'playing') pauseGame();
+  else if (gameState === 'paused') resumeGame();
+});
+
+// ══════════════════════════════════════════
+//  HUB CANVAS ANIMATION
+// ══════════════════════════════════════════
+const hubCanvas = document.getElementById('hub-canvas');
+const hctx = hubCanvas.getContext('2d');
+let hubTime = 0;
+const hubGloops = [];
+
+function initHubCanvas() {
+  hubCanvas.width = hubCanvas.offsetWidth || 400;
+  hubCanvas.height = hubCanvas.offsetHeight || 200;
+  for (let i = 0; i < 6; i++) {
+    hubGloops.push({
+      x: Math.random() * hubCanvas.width,
+      y: hubCanvas.height * 0.5 + Math.random() * hubCanvas.height * 0.3,
+      size: 12 + Math.random() * 20,
+      speed: 0.3 + Math.random() * 0.5,
+      phase: Math.random() * Math.PI * 2,
+      color: ['#7dff8f','#a78bfa','#60d0ff','#ffe066','#ff6b9d'][Math.floor(Math.random()*5)]
+    });
+  }
+}
+
+function animateHub() {
+  requestAnimationFrame(animateHub);
+  if (currentScreen !== 'hub-screen') return;
+  hubTime += 0.02;
+  const hw = hubCanvas.width, hh = hubCanvas.height;
+  hctx.clearRect(0, 0, hw, hh);
+
+  // Stars
+  hctx.fillStyle = '#0d0520';
+  hctx.fillRect(0, 0, hw, hh);
+  for (let i = 0; i < 40; i++) {
+    const sx = (i * 137.5) % hw;
+    const sy = (i * 73.1) % (hh * 0.7);
+    const twinkle = 0.3 + Math.sin(hubTime * 2 + i) * 0.3;
+    hctx.globalAlpha = twinkle;
+    hctx.fillStyle = '#fff';
+    hctx.beginPath(); hctx.arc(sx, sy, 0.8 + Math.sin(hubTime + i) * 0.4, 0, Math.PI * 2); hctx.fill();
+  }
+  hctx.globalAlpha = 1;
+
+  // Ground
+  const grd = hctx.createLinearGradient(0, hh * 0.75, 0, hh);
+  grd.addColorStop(0, '#3b1a6b'); grd.addColorStop(1, '#1a0a2e');
+  hctx.fillStyle = grd;
+  hctx.fillRect(0, hh * 0.75, hw, hh * 0.25);
+
+  // Ground glow
+  hctx.beginPath(); hctx.moveTo(0, hh * 0.75); hctx.lineTo(hw, hh * 0.75);
+  hctx.strokeStyle = '#a78bfa'; hctx.lineWidth = 1.5;
+  hctx.shadowColor = '#a78bfa'; hctx.shadowBlur = 8;
+  hctx.stroke(); hctx.shadowBlur = 0;
+
+  // Floating gloops
+  for (let g of hubGloops) {
+    g.x -= g.speed;
+    if (g.x < -30) g.x = hw + 30;
+    const floatY = g.y + Math.sin(hubTime * 1.5 + g.phase) * 8;
+    const scaleX = 1 + Math.sin(hubTime * 2 + g.phase) * 0.08;
+    const scaleY = 1 - Math.sin(hubTime * 2 + g.phase) * 0.08;
+
+    hctx.save();
+    hctx.shadowColor = g.color; hctx.shadowBlur = 12;
+    hctx.globalAlpha = 0.7;
+    hctx.fillStyle = g.color;
+    hctx.beginPath();
+    hctx.ellipse(g.x, floatY, g.size * scaleX, g.size * scaleY, 0, 0, Math.PI * 2);
+    hctx.fill();
+    // Eyes
+    hctx.globalAlpha = 1;
+    hctx.fillStyle = '#1a0520';
+    hctx.beginPath(); hctx.arc(g.x - g.size * 0.2, floatY - g.size * 0.1, g.size * 0.12, 0, Math.PI * 2); hctx.fill();
+    hctx.beginPath(); hctx.arc(g.x + g.size * 0.2, floatY - g.size * 0.1, g.size * 0.12, 0, Math.PI * 2); hctx.fill();
+    hctx.restore();
+  }
+}
+
+// ══════════════════════════════════════════
+//  MAIN GAME LOOP
+// ══════════════════════════════════════════
+function gameLoop(timestamp) {
+  requestAnimationFrame(gameLoop);
+  if (currentScreen !== 'game-screen') return;
+  if (GW === 0) return;
+
+  const raw = lastTime ? (timestamp - lastTime) / (1000 / TARGET_FPS) : 1;
+  dt = Math.min(raw, 3); lastTime = timestamp; frameCount++;
+
+  if (gameState === 'paused') return;
+
+  // Death flash
+  if (deathFlash > 0) {
+    drawBg(); drawObstacles();
+    drawParticles(); gloop.draw(); drawWords();
+    ctx.fillStyle = `rgba(255,60,60,${(deathFlash / 14) * 0.52})`; ctx.fillRect(0, 0, GW, GH);
+    deathFlash -= dt; return;
+  }
+
+  drawBg();
+
+  if (gameState === 'playing') {
+    const c = cfg();
+    speed = c.base + score * c.scale;
+    nextObstacleIn -= dt;
+    if (nextObstacleIn <= 0) {
+      spawnObstacle();
+      const base = Math.max(c.spawnMin, c.spawnBase - Math.floor(score / 3) * 4);
+      nextObstacleIn = base + Math.random() * 38;
+    }
+    scoreAccum += dt;
+    if (scoreAccum >= 6) {
+      score += Math.floor(scoreAccum / 6);
+      scoreAccum %= 6;
+      document.getElementById('g-score').textContent = score;
+    }
+    if (inputHeld && !gloop.grounded && frameCount % 40 === 0) spawnWord(gloop.x, gloop.top - 15, STRETCH_W, '#ffe066');
+    updateObstacles(); gloop.update();
+    if (checkCollisions()) die();
+
+  } else if (gameState === 'menu' || gameState === 'dead') {
+    idleTime += dt;
+    gloop.y = GROUND_Y + Math.sin(idleTime * 0.06) * 5;
+    gloop.w = gloop.bw * (1 + Math.sin(idleTime * 0.09) * 0.08);
+    gloop.h = gloop.bh * (1 - Math.sin(idleTime * 0.09) * 0.08);
+  }
+
+  drawObstacles();
+  updateParticles(); drawParticles();
+  gloop.draw();
+  updateWords(); drawWords();
+  drawTouchHints();
+}
+
+// ══════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════
+window.addEventListener('resize', () => {
+  if (currentScreen === 'game-screen') {
+    const wrap = document.getElementById('game-wrap');
+    GW = wrap.clientWidth;
+    GH = wrap.clientHeight;
+    canvas.width = GW;
+    canvas.height = GH;
+    buildGrads();
+    gloop.reset();
+  }
+  if (hubCanvas) {
+    hubCanvas.width = hubCanvas.offsetWidth || 400;
+    hubCanvas.height = hubCanvas.offsetHeight || 200;
+  }
+});
+
+// Init
+document.getElementById('game-pause-btn').style.display = 'none';
+syncAllDiffBtns();
+updateHints();
+updateCurrencyDisplays();
+renderQuests('daily');
+renderShop('video');
+renderPassTrack();
+
+// Start hub canvas
+setTimeout(() => {
+  initHubCanvas();
+  animateHub();
+}, 100);
+
+// ══════════════════════════════════════════
+//  PERSISTENCE (localStorage)
+// ══════════════════════════════════════════
+const SAVE_KEY = 'silly_gloop_v1';
+
+function saveGame() {
+  try {
+    const data = {
+      gold: STATE.gold,
+      gems: STATE.gems,
+      energy: STATE.energy,
+      playerLevel: STATE.playerLevel,
+      xp: STATE.xp,
+      xpMax: STATE.xpMax,
+      hiScore: STATE.hiScore,
+      passLevel: STATE.passLevel,
+      passXP: STATE.passXP,
+      videoWatched: STATE.videoWatched,
+      questClaimed: [...STATE.questClaimed],
+      claimedRewards: [...STATE.claimedRewards],
+      lastSave: Date.now(),
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    STATE.gold = d.gold ?? STATE.gold;
+    STATE.gems = d.gems ?? STATE.gems;
+    STATE.energy = d.energy ?? STATE.energy;
+    STATE.playerLevel = d.playerLevel ?? STATE.playerLevel;
+    STATE.xp = d.xp ?? STATE.xp;
+    STATE.xpMax = d.xpMax ?? STATE.xpMax;
+    STATE.hiScore = d.hiScore ?? STATE.hiScore;
+    STATE.passLevel = d.passLevel ?? STATE.passLevel;
+    STATE.passXP = d.passXP ?? STATE.passXP;
+    STATE.videoWatched = d.videoWatched ?? STATE.videoWatched;
+    if (d.questClaimed) STATE.questClaimed = new Set(d.questClaimed);
+    if (d.claimedRewards) STATE.claimedRewards = new Set(d.claimedRewards);
+    // Offline energy regen: 1 energy per 10 min
+    if (d.lastSave && STATE.energy < STATE.maxEnergy) {
+      const mins = Math.floor((Date.now() - d.lastSave) / 60000);
+      const regen = Math.floor(mins / 10);
+      STATE.energy = Math.min(STATE.maxEnergy, STATE.energy + regen);
+    }
+    document.getElementById('g-hi').textContent = STATE.hiScore;
+  } catch(e) {}
+}
+
+// Auto-save every 30 seconds
+setInterval(saveGame, 30000);
+
+// Energy regeneration: +1 every 10 minutes
+setInterval(() => {
+  if (STATE.energy < STATE.maxEnergy) {
+    STATE.energy++;
+    updateCurrencyDisplays();
+    showToast('⚡', 'Energy restored! +1', 'green');
+    saveGame();
+  }
+}, 600000);
+
+// Load saved game
+loadGame();
+updateCurrencyDisplays();
+
+// Save on page hide / close
+window.addEventListener('beforeunload', saveGame);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveGame(); });
+
+// Start game loop
+requestAnimationFrame(gameLoop);
+
+// Show welcome toast
+setTimeout(() => {
+  showToast('🫧', 'Welcome to Silly Gloop! Tap PLAY to start!', 'green');
+}, 500);
+setTimeout(() => {
+  showToast('📺', 'Watch videos to earn FREE rewards!', 'gold');
+}, 2000);
+</script>
+</body>
+</html>
