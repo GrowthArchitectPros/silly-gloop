@@ -3156,6 +3156,7 @@ const COSMETICS = {
 const gloop = {
   x: 0, y: 0, vy: 0,
   bw: 46, bh: 46, w: 46, h: 46,
+  get baseSize() { return Math.max(36, Math.min(72, GW * 0.09)); },
   wobble: 0, wobbleV: 0,
   grounded: true, stretchTimer: 0, squishTimer: 0,
   eyeX: 0, eyeY: 0,
@@ -3165,6 +3166,7 @@ const gloop = {
   get right()  { return this.x + this.w / 2; },
 
   reset() {
+    this.bw = this.bh = this.baseSize;
     this.x = Math.floor(GW * GLOOP_X_RATIO);
     this.y = GROUND_Y; this.vy = 0;
     this.w = this.bw; this.h = this.bh;
