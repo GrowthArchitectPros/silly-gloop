@@ -60,6 +60,125 @@
   --card-radius: 18px;
 }
 
+/* ══════════════════════════════════════════
+   NIGHTLIFE MODE — dark neon club theme
+══════════════════════════════════════════ */
+body.nightlife {
+  --bg:           #0d0020;
+  --surface:      #1a0035;
+  --surface2:     #240050;
+  --border:       rgba(180,60,255,0.35);
+  --text:         #f0e0ff;
+  --dim:          rgba(200,160,255,0.55);
+  --candy-pink:   #ff2dff;
+  --candy-yellow: #ffe566;
+  --candy-blue:   #00f5ff;
+  --candy-green:  #39ff14;
+  --candy-purple: #bf00ff;
+  --green:        #39ff14;
+  --gold:         #ffe566;
+  --purple:       #bf00ff;
+  /* UI chrome */
+  --topbar-bg:    linear-gradient(180deg,#2a004a 0%,#1a0035 100%);
+  --topbar-border:#bf00ff;
+  --nav-bg:       linear-gradient(180deg,#1a0035 0%,#0d0020 100%);
+  --nav-border:   #bf00ff;
+  --card-bg:      rgba(40,0,80,0.85);
+  --card-border:  rgba(180,60,255,0.4);
+  --screen-bg:    #0d0020;
+}
+/* Nightlife top bars */
+body.nightlife .top-bar {
+  background: linear-gradient(180deg,#2a004a 0%,#1a0035 100%) !important;
+  border-bottom-color: #bf00ff !important;
+  box-shadow: 0 3px 20px rgba(191,0,255,0.4) !important;
+}
+body.nightlife .top-bar span { color: #ff80ff !important; }
+body.nightlife .back-btn { background: rgba(191,0,255,0.2) !important; border-color: rgba(191,0,255,0.5) !important; color: #ff80ff !important; }
+/* Nightlife bottom nav */
+body.nightlife .bottom-nav {
+  background: linear-gradient(180deg,#1a0035 0%,#0d0020 100%) !important;
+  border-top-color: #bf00ff !important;
+  box-shadow: 0 -3px 20px rgba(191,0,255,0.4) !important;
+}
+body.nightlife .nav-label { color: #ff80ff !important; }
+/* Nightlife screens */
+body.nightlife .screen { background: #0d0020 !important; color: #f0e0ff !important; }
+body.nightlife .card, body.nightlife .quest-item, body.nightlife .shop-item, body.nightlife .pass-card {
+  background: rgba(40,0,80,0.85) !important;
+  border-color: rgba(180,60,255,0.4) !important;
+  color: #f0e0ff !important;
+}
+body.nightlife .quest-tab, body.nightlife .shop-tab, body.nightlife .pass-tab {
+  background: rgba(40,0,80,0.6) !important;
+  color: #c080ff !important;
+  border-color: rgba(180,60,255,0.3) !important;
+}
+body.nightlife .quest-tab.active, body.nightlife .shop-tab.active, body.nightlife .pass-tab.active {
+  background: linear-gradient(135deg,#bf00ff,#7700cc) !important;
+  color: #fff !important;
+}
+body.nightlife .btn.primary { background: linear-gradient(135deg,#ff2dff,#bf00ff) !important; }
+body.nightlife .btn.gold    { background: linear-gradient(135deg,#ffe566,#ff8c00) !important; }
+body.nightlife .btn.purple  { background: linear-gradient(135deg,#bf00ff,#7700cc) !important; }
+/* Nightlife hub top bar */
+body.nightlife #hub-topbar {
+  background: linear-gradient(180deg,#2a004a 0%,#1a0035 100%) !important;
+  border-bottom-color: #bf00ff !important;
+  box-shadow: 0 3px 20px rgba(191,0,255,0.4) !important;
+}
+body.nightlife #hub-topbar span { color: #ff80ff !important; }
+/* Nightlife cur-pills */
+body.nightlife .cur-pill {
+  background: rgba(191,0,255,0.2) !important;
+  border-color: rgba(191,0,255,0.5) !important;
+  color: #ff80ff !important;
+}
+/* Nightlife quest/pass item text */
+body.nightlife .quest-title, body.nightlife .item-name, body.nightlife .pass-reward-name { color: #f0e0ff !important; }
+body.nightlife .quest-sub, body.nightlife .item-desc, body.nightlife .pass-reward-sub { color: #c080ff !important; }
+/* Nightlife wardrobe */
+body.nightlife #wardrobe-canvas { background: linear-gradient(135deg,#0d0020,#1a0035) !important; border-color: rgba(191,0,255,0.5) !important; }
+body.nightlife .wardrobe-card { background: rgba(40,0,80,0.85) !important; border-color: rgba(180,60,255,0.4) !important; }
+body.nightlife .charselect-card { background: rgba(40,0,80,0.85) !important; border-color: rgba(180,60,255,0.4) !important; }
+
+/* ══════════════════════════════════════════
+   LANDSCAPE LAYOUT — compact menus
+══════════════════════════════════════════ */
+body.orient-landscape .screen {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+body.orient-landscape .bottom-nav {
+  flex-direction: column;
+  width: 64px;
+  height: 100%;
+  border-top: none;
+  border-right: 3px solid #c03080;
+  padding: calc(8px + env(safe-area-inset-top)) 0 calc(8px + env(safe-area-inset-bottom));
+  justify-content: space-around;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+body.orient-landscape.nightlife .bottom-nav {
+  border-right-color: #bf00ff;
+}
+body.orient-landscape .bottom-nav .nav-item {
+  flex-direction: column;
+  padding: 4px 0;
+}
+body.orient-landscape .scroll-content {
+  flex: 1;
+  overflow-y: auto;
+}
+body.orient-landscape .top-bar {
+  padding: 4px 12px;
+  min-height: 40px;
+}
+/* Landscape game screen: canvas fills full area */
+body.orient-landscape #game-screen { flex-direction: column; }
+body.orient-landscape #game-wrap { flex: 1; width: 100%; height: 100%; }
+
 /* ——— Phone portrait (default, ≤ 480px wide) ——— */
 body.device-phone.orient-portrait {
   --app-max-w:   100vw;
@@ -144,7 +263,8 @@ body{
 @keyframes rotateHint{from{transform:rotate(-20deg);}to{transform:rotate(20deg);}}
 #orient-overlay .oo-text{font-size:22px;color:var(--candy-pink);text-align:center;padding:0 24px;}
 #orient-overlay .oo-sub{font-size:14px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
-body.device-phone.orient-landscape #orient-overlay{display:flex;}
+/* Orientation overlay is now optional — landscape is fully supported */
+body.orient-landscape.force-portrait #orient-overlay{display:flex;}
 
 /* ══════════════════════════════════════════
    SCREEN SYSTEM
@@ -1198,7 +1318,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   flex-direction:column;align-items:center;justify-content:center;
   gap:20px;text-align:center;padding:40px;
 }
-#orient-overlay.show{display:flex;}
+#orient-overlay.show{display:flex;} /* only shown if explicitly triggered */
 .oo-icon{font-size:72px;animation:ooSpin 2s ease-in-out infinite alternate;}
 @keyframes ooSpin{from{transform:rotate(-15deg);}to{transform:rotate(15deg);}}
 .oo-text{font-size:22px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.2);max-width:280px;}
@@ -1404,14 +1524,22 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
       <span style="font-size:18px;">🥇</span>
       <span class="cur-gold" id="hub-gold" style="font-size:15px;font-family:'Fredoka One',cursive;color:#7a4400;">0</span>
     </div>
-    <!-- Settings -->
-    <div onclick="showScreen('settings-screen')" style="
-      width:38px;height:38px;border-radius:50%;
-      background:linear-gradient(135deg,#e0509a,#c0308a);
-      border:3px solid rgba(255,255,255,0.6);
-      display:flex;align-items:center;justify-content:center;
-      font-size:18px;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,0.2);
-    ">⚙️</div>
+    <!-- Mode toggle + Settings -->
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div id="mode-toggle-btn" onclick="toggleNightlifeMode()" style="
+        height:34px;border-radius:20px;padding:0 10px;
+        background:rgba(255,255,255,0.35);border:2px solid rgba(255,255,255,0.7);
+        display:flex;align-items:center;justify-content:center;gap:4px;
+        cursor:pointer;font-family:'Fredoka One',cursive;font-size:12px;color:#a0003a;
+      "><span id="mode-toggle-icon">🌙</span><span id="mode-toggle-label">Night</span></div>
+      <div onclick="showScreen('settings-screen')" style="
+        width:34px;height:34px;border-radius:50%;
+        background:linear-gradient(135deg,#e0509a,#c0308a);
+        border:2px solid rgba(255,255,255,0.6);
+        display:flex;align-items:center;justify-content:center;
+        font-size:16px;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,0.2);
+      ">⚙️</div>
+    </div>
   </div>
 
   <!-- ── HIDDEN currency fields for JS compatibility ───────────────── -->
@@ -2063,6 +2191,7 @@ const STATE = {
   unlockedTrails: new Set([0]),
   trophiesEarned: 0,
   firstLaunch: true,
+  nightlifeMode: false,
 };
 
 // ══════════════════════════════════════════
@@ -2939,15 +3068,29 @@ let skyGrd, groundGrd;
 function buildGrads() {
   GROUND_Y = GH - Math.floor(GH * 0.14);
   if (!ctx) return;
-  // Candyland bright sky: soft blue-pink gradient
-  skyGrd = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-  skyGrd.addColorStop(0,   '#a8d8ff'); // sky blue top
-  skyGrd.addColorStop(0.45,'#ffd6f0'); // pink mid
-  skyGrd.addColorStop(1,   '#fff0c8'); // warm cream near ground
-  // Candy ground: green grass with pink tint
-  groundGrd = ctx.createLinearGradient(0, GROUND_Y, 0, GH);
-  groundGrd.addColorStop(0, '#6ee87a');
-  groundGrd.addColorStop(1, '#3ab84a');
+  const night = document.body.classList.contains('nightlife');
+  if (night) {
+    // Nightlife: deep purple/navy sky with neon horizon glow
+    skyGrd = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+    skyGrd.addColorStop(0,    '#05001a'); // near-black top
+    skyGrd.addColorStop(0.45, '#1a0035'); // deep purple mid
+    skyGrd.addColorStop(0.8,  '#2d0060'); // neon purple near ground
+    skyGrd.addColorStop(1,    '#3d0080'); // bright purple at horizon
+    // Nightlife ground: dark neon dance floor
+    groundGrd = ctx.createLinearGradient(0, GROUND_Y, 0, GH);
+    groundGrd.addColorStop(0, '#1a0040');
+    groundGrd.addColorStop(1, '#0d0020');
+  } else {
+    // Sunshine / Candyland: soft blue-pink sky
+    skyGrd = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+    skyGrd.addColorStop(0,    '#a8d8ff'); // sky blue top
+    skyGrd.addColorStop(0.45, '#ffd6f0'); // pink mid
+    skyGrd.addColorStop(1,    '#fff0c8'); // warm cream near ground
+    // Candy ground: green grass
+    groundGrd = ctx.createLinearGradient(0, GROUND_Y, 0, GH);
+    groundGrd.addColorStop(0, '#6ee87a');
+    groundGrd.addColorStop(1, '#3ab84a');
+  }
   buildStars();
 }
 
@@ -3287,9 +3430,23 @@ const gloop = {
     // Trail / aura effect
     if (trail && trail.draw) trail.draw(ctx, cx, cy, this.w, this.h, frameCount);
 
-    // ── BODY SHADOW / GLOW ──────────────────────────────────
+    // ── NIGHTLIFE NEON GLOW AURA ────────────────────────────────────────
+    if (document.body.classList.contains('nightlife')) {
+      const glowHue = (frameCount * 1.8) % 360;
+      const glowColor = `hsl(${glowHue},100%,65%)`;
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.shadowColor = glowColor; ctx.shadowBlur = 32;
+      ctx.fillStyle = glowColor;
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(hw, hh) * 1.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── BODY SHADOW / GLOW ──────────────────────────────────────────────
     ctx.shadowColor = bodyGlow;
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = document.body.classList.contains('nightlife') ? 30 : 20;
 
     // ── MAIN BODY — chubby round blob (wider than tall when squished) ──
     ctx.beginPath();
@@ -4106,13 +4263,16 @@ function drawBg() {
 
   // Floating candy decorations (replace dark stars)
   if (env.stars) {
-    const candyColors = ['#ff6eb4','#ffe566','#6ec6ff','#a8ff78','#ffb347'];
+    const nightMode = document.body.classList.contains('nightlife');
+    const candyColors = nightMode
+      ? ['#ff2dff','#00f5ff','#bf00ff','#ffe566','#39ff14'] // neon club colors
+      : ['#ff6eb4','#ffe566','#6ec6ff','#a8ff78','#ffb347'];
     for (let s of bgStars) {
       s.twinkle += 0.025 * dt;
-      s.x -= speed * dt * 0.06;
+      s.x -= speed * dt * (nightMode ? 0.04 : 0.06);
       if (s.x < -30) { s.x = GW + 30; s.y = Math.random() * (GROUND_Y * 0.55); s.type = Math.floor(Math.random()*4); }
       ctx.save();
-      ctx.globalAlpha = 0.55 + Math.sin(s.twinkle) * 0.2;
+      ctx.globalAlpha = nightMode ? (0.4 + Math.sin(s.twinkle) * 0.35) : (0.55 + Math.sin(s.twinkle) * 0.2);
       const col = candyColors[Math.floor(s.r * 7) % candyColors.length];
       ctx.fillStyle = col;
       ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.2;
@@ -4145,11 +4305,27 @@ function drawBg() {
   // Ground (bright green grass)
   ctx.fillStyle = groundGrd; ctx.fillRect(0, GROUND_Y, GW, GH - GROUND_Y);
 
-  // Ground line — candy stripe
+  // Ground line — candy stripe (neon in nightlife mode)
+  const night = document.body.classList.contains('nightlife');
+  const glColor = night ? '#bf00ff' : '#ff6eb4';
   ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
-  ctx.strokeStyle = '#ff6eb4'; ctx.lineWidth = 3;
-  if (env.glow) { ctx.shadowColor = '#ff6eb4'; ctx.shadowBlur = 10; }
+  ctx.strokeStyle = glColor; ctx.lineWidth = night ? 2 : 3;
+  if (env.glow || night) { ctx.shadowColor = glColor; ctx.shadowBlur = night ? 18 : 10; }
   ctx.stroke(); ctx.shadowBlur = 0;
+  // Nightlife: add neon grid lines on ground
+  if (night) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(191,0,255,0.18)'; ctx.lineWidth = 1;
+    const gStep = GW / 8;
+    for (let gx = 0; gx <= GW; gx += gStep) {
+      ctx.beginPath(); ctx.moveTo(gx, GROUND_Y); ctx.lineTo(gx, GH); ctx.stroke();
+    }
+    const rStep = (GH - GROUND_Y) / 3;
+    for (let gy = GROUND_Y; gy <= GH; gy += rStep) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(GW, gy); ctx.stroke();
+    }
+    ctx.restore();
+  }
 
   // Candy dots along ground
   const ds = 36; dotOffset = (dotOffset + speed * dt * 0.5) % ds;
@@ -4267,6 +4443,43 @@ function quitToMenu() {
   document.getElementById('menu-prompt').textContent = 'TAP or PRESS SPACE to play';
   document.getElementById('menu-overlay').classList.remove('hidden');
   document.getElementById('game-pause-btn').style.display = 'none';
+}
+
+// ══════════════════════════════════════════
+//  SUNSHINE / NIGHTLIFE MODE TOGGLE
+// ══════════════════════════════════════════
+
+function applyModeUI() {
+  const night = document.body.classList.contains('nightlife');
+  // Toggle button label
+  const icon  = document.getElementById('mode-toggle-icon');
+  const label = document.getElementById('mode-toggle-label');
+  const btn   = document.getElementById('mode-toggle-btn');
+  if (icon)  icon.textContent  = night ? '☀️' : '🌙';
+  if (label) label.textContent = night ? 'Day'  : 'Night';
+  if (btn) {
+    btn.style.background = night
+      ? 'rgba(191,0,255,0.25)'
+      : 'rgba(255,255,255,0.35)';
+    btn.style.borderColor = night ? 'rgba(191,0,255,0.6)' : 'rgba(255,255,255,0.7)';
+    btn.style.color = night ? '#ff80ff' : '#a0003a';
+  }
+  // Rebuild game gradients if canvas is ready
+  if (typeof buildGrads === 'function' && ctx) buildGrads();
+  // Repaint hub canvas
+  if (typeof initHubCanvas === 'function') initHubCanvas();
+}
+
+function toggleNightlifeMode() {
+  const night = document.body.classList.toggle('nightlife');
+  STATE.nightlifeMode = night;
+  applyModeUI();
+  saveGame();
+  showToast(
+    night ? '🌙' : '☀️',
+    night ? 'Nightlife Mode ON — neon vibes!' : 'Sunshine Mode ON — bright & sweet!',
+    night ? 'purple' : 'gold'
+  );
 }
 
 function openGameSettings() {
@@ -4692,6 +4905,8 @@ function saveGame() {
       unlockedHats: [...STATE.unlockedHats],
       unlockedTrails: [...STATE.unlockedTrails],
       firstLaunch: false,
+      nightlifeMode: STATE.nightlifeMode,
+      baseCharacter: STATE.baseCharacter,
       lastSave: Date.now(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -4736,6 +4951,14 @@ function loadGame() {
     if (d.unlockedHats) STATE.unlockedHats = new Set(d.unlockedHats);
     if (d.unlockedTrails) STATE.unlockedTrails = new Set(d.unlockedTrails);
     STATE.firstLaunch = d.firstLaunch ?? false;
+    STATE.nightlifeMode = d.nightlifeMode ?? false;
+    STATE.baseCharacter = d.baseCharacter ?? 0;
+    // Apply nightlife mode on load
+    if (STATE.nightlifeMode) {
+      document.body.classList.add('nightlife');
+    } else {
+      document.body.classList.remove('nightlife');
+    }
     // Offline energy regen: 1 energy per 10 min
     if (d.lastSave && STATE.energy < STATE.maxEnergy) {
       const mins = Math.floor((Date.now() - d.lastSave) / 60000);
@@ -4765,6 +4988,8 @@ setInterval(() => {
 // Load saved game
 loadGame();
 updateCurrencyDisplays();
+// Apply saved mode UI state
+setTimeout(applyModeUI, 100);
 
 // Save on page hide / close
 window.addEventListener('beforeunload', saveGame);
@@ -5050,17 +5275,15 @@ function applyDeviceLayout() {
   const vh = window.innerHeight;
   const isPortrait = vh > vw;
 
-  // Orientation overlay: show on phone landscape
-  const oo = document.getElementById('orient-overlay');
-  if (DEVICE.isMobile && !isPortrait) {
-    oo.classList.add('show');
-  } else {
-    oo.classList.remove('show');
-  }
+  // Never block landscape — apply layout class instead
+  document.body.classList.toggle('orient-portrait', isPortrait);
+  document.body.classList.toggle('orient-landscape', !isPortrait);
+  document.getElementById('orient-overlay').classList.remove('show');
 
-  // Font scale: smaller on very small phones, larger on tablets/desktop
+  // Font scale
   let fontScale = 1;
-  if (vw < 360) fontScale = 0.85;
+  if (vw < 360) fontScale = 0.82;
+  else if (!isPortrait && DEVICE.isMobile) fontScale = 0.84; // landscape phone: compact
   else if (vw > 768) fontScale = 1.15;
   else if (vw > 1024) fontScale = 1.3;
   r.style.setProperty('--font-scale', fontScale);
@@ -5069,17 +5292,39 @@ function applyDeviceLayout() {
   const maxW = DEVICE.isDesktop ? '480px' : '100%';
   r.style.setProperty('--app-max-w', maxW);
 
-  // Nav height: taller on iPhone for home bar
-  const navH = DEVICE.isIOS ? '72px' : '60px';
+  // Nav height: shorter in landscape to save vertical space
+  const navH = !isPortrait && DEVICE.isMobile ? '52px' : (DEVICE.isIOS ? '72px' : '60px');
   r.style.setProperty('--nav-h', navH);
 
-  // Top bar height: taller on iPhone for notch
-  const topH = DEVICE.isIOS ? '60px' : '52px';
+  // Top bar height: shorter in landscape
+  const topH = !isPortrait && DEVICE.isMobile ? '44px' : (DEVICE.isIOS ? '60px' : '52px');
   r.style.setProperty('--top-h', topH);
 
-  // Gloop size: scale with screen
-  const gloopBase = Math.max(36, Math.min(56, vw * 0.12));
+  // Gloop size: scale with the shorter dimension
+  const shortSide = Math.min(vw, vh);
+  const gloopBase = Math.max(28, Math.min(60, shortSide * 0.11));
   r.style.setProperty('--gloop-base', gloopBase + 'px');
+
+  // Landscape game: game canvas fills full width, HUD compact
+  if (!isPortrait) {
+    r.style.setProperty('--game-hud-dir', 'row');
+    r.style.setProperty('--game-hud-pos', 'top');
+  } else {
+    r.style.setProperty('--game-hud-dir', 'row');
+    r.style.setProperty('--game-hud-pos', 'top');
+  }
+
+  // Reinit game canvas if it's active
+  if (typeof GW !== 'undefined' && document.getElementById('game-canvas')) {
+    const gc = document.getElementById('game-canvas');
+    const gw = document.getElementById('game-wrap');
+    if (gw && gc) {
+      gc.width  = gw.offsetWidth  || vw;
+      gc.height = gw.offsetHeight || vh;
+      if (typeof buildGrads === 'function') buildGrads();
+      if (typeof syncGloopSizeFromDevice === 'function') syncGloopSizeFromDevice();
+    }
+  }
 }
 
 // Run on load and on resize/orientation change
