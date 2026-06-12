@@ -14,21 +14,137 @@
    RESET & BASE
 ══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+/* ══════════════════════════════════════════
+   CANDYLAND THEME TOKENS
+   Device classes set by JS: body.device-phone / .device-tablet / .device-desktop
+   Orientation classes: body.orient-portrait / .orient-landscape
+══════════════════════════════════════════ */
 :root{
-  --green:#7dff8f;--purple:#a78bfa;--gold:#ffe066;--pink:#ff6b9d;
-  --red:#ff4d6d;--blue:#60d0ff;--orange:#ff8c32;
-  --bg:#0d0520;--panel:rgba(20,8,45,0.96);--border:rgba(167,139,250,0.22);
-  --text:#e8e0ff;--dim:rgba(255,255,255,0.38);
+  /* Candyland palette */
+  --candy-pink:   #ff6eb4;
+  --candy-mint:   #5dffc8;
+  --candy-lemon:  #ffe566;
+  --candy-sky:    #6ec6ff;
+  --candy-lavender:#c084fc;
+  --candy-coral:  #ff8c6e;
+  --candy-lime:   #a8ff6e;
+  --candy-cream:  #fff8e7;
+
+  /* Semantic aliases (used throughout) */
+  --green:  var(--candy-mint);
+  --purple: var(--candy-lavender);
+  --gold:   var(--candy-lemon);
+  --pink:   var(--candy-pink);
+  --red:    #ff5577;
+  --blue:   var(--candy-sky);
+  --orange: var(--candy-coral);
+
+  /* Backgrounds — warm candy sky instead of dark space */
+  --bg:      #1a0635;
+  --bg2:     #2d0f5a;
+  --panel:   rgba(50,10,100,0.92);
+  --border:  rgba(255,110,180,0.28);
+  --text:    #fff5ff;
+  --dim:     rgba(255,220,255,0.45);
+
+  /* Layout — set by JS device detection */
+  --app-max-w:   520px;
+  --font-scale:  1;
+  --tile-cols:   2;
+  --hub-hero-h:  200px;
+  --nav-icon-sz: 22px;
+  --nav-label-sz:10px;
+  --hud-font-sz: 20px;
+  --btn-font-sz: 16px;
+  --card-radius: 18px;
 }
+
+/* ——— Phone portrait (default, ≤ 480px wide) ——— */
+body.device-phone.orient-portrait {
+  --app-max-w:   100vw;
+  --hub-hero-h:  180px;
+  --font-scale:  1;
+  --tile-cols:   2;
+}
+/* ——— Phone landscape ——— */
+body.device-phone.orient-landscape {
+  --app-max-w:   100vw;
+  --hub-hero-h:  120px;
+  --font-scale:  0.88;
+  --tile-cols:   4;
+}
+/* ——— Tablet portrait (481–900px wide) ——— */
+body.device-tablet.orient-portrait {
+  --app-max-w:   640px;
+  --hub-hero-h:  260px;
+  --font-scale:  1.1;
+  --tile-cols:   3;
+  --nav-icon-sz: 26px;
+  --nav-label-sz:11px;
+  --hud-font-sz: 24px;
+  --btn-font-sz: 18px;
+  --card-radius: 22px;
+}
+/* ——— Tablet landscape ——— */
+body.device-tablet.orient-landscape {
+  --app-max-w:   780px;
+  --hub-hero-h:  220px;
+  --font-scale:  1.1;
+  --tile-cols:   4;
+  --nav-icon-sz: 26px;
+  --nav-label-sz:11px;
+  --hud-font-sz: 24px;
+  --btn-font-sz: 18px;
+  --card-radius: 22px;
+}
+/* ——— Desktop (≥ 901px wide) ——— */
+body.device-desktop {
+  --app-max-w:   480px;   /* Keep phone-like column on wide screens */
+  --hub-hero-h:  240px;
+  --font-scale:  1;
+  --tile-cols:   2;
+  --card-radius: 20px;
+}
+
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+
+/* Candyland gradient sky background */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background: radial-gradient(ellipse at 20% 10%, rgba(255,110,180,0.18) 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 5%,  rgba(110,198,255,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 100%,rgba(192,132,252,0.22) 0%, transparent 60%),
+              linear-gradient(180deg, #1a0635 0%, #2d0f5a 50%, #1a0635 100%);
+  pointer-events:none;
+}
+
 /* iPhone safe areas */
 .bottom-nav{padding-bottom:max(10px, env(safe-area-inset-bottom));}
-.top-bar{padding-top:max(10px, env(safe-area-inset-top));}
+.top-bar{padding-top:max(6px, env(safe-area-inset-top));}
+
 body{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-family:'Fredoka One',cursive;user-select:none;-webkit-user-select:none;
   touch-action:manipulation;
+  position:relative;
 }
+
+/* Orientation lock overlay for landscape phones */
+#orient-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:#1a0635;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+  font-family:'Fredoka One',cursive;
+}
+#orient-overlay .oo-icon{font-size:64px;animation:rotateHint 1.5s ease-in-out infinite alternate;}
+@keyframes rotateHint{from{transform:rotate(-20deg);}to{transform:rotate(20deg);}}
+#orient-overlay .oo-text{font-size:22px;color:var(--candy-pink);text-align:center;padding:0 24px;}
+#orient-overlay .oo-sub{font-size:14px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
+body.device-phone.orient-landscape #orient-overlay{display:flex;}
 
 /* ══════════════════════════════════════════
    SCREEN SYSTEM
@@ -38,79 +154,98 @@ body{
   display:flex;flex-direction:column;align-items:center;
   overflow-y:auto;overflow-x:hidden;
   z-index:10;
-  background:var(--bg);
-  transition:opacity .25s, transform .25s;
+  background:transparent;
+  transition:opacity .28s, transform .28s;
 }
 .screen.hidden{display:none!important;}
-.screen-enter{animation:screenIn .25s ease forwards;}
-@keyframes screenIn{from{opacity:0;transform:scale(0.97);}to{opacity:1;transform:scale(1);}}
+.screen-enter{animation:screenIn .28s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes screenIn{from{opacity:0;transform:scale(0.94) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
 
 /* ══════════════════════════════════════════
    GLOBAL TOP BAR (currency bar)
 ══════════════════════════════════════════ */
 .top-bar{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px 6px;flex-shrink:0;
-  background:rgba(13,5,32,0.9);
-  border-bottom:1px solid var(--border);
+  padding:8px 12px 6px;flex-shrink:0;
+  background:rgba(26,6,53,0.88);
+  border-bottom:2px solid rgba(255,110,180,0.22);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   position:sticky;top:0;z-index:50;
 }
-.currency-group{display:flex;gap:8px;align-items:center;}
+.currency-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .cur-pill{
-  display:flex;align-items:center;gap:4px;
-  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.14);
-  border-radius:20px;padding:3px 10px 3px 6px;
-  font-size:14px;color:#fff;font-family:'Fredoka One',cursive;
+  display:flex;align-items:center;gap:3px;
+  background:rgba(255,255,255,0.07);
+  border:1.5px solid rgba(255,110,180,0.22);
+  border-radius:20px;padding:3px 9px 3px 5px;
+  font-size:calc(13px * var(--font-scale));color:#fff;
+  font-family:'Fredoka One',cursive;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25);
 }
-.cur-pill .icon{font-size:16px;}
-.cur-pill .val{min-width:36px;text-align:right;}
+.cur-pill .icon{font-size:calc(15px * var(--font-scale));}
+.cur-pill .val{min-width:32px;text-align:right;}
 .cur-pill .add-btn{
-  width:18px;height:18px;border-radius:50%;
-  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);
+  width:17px;height:17px;border-radius:50%;
+  background:rgba(255,110,180,0.18);border:1px solid rgba(255,110,180,0.35);
   display:flex;align-items:center;justify-content:center;
-  font-size:12px;cursor:pointer;margin-left:2px;color:#fff;
-  transition:background .15s;
+  font-size:11px;cursor:pointer;margin-left:2px;color:var(--candy-pink);
+  transition:all .15s;
 }
-.cur-pill .add-btn:hover{background:rgba(125,255,143,0.28);}
-.top-bar-right{display:flex;gap:8px;align-items:center;}
+.cur-pill .add-btn:hover{background:rgba(255,110,180,0.38);transform:scale(1.15);}
+.top-bar-right{display:flex;gap:7px;align-items:center;}
 .icon-btn{
-  width:34px;height:34px;border-radius:10px;
-  background:rgba(255,255,255,0.06);border:1.5px solid var(--border);
+  width:32px;height:32px;border-radius:10px;
+  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,110,180,0.22);
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;cursor:pointer;transition:background .15s;color:#fff;
+  font-size:17px;cursor:pointer;transition:all .15s;color:#fff;
 }
-.icon-btn:hover{background:rgba(255,255,255,0.14);}
+.icon-btn:hover{background:rgba(255,110,180,0.18);transform:scale(1.08);}
 
 /* ══════════════════════════════════════════
    BOTTOM NAV BAR
 ══════════════════════════════════════════ */
 .bottom-nav{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   display:flex;align-items:center;justify-content:space-around;
   padding:6px 4px 10px;
-  background:rgba(13,5,32,0.95);
-  border-top:1px solid var(--border);
+  background:rgba(26,6,53,0.92);
+  border-top:2px solid rgba(255,110,180,0.22);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   position:sticky;bottom:0;z-index:50;flex-shrink:0;
 }
 .nav-item{
   display:flex;flex-direction:column;align-items:center;gap:2px;
-  cursor:pointer;padding:4px 8px;border-radius:10px;
-  transition:background .15s;min-width:52px;
+  cursor:pointer;padding:5px 10px;border-radius:14px;
+  transition:all .18s;min-width:52px;
   position:relative;
 }
-.nav-item:hover,.nav-item.active{background:rgba(125,255,143,0.1);}
-.nav-item .nav-icon{font-size:22px;line-height:1;}
-.nav-item .nav-label{font-size:10px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-.nav-item.active .nav-label{color:var(--green);}
-.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px var(--green));}
+.nav-item:hover,.nav-item.active{
+  background:rgba(255,110,180,0.12);
+}
+.nav-item .nav-icon{
+  font-size:var(--nav-icon-sz);line-height:1;
+  transition:transform .2s;
+}
+.nav-item.active .nav-icon{transform:scale(1.18);}
+.nav-item .nav-label{
+  font-size:var(--nav-label-sz);color:var(--dim);
+  font-family:'Nunito',sans-serif;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.nav-item.active .nav-label{color:var(--candy-pink);}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 8px var(--candy-pink));}
 .nav-badge{
   position:absolute;top:0;right:4px;
   background:var(--red);color:#fff;
   border-radius:10px;font-size:10px;
   padding:1px 5px;font-family:'Nunito',sans-serif;font-weight:900;
   border:1.5px solid var(--bg);
+  animation:badgePop .4s cubic-bezier(.34,1.56,.64,1);
 }
+@keyframes badgePop{from{transform:scale(0);}to{transform:scale(1);}}
 
 /* ══════════════════════════════════════════
    SECTION HEADERS
@@ -132,47 +267,67 @@ body{
 .screen-header .header-icon{font-size:22px;}
 
 /* ══════════════════════════════════════════
-   BUTTONS
+   BUTTONS — Candyland chunky style
 ══════════════════════════════════════════ */
 .btn{
-  font-family:'Fredoka One',cursive;font-size:16px;
-  padding:8px 22px;border-radius:12px;
-  border:2px solid rgba(255,255,255,0.18);
-  background:rgba(255,255,255,0.06);color:#fff;
-  cursor:pointer;transition:all .14s;letter-spacing:.5px;
-  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Fredoka One',cursive;
+  font-size:calc(var(--btn-font-sz) * var(--font-scale));
+  padding:9px 24px;border-radius:var(--card-radius);
+  border:2.5px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.07);color:#fff;
+  cursor:pointer;transition:all .16s;letter-spacing:.5px;
+  display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.08) inset;
 }
-.btn:hover{background:rgba(255,255,255,0.14);transform:scale(1.03);}
-.btn:active{transform:scale(0.97);}
-.btn.primary{background:rgba(125,255,143,0.14);border-color:var(--green);color:var(--green);font-size:18px;padding:10px 32px;}
-.btn.primary:hover{background:rgba(125,255,143,0.26);}
-.btn.gold{background:rgba(255,224,102,0.14);border-color:var(--gold);color:var(--gold);}
-.btn.gold:hover{background:rgba(255,224,102,0.26);}
-.btn.purple{background:rgba(167,139,250,0.14);border-color:var(--purple);color:var(--purple);}
-.btn.purple:hover{background:rgba(167,139,250,0.26);}
-.btn.pink{background:rgba(255,107,157,0.14);border-color:var(--pink);color:var(--pink);}
-.btn.pink:hover{background:rgba(255,107,157,0.26);}
+.btn:hover{background:rgba(255,255,255,0.14);transform:scale(1.04) translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.35);}
+.btn:active{transform:scale(0.96) translateY(1px);box-shadow:0 2px 6px rgba(0,0,0,0.2);}
+.btn.primary{
+  background:linear-gradient(135deg,rgba(93,255,200,0.22),rgba(93,255,200,0.1));
+  border-color:var(--candy-mint);color:var(--candy-mint);
+  font-size:calc(18px * var(--font-scale));padding:11px 34px;
+  box-shadow:0 0 20px rgba(93,255,200,0.2),0 4px 12px rgba(0,0,0,0.3);
+}
+.btn.primary:hover{background:linear-gradient(135deg,rgba(93,255,200,0.35),rgba(93,255,200,0.18));box-shadow:0 0 30px rgba(93,255,200,0.35),0 6px 18px rgba(0,0,0,0.35);}
+.btn.gold{
+  background:linear-gradient(135deg,rgba(255,229,102,0.22),rgba(255,229,102,0.1));
+  border-color:var(--candy-lemon);color:var(--candy-lemon);
+  box-shadow:0 0 16px rgba(255,229,102,0.18),0 4px 12px rgba(0,0,0,0.3);
+}
+.btn.gold:hover{background:linear-gradient(135deg,rgba(255,229,102,0.35),rgba(255,229,102,0.18));}
+.btn.purple{
+  background:linear-gradient(135deg,rgba(192,132,252,0.22),rgba(192,132,252,0.1));
+  border-color:var(--candy-lavender);color:var(--candy-lavender);
+  box-shadow:0 0 16px rgba(192,132,252,0.18),0 4px 12px rgba(0,0,0,0.3);
+}
+.btn.purple:hover{background:linear-gradient(135deg,rgba(192,132,252,0.35),rgba(192,132,252,0.18));}
+.btn.pink{
+  background:linear-gradient(135deg,rgba(255,110,180,0.22),rgba(255,110,180,0.1));
+  border-color:var(--candy-pink);color:var(--candy-pink);
+  box-shadow:0 0 16px rgba(255,110,180,0.18),0 4px 12px rgba(0,0,0,0.3);
+}
+.btn.pink:hover{background:linear-gradient(135deg,rgba(255,110,180,0.35),rgba(255,110,180,0.18));}
 .btn.danger{border-color:var(--red);color:var(--red);}
-.btn.danger:hover{background:rgba(255,77,109,0.14);}
+.btn.danger:hover{background:rgba(255,85,119,0.14);}
 .btn.full{width:100%;justify-content:center;}
-.btn.sm{font-size:13px;padding:5px 14px;border-radius:9px;}
-.btn.selected{background:rgba(125,255,143,0.16);border-color:var(--green);color:var(--green);}
+.btn.sm{font-size:calc(13px * var(--font-scale));padding:6px 15px;border-radius:12px;}
+.btn.selected{background:rgba(93,255,200,0.16);border-color:var(--candy-mint);color:var(--candy-mint);}
 
 /* ══════════════════════════════════════════
-   CARDS & PANELS
+   CARDS & PANELS — Candyland frosted glass
 ══════════════════════════════════════════ */
 .card{
-  background:rgba(255,255,255,0.04);
-  border:1.5px solid var(--border);
-  border-radius:14px;padding:14px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,110,180,0.18);
+  border-radius:var(--card-radius);padding:14px;
   width:100%;
+  box-shadow:0 4px 20px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.05) inset;
 }
-.card.glow-green{border-color:rgba(125,255,143,0.3);box-shadow:0 0 18px rgba(125,255,143,0.08);}
-.card.glow-gold{border-color:rgba(255,224,102,0.3);box-shadow:0 0 18px rgba(255,224,102,0.08);}
-.card.glow-purple{border-color:rgba(167,139,250,0.3);box-shadow:0 0 18px rgba(167,139,250,0.08);}
+.card.glow-green{border-color:rgba(93,255,200,0.35);box-shadow:0 0 20px rgba(93,255,200,0.1),0 4px 20px rgba(0,0,0,0.25);}
+.card.glow-gold{border-color:rgba(255,229,102,0.35);box-shadow:0 0 20px rgba(255,229,102,0.1),0 4px 20px rgba(0,0,0,0.25);}
+.card.glow-purple{border-color:rgba(192,132,252,0.35);box-shadow:0 0 20px rgba(192,132,252,0.1),0 4px 20px rgba(0,0,0,0.25);}
 
 .scroll-content{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   padding:0 14px 80px;
   display:flex;flex-direction:column;gap:12px;
   flex:1;
@@ -206,44 +361,52 @@ body{
 .toggle input:checked~.toggle-thumb{left:25px;background:var(--green);}
 
 /* ══════════════════════════════════════════
-   ★ HUB SCREEN
+   ★ HUB SCREEN — Candyland
 ══════════════════════════════════════════ */
 #hub-screen{
-  background:linear-gradient(180deg,#0d0520 0%,#1a0840 100%);
+  background:transparent;
 }
 .hub-hero{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   position:relative;overflow:hidden;
-  height:200px;flex-shrink:0;
+  height:var(--hub-hero-h);flex-shrink:0;
 }
 .hub-hero canvas{width:100%;height:100%;display:block;}
 .hub-hero-overlay{
   position:absolute;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
   padding:0 16px 14px;
-  background:linear-gradient(0deg,rgba(13,5,32,0.85) 0%,transparent 60%);
+  background:linear-gradient(0deg,rgba(26,6,53,0.9) 0%,transparent 55%);
 }
 .hub-title{
-  font-size:52px;color:var(--green);
-  text-shadow:0 0 30px var(--green),0 3px 0 #2a7a38;
+  font-size:calc(52px * var(--font-scale));
+  color:var(--candy-pink);
+  text-shadow:0 0 30px var(--candy-pink),0 0 60px rgba(255,110,180,0.4),0 3px 0 rgba(180,0,80,0.6);
   letter-spacing:4px;
   animation:blobTitle 1.4s ease-in-out infinite alternate;
 }
-@keyframes blobTitle{from{transform:scaleX(1.08)scaleY(0.92);}to{transform:scaleX(0.93)scaleY(1.1);}}
-.hub-sub{font-size:13px;color:var(--purple);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;}
+@keyframes blobTitle{
+  from{transform:scaleX(1.08) scaleY(0.92);}
+  to{transform:scaleX(0.93) scaleY(1.1);}
+}
+.hub-sub{
+  font-size:calc(13px * var(--font-scale));
+  color:var(--candy-lavender);
+  font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;
+}
 
 .player-row{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   display:flex;align-items:center;gap:12px;
   padding:10px 14px;flex-shrink:0;
 }
 .player-avatar{
-  width:52px;height:52px;border-radius:14px;
-  background:linear-gradient(135deg,#2a0a5e,#4a1a8e);
-  border:2px solid var(--purple);
+  width:56px;height:56px;border-radius:18px;
+  background:linear-gradient(135deg,#3a0a7e,#6a1aae);
+  border:2.5px solid var(--candy-pink);
   display:flex;align-items:center;justify-content:center;
-  font-size:28px;flex-shrink:0;
-  box-shadow:0 0 14px rgba(167,139,250,0.3);
+  font-size:30px;flex-shrink:0;
+  box-shadow:0 0 18px rgba(255,110,180,0.4),0 4px 12px rgba(0,0,0,0.3);
 }
 .player-info{flex:1;}
 .player-name{font-size:18px;color:#fff;letter-spacing:.5px;}
@@ -252,62 +415,86 @@ body{
 .xp-label{font-size:10px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-bottom:2px;}
 
 .hub-grid{
-  width:100%;max-width:520px;
-  display:grid;grid-template-columns:1fr 1fr;
+  width:100%;max-width:var(--app-max-w);
+  display:grid;
+  grid-template-columns:repeat(var(--tile-cols),1fr);
   gap:10px;padding:0 14px;flex-shrink:0;
 }
 .hub-tile{
-  background:rgba(255,255,255,0.04);
-  border:1.5px solid var(--border);
-  border-radius:14px;padding:14px 12px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,110,180,0.16);
+  border-radius:var(--card-radius);padding:14px 12px;
   display:flex;flex-direction:column;align-items:center;gap:6px;
-  cursor:pointer;transition:all .18s;
+  cursor:pointer;transition:all .2s;
   position:relative;overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,0.25),0 1px 0 rgba(255,255,255,0.05) inset;
 }
-.hub-tile:hover,.hub-tile:active{background:rgba(255,255,255,0.09);transform:scale(0.98);}
-.hub-tile .tile-icon{font-size:32px;line-height:1;}
-.hub-tile .tile-label{font-size:14px;color:var(--text);letter-spacing:.5px;}
-.hub-tile .tile-sub{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+/* Candy shimmer on hover */
+.hub-tile::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.06) 0%,transparent 60%);
+  border-radius:inherit;
+  opacity:0;transition:opacity .2s;
+}
+.hub-tile:hover::after{opacity:1;}
+.hub-tile:hover{transform:scale(1.03) translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.35);}
+.hub-tile:active{transform:scale(0.97);}
+.hub-tile .tile-icon{
+  font-size:calc(32px * var(--font-scale));line-height:1;
+  filter:drop-shadow(0 2px 6px rgba(255,110,180,0.3));
+}
+.hub-tile .tile-label{font-size:calc(14px * var(--font-scale));color:var(--text);letter-spacing:.5px;}
+.hub-tile .tile-sub{font-size:calc(11px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
 .hub-tile .tile-badge{
   position:absolute;top:8px;right:8px;
-  background:var(--red);color:#fff;border-radius:8px;
+  background:linear-gradient(135deg,#ff5577,#ff2255);
+  color:#fff;border-radius:8px;
   font-size:10px;padding:1px 6px;font-family:'Nunito',sans-serif;font-weight:900;
+  box-shadow:0 2px 8px rgba(255,85,119,0.4);
+  animation:badgePop .4s cubic-bezier(.34,1.56,.64,1);
 }
 .hub-tile.featured{
   grid-column:1/-1;
   flex-direction:row;gap:14px;
-  background:linear-gradient(135deg,rgba(125,255,143,0.08),rgba(167,139,250,0.08));
-  border-color:rgba(125,255,143,0.3);
+  background:linear-gradient(135deg,rgba(93,255,200,0.1),rgba(192,132,252,0.1));
+  border-color:rgba(93,255,200,0.3);
+  box-shadow:0 0 24px rgba(93,255,200,0.08),0 4px 16px rgba(0,0,0,0.25);
 }
-.hub-tile.featured .tile-icon{font-size:48px;}
+.hub-tile.featured .tile-icon{font-size:calc(48px * var(--font-scale));}
 .hub-tile.featured .tile-info{flex:1;}
-.hub-tile.featured .tile-label{font-size:18px;color:var(--green);}
+.hub-tile.featured .tile-label{font-size:calc(18px * var(--font-scale));color:var(--candy-mint);}
 
 .event-banner{
-  width:100%;max-width:520px;
-  margin:0 14px;
-  background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(167,139,250,0.15));
-  border:1.5px solid rgba(255,107,157,0.35);
-  border-radius:14px;padding:12px 16px;
+  max-width:var(--app-max-w);
+  background:linear-gradient(135deg,rgba(255,110,180,0.15),rgba(192,132,252,0.15));
+  border:2px solid rgba(255,110,180,0.35);
+  border-radius:var(--card-radius);padding:12px 16px;
   display:flex;align-items:center;gap:12px;
   cursor:pointer;flex-shrink:0;
   width:calc(100% - 28px);
+  box-shadow:0 0 20px rgba(255,110,180,0.1),0 4px 16px rgba(0,0,0,0.25);
+  animation:eventPulse 2.5s ease-in-out infinite alternate;
 }
-.event-banner .ev-icon{font-size:36px;}
+@keyframes eventPulse{
+  from{box-shadow:0 0 16px rgba(255,110,180,0.1),0 4px 16px rgba(0,0,0,0.25);}
+  to{box-shadow:0 0 28px rgba(255,110,180,0.25),0 4px 16px rgba(0,0,0,0.25);}
+}
+.event-banner .ev-icon{font-size:calc(36px * var(--font-scale));}
 .event-banner .ev-info{flex:1;}
-.event-banner .ev-title{font-size:16px;color:var(--pink);letter-spacing:.5px;}
-.event-banner .ev-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
-.event-banner .ev-timer{font-size:13px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
+.event-banner .ev-title{font-size:calc(16px * var(--font-scale));color:var(--candy-pink);letter-spacing:.5px;}
+.event-banner .ev-sub{font-size:calc(12px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.event-banner .ev-timer{font-size:calc(13px * var(--font-scale));color:var(--candy-lemon);font-family:'Nunito',sans-serif;font-weight:900;}
 
 /* ══════════════════════════════════════════
    ★ GAME SCREEN (canvas wrapper)
 ══════════════════════════════════════════ */
 #game-screen{
-  background:#0d0520;
+  background:transparent;
   justify-content:flex-start;
 }
 #game-wrap{
-  position:relative;width:100%;max-width:520px;
+  position:relative;width:100%;max-width:var(--app-max-w);
   flex:1;display:flex;flex-direction:column;
 }
 #game-canvas{
@@ -320,30 +507,45 @@ body{
   padding:8px 12px;z-index:10;pointer-events:none;
 }
 .hud-pill{
-  background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);
-  border-radius:12px;padding:3px 14px;color:#fff;font-size:20px;
-  letter-spacing:1px;text-shadow:0 0 10px var(--purple);
+  background:rgba(26,6,53,0.75);
+  border:2px solid rgba(255,110,180,0.3);
+  border-radius:14px;padding:4px 16px;
+  color:#fff;
+  font-size:calc(var(--hud-font-sz) * var(--font-scale));
+  letter-spacing:1px;
+  text-shadow:0 0 12px var(--candy-pink);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
-.hud-pill.hi{color:var(--purple);font-size:14px;}
+.hud-pill.hi{color:var(--candy-lavender);font-size:calc(14px * var(--font-scale));}
 #game-pause-btn{
   pointer-events:all;cursor:pointer;
-  background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);
-  border-radius:10px;padding:3px 12px;color:#fff;font-size:18px;
-  font-family:'Fredoka One',cursive;transition:background .15s;
+  background:rgba(26,6,53,0.75);
+  border:2px solid rgba(255,110,180,0.3);
+  border-radius:12px;padding:4px 14px;color:#fff;
+  font-size:calc(18px * var(--font-scale));
+  font-family:'Fredoka One',cursive;transition:all .15s;
+  backdrop-filter:blur(8px);
 }
-#game-pause-btn:hover{background:rgba(255,255,255,0.18);}
+#game-pause-btn:hover{background:rgba(255,110,180,0.2);}
 
 /* In-game overlays */
 .game-overlay{
   position:absolute;inset:0;
-  background:rgba(10,4,28,0.94);backdrop-filter:blur(8px);
+  background:rgba(26,6,53,0.92);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   z-index:30;gap:10px;padding:20px 16px;
 }
 .game-overlay.hidden{display:none;}
-.game-overlay h2{font-size:40px;color:var(--green);text-shadow:0 0 24px var(--green),0 3px 0 #2a7a38;letter-spacing:3px;}
-.game-overlay .sub-text{font-size:14px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
-.sep{width:90%;height:1.5px;background:rgba(255,255,255,0.07);border-radius:2px;margin:4px 0;}
+.game-overlay h2{
+  font-size:calc(40px * var(--font-scale));
+  color:var(--candy-mint);
+  text-shadow:0 0 24px var(--candy-mint),0 3px 0 rgba(0,120,80,0.8);
+  letter-spacing:3px;
+}
+.game-overlay .sub-text{font-size:calc(14px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;}
+.sep{width:90%;height:1.5px;background:rgba(255,110,180,0.12);border-radius:2px;margin:4px 0;}
 .row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:center;}
 
 /* Menu overlay on canvas */
@@ -354,51 +556,80 @@ body{
 }
 #menu-overlay.hidden{display:none;}
 #menu-overlay h1{
-  font-size:64px;color:var(--green);
-  text-shadow:0 0 30px var(--green),0 4px 0 #2a7a38;
+  font-size:calc(64px * var(--font-scale));
+  color:var(--candy-pink);
+  text-shadow:0 0 30px var(--candy-pink),0 0 60px rgba(255,110,180,0.5),0 4px 0 rgba(180,0,80,0.7);
   letter-spacing:4px;animation:blobTitle 1.3s ease-in-out infinite alternate;
 }
 #menu-overlay .prompt{
   font-family:'Nunito',sans-serif;font-weight:900;
-  color:#fff;font-size:17px;margin-top:6px;
+  color:#fff;font-size:calc(17px * var(--font-scale));margin-top:6px;
   animation:pulse 1s ease-in-out infinite alternate;pointer-events:none;
+  text-shadow:0 0 12px rgba(255,110,180,0.5);
 }
 @keyframes pulse{from{opacity:.5;}to{opacity:1;}}
-#menu-overlay .sub{font-size:12px;color:var(--purple);margin-top:2px;font-family:'Nunito',sans-serif;font-weight:700;}
+#menu-overlay .sub{
+  font-size:calc(12px * var(--font-scale));
+  color:var(--candy-lavender);margin-top:2px;
+  font-family:'Nunito',sans-serif;font-weight:700;
+}
 
-/* Death screen */
+/* Death screen — Candyland */
 #death-overlay{
   position:absolute;inset:0;
-  background:rgba(10,4,28,0.96);backdrop-filter:blur(10px);
+  background:rgba(26,6,53,0.96);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   z-index:35;gap:8px;padding:20px;
 }
 #death-overlay.hidden{display:none;}
-#death-overlay h2{font-size:44px;color:var(--red);text-shadow:0 0 20px var(--red);letter-spacing:2px;}
-.death-score-big{font-size:56px;color:#fff;text-shadow:0 0 20px var(--purple);}
-.death-score-label{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
-.death-best{font-size:16px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
-.ad-reward-box{
-  background:rgba(255,224,102,0.08);border:1.5px solid rgba(255,224,102,0.3);
-  border-radius:14px;padding:12px 20px;text-align:center;width:100%;
+#death-overlay h2{
+  font-size:calc(44px * var(--font-scale));
+  color:var(--candy-coral);
+  text-shadow:0 0 20px var(--candy-coral),0 0 40px rgba(255,140,110,0.4);
+  letter-spacing:2px;
 }
-.ad-reward-box .ad-title{font-size:15px;color:var(--gold);}
-.ad-reward-box .ad-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.death-score-big{
+  font-size:calc(56px * var(--font-scale));
+  color:#fff;
+  text-shadow:0 0 20px var(--candy-lavender),0 0 40px rgba(192,132,252,0.4);
+}
+.death-score-label{font-size:calc(13px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.death-best{font-size:calc(16px * var(--font-scale));color:var(--candy-lemon);font-family:'Nunito',sans-serif;font-weight:900;}
+.ad-reward-box{
+  background:rgba(255,229,102,0.08);
+  border:2px solid rgba(255,229,102,0.3);
+  border-radius:var(--card-radius);padding:12px 20px;text-align:center;width:100%;
+  box-shadow:0 0 16px rgba(255,229,102,0.08);
+}
+.ad-reward-box .ad-title{font-size:calc(15px * var(--font-scale));color:var(--candy-lemon);}
+.ad-reward-box .ad-sub{font-size:calc(12px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
 
 /* ══════════════════════════════════════════
    ★ CAMPAIGN SCREEN
 ══════════════════════════════════════════ */
-#campaign-screen{background:linear-gradient(180deg,#0d0520 0%,#0a1a2e 100%);}
+#campaign-screen{background:transparent;}
 .chapter-header{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   text-align:center;padding:16px 16px 8px;flex-shrink:0;
 }
-.chapter-header .ch-num{font-size:12px;color:var(--dim);letter-spacing:3px;font-family:'Nunito',sans-serif;font-weight:900;text-transform:uppercase;}
-.chapter-header .ch-name{font-size:28px;color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px rgba(255,224,102,0.4);}
-.chapter-header .ch-sub{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.chapter-header .ch-num{
+  font-size:calc(12px * var(--font-scale));
+  color:var(--candy-lavender);letter-spacing:3px;
+  font-family:'Nunito',sans-serif;font-weight:900;text-transform:uppercase;
+}
+.chapter-header .ch-name{
+  font-size:calc(28px * var(--font-scale));
+  color:var(--candy-lemon);letter-spacing:2px;
+  text-shadow:0 0 20px rgba(255,229,102,0.5);
+}
+.chapter-header .ch-sub{
+  font-size:calc(12px * var(--font-scale));
+  color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;
+}
 
 .stage-map{
-  width:100%;max-width:520px;
+  width:100%;max-width:var(--app-max-w);
   padding:8px 14px;display:flex;flex-direction:column;gap:0;flex-shrink:0;
 }
 .stage-row{
@@ -407,41 +638,52 @@ body{
 }
 .stage-node{
   width:64px;height:64px;border-radius:50%;
-  background:rgba(255,255,255,0.04);
-  border:2.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  border:2.5px solid rgba(255,110,180,0.2);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .18s;flex-shrink:0;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
   position:relative;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
-.stage-node:hover{transform:scale(1.08);}
+.stage-node:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(0,0,0,0.4);}
 .stage-node.completed{
-  background:rgba(125,255,143,0.1);
-  border-color:var(--green);
+  background:rgba(93,255,200,0.12);
+  border-color:var(--candy-mint);
+  box-shadow:0 0 14px rgba(93,255,200,0.2),0 4px 12px rgba(0,0,0,0.3);
 }
 .stage-node.current{
-  background:rgba(167,139,250,0.15);
-  border-color:var(--purple);
-  box-shadow:0 0 20px rgba(167,139,250,0.4);
+  background:rgba(255,110,180,0.15);
+  border-color:var(--candy-pink);
+  box-shadow:0 0 22px rgba(255,110,180,0.45);
   animation:nodePulse 1.5s ease-in-out infinite alternate;
 }
-@keyframes nodePulse{from{box-shadow:0 0 14px rgba(167,139,250,0.3);}to{box-shadow:0 0 28px rgba(167,139,250,0.6);}}
+@keyframes nodePulse{
+  from{box-shadow:0 0 14px rgba(255,110,180,0.3),0 4px 12px rgba(0,0,0,0.3);}
+  to{box-shadow:0 0 30px rgba(255,110,180,0.65),0 4px 12px rgba(0,0,0,0.3);}
+}
 .stage-node.locked{
-  opacity:0.5;cursor:not-allowed;
+  opacity:0.45;cursor:not-allowed;
+  filter:grayscale(0.5);
 }
 .stage-node.boss{
   width:72px;height:72px;
-  background:rgba(255,77,109,0.1);
+  background:rgba(255,85,119,0.12);
   border-color:var(--red);
+  box-shadow:0 0 18px rgba(255,85,119,0.25),0 4px 12px rgba(0,0,0,0.3);
 }
-.stage-node .node-label{font-size:12px;color:#fff;letter-spacing:.5px;}
-.stage-node .node-stars{font-size:11px;letter-spacing:1px;}
-.stage-node .lock-icon{font-size:20px;}
+.stage-node .node-label{font-size:calc(12px * var(--font-scale));color:#fff;letter-spacing:.5px;}
+.stage-node .node-stars{font-size:calc(11px * var(--font-scale));letter-spacing:1px;}
+.stage-node .lock-icon{font-size:calc(20px * var(--font-scale));}
 .stage-connector{
-  flex:1;height:2px;
-  background:rgba(255,255,255,0.1);
+  flex:1;height:3px;
+  background:rgba(255,110,180,0.12);
+  border-radius:2px;
   position:relative;
 }
-.stage-connector.done{background:rgba(125,255,143,0.4);}
+.stage-connector.done{
+  background:linear-gradient(90deg,var(--candy-mint),var(--candy-sky));
+  box-shadow:0 0 8px rgba(93,255,200,0.3);
+}
 
 .chapter-nav{
   width:100%;max-width:520px;
@@ -900,11 +1142,93 @@ body{
 /* Scrollbar hide */
 .screen::-webkit-scrollbar{display:none;}
 .screen{scrollbar-width:none;}
+
+/* ══════════════════════════════════════════
+   ★ ORIENTATION OVERLAY
+══════════════════════════════════════════ */
+#orient-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#ff6eb4,#ffe566,#6ec6ff);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;text-align:center;padding:40px;
+}
+#orient-overlay.show{display:flex;}
+.oo-icon{font-size:72px;animation:ooSpin 2s ease-in-out infinite alternate;}
+@keyframes ooSpin{from{transform:rotate(-15deg);}to{transform:rotate(15deg);}}
+.oo-text{font-size:22px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.2);max-width:280px;}
+.oo-sub{font-size:15px;color:rgba(255,255,255,0.8);}
+
+/* ══════════════════════════════════════════
+   ★ CHARACTER SELECT SCREEN
+══════════════════════════════════════════ */
+#charselect-screen{
+  background:linear-gradient(160deg,#3a1a6e 0%,#6a1a8e 50%,#2a0a50 100%);
+}
+.charselect-title{
+  text-align:center;padding:18px 16px 4px;
+  font-size:calc(26px * var(--font-scale));
+  color:var(--candy-lemon);
+  text-shadow:0 0 20px rgba(255,229,102,0.5);
+  flex-shrink:0;
+}
+.charselect-sub{
+  text-align:center;font-size:calc(14px * var(--font-scale));
+  color:rgba(255,255,255,0.75);
+  font-family:'Nunito',sans-serif;font-weight:700;
+  padding:0 16px 12px;flex-shrink:0;
+}
+.charselect-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:14px;padding:0 16px 16px;
+  width:100%;max-width:var(--app-max-w);
+}
+.char-card{
+  background:rgba(255,255,255,0.07);
+  border:2.5px solid rgba(255,255,255,0.15);
+  border-radius:20px;padding:16px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;transition:all .2s;
+  position:relative;
+}
+.char-card:hover,.char-card:active{transform:scale(1.04);}
+.char-card.selected{
+  border-color:var(--candy-lemon);
+  background:rgba(255,229,102,0.1);
+  box-shadow:0 0 24px rgba(255,229,102,0.35);
+}
+.char-card canvas{border-radius:12px;}
+.char-card .cc-name{
+  font-size:calc(16px * var(--font-scale));
+  color:#fff;letter-spacing:.5px;
+}
+.char-card .cc-desc{
+  font-size:calc(11px * var(--font-scale));
+  color:rgba(255,255,255,0.6);
+  font-family:'Nunito',sans-serif;font-weight:700;
+  text-align:center;
+}
+.char-card .cc-check{
+  position:absolute;top:8px;right:10px;
+  font-size:18px;display:none;
+}
+.char-card.selected .cc-check{display:block;}
+.charselect-confirm{
+  width:calc(100% - 32px);max-width:calc(var(--app-max-w) - 32px);
+  margin:0 16px 20px;flex-shrink:0;
+}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
+<!-- Orientation overlay (shown on phone landscape) -->
+<div id="orient-overlay">
+  <div class="oo-icon">📱</div>
+  <div class="oo-text">Rotate your phone upright for the best Gloop experience!</div>
+  <div class="oo-sub">Silly Gloop is designed for portrait mode 🪷</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
      TOAST CONTAINER
 ═══════════════════════════════════════════════════════ -->
 <div id="toast-container"></div>
@@ -1502,10 +1826,32 @@ body{
 <!-- ═══════════════════════════════════════════════════════
      SETTINGS SCREEN
 ═══════════════════════════════════════════════════════ -->
+<div id="charselect-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">&#8249;</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">MY GLOOP</span>
+    </div>
+  </div>
+  <div class="charselect-title">Choose Your Gloop!</div>
+  <div class="charselect-sub">Pick your character — more unlock as you play!</div>
+  <div class="scroll-content">
+    <div class="charselect-grid" id="charselect-grid"><!-- filled by JS --></div>
+    <div style="padding:0 16px 8px;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Coming Soon — Seasonal Characters</div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;background:rgba(255,255,255,0.04);border:1.5px dashed rgba(255,255,255,0.15);border-radius:16px;padding:14px;text-align:center;"><div style="font-size:28px;filter:grayscale(1);opacity:0.4;">&#127877;</div><div style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Nunito',sans-serif;font-weight:700;margin-top:4px;">Holiday Gloop</div><div style="font-size:10px;color:var(--candy-pink);opacity:0.6;">SEASONAL</div></div>
+        <div style="flex:1;background:rgba(255,255,255,0.04);border:1.5px dashed rgba(255,255,255,0.15);border-radius:16px;padding:14px;text-align:center;"><div style="font-size:28px;filter:grayscale(1);opacity:0.4;">&#127875;</div><div style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Nunito',sans-serif;font-weight:700;margin-top:4px;">Spooky Gloop</div><div style="font-size:10px;color:var(--candy-pink);opacity:0.6;">SEASONAL</div></div>
+        <div style="flex:1;background:rgba(255,255,255,0.04);border:1.5px dashed rgba(255,255,255,0.15);border-radius:16px;padding:14px;text-align:center;"><div style="font-size:28px;filter:grayscale(1);opacity:0.4;">&#127800;</div><div style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Nunito',sans-serif;font-weight:700;margin-top:4px;">Spring Gloop</div><div style="font-size:10px;color:var(--candy-pink);opacity:0.6;">SEASONAL</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="settings-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">&#8249;</div>
       <span style="font-size:16px;color:var(--text);letter-spacing:1px;">SETTINGS</span>
     </div>
   </div>
@@ -1597,6 +1943,7 @@ const STATE = {
   videoWatched: 0,
   interactions: { like:false, share:false, save:false },
   // Cosmetics
+  baseCharacter: 0,   // 0=Blobby 1=Goopster 2=Splat 3=Wiggles
   equippedSkin: 0,
   equippedEyes: 0,
   equippedHat: 0,
@@ -1608,6 +1955,52 @@ const STATE = {
   trophiesEarned: 0,
   firstLaunch: true,
 };
+
+// ══════════════════════════════════════════
+//  BASE CHARACTERS (Blobby / Goopster / Splat / Wiggles)
+// ══════════════════════════════════════════
+const BASE_CHARS = [
+  {
+    id: 0, name: 'Blobby', emoji: '🩷',
+    // Pink — the default lovable blob
+    bodyLight: '#ffb8d8', bodyMid: '#ff6eb4', bodyDark: '#c0306e',
+    glow: 'rgba(255,110,180,0.7)',
+    outline: 'rgba(160,30,80,0.5)',
+    blush: 'rgba(255,160,200,0.45)',
+    shine: 'rgba(255,255,255,0.55)',
+    desc: 'The original silly gloop!',
+  },
+  {
+    id: 1, name: 'Goopster', emoji: '💚',
+    // Green — energetic and bouncy
+    bodyLight: '#c8ffb0', bodyMid: '#78e840', bodyDark: '#3a7a18',
+    glow: 'rgba(120,232,64,0.7)',
+    outline: 'rgba(40,90,10,0.5)',
+    blush: 'rgba(160,255,120,0.4)',
+    shine: 'rgba(255,255,255,0.55)',
+    desc: 'Bouncy and full of energy!',
+  },
+  {
+    id: 2, name: 'Splat', emoji: '🩵',
+    // Blue — cool and chill
+    bodyLight: '#c0e8ff', bodyMid: '#6ec6ff', bodyDark: '#2060a0',
+    glow: 'rgba(110,198,255,0.7)',
+    outline: 'rgba(20,70,130,0.5)',
+    blush: 'rgba(140,210,255,0.4)',
+    shine: 'rgba(255,255,255,0.55)',
+    desc: 'Cool, calm, and splashy!',
+  },
+  {
+    id: 3, name: 'Wiggles', emoji: '🧡',
+    // Orange — wild and silly
+    bodyLight: '#ffe0b0', bodyMid: '#ff9840', bodyDark: '#c05010',
+    glow: 'rgba(255,152,64,0.7)',
+    outline: 'rgba(150,50,10,0.5)',
+    blush: 'rgba(255,180,100,0.45)',
+    shine: 'rgba(255,255,255,0.55)',
+    desc: 'Wiggles like crazy!',
+  },
+];
 
 const PLAYER_TITLES = ['Gloopy Newbie','Wobbly Apprentice','Slime Squire','Ooze Knight','Blob Baron','Gloop Lord','Supreme Sploosh'];
 
@@ -2329,11 +2722,13 @@ let nextObstacleIn = 100, deathFlash = 0, idleTime = 0, dotOffset = 0;
 let obstacles = [], particles = [], floatingWords = [], bgStars = [];
 
 function buildStars() {
+  // In Candyland mode, stars = floating candy/cloud decorations
   bgStars = [];
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 30; i++) {
     bgStars.push({
-      x: Math.random() * GW, y: Math.random() * (GROUND_Y - 40),
-      r: Math.random() * 1.5 + 0.3, twinkle: Math.random() * Math.PI * 2
+      x: Math.random() * GW, y: Math.random() * (GROUND_Y * 0.6),
+      r: Math.random() * 10 + 6, twinkle: Math.random() * Math.PI * 2,
+      type: Math.floor(Math.random() * 4) // 0=cloud 1=star 2=heart 3=candy
     });
   }
 }
@@ -2342,10 +2737,15 @@ let skyGrd, groundGrd;
 function buildGrads() {
   GROUND_Y = GH - Math.floor(GH * 0.14);
   if (!ctx) return;
+  // Candyland bright sky: soft blue-pink gradient
   skyGrd = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-  skyGrd.addColorStop(0, '#0d0520'); skyGrd.addColorStop(1, '#1e0a40');
+  skyGrd.addColorStop(0,   '#a8d8ff'); // sky blue top
+  skyGrd.addColorStop(0.45,'#ffd6f0'); // pink mid
+  skyGrd.addColorStop(1,   '#fff0c8'); // warm cream near ground
+  // Candy ground: green grass with pink tint
   groundGrd = ctx.createLinearGradient(0, GROUND_Y, 0, GH);
-  groundGrd.addColorStop(0, '#3b1a6b'); groundGrd.addColorStop(1, '#1a0a2e');
+  groundGrd.addColorStop(0, '#6ee87a');
+  groundGrd.addColorStop(1, '#3ab84a');
   buildStars();
 }
 
@@ -2659,154 +3059,228 @@ const gloop = {
 
   draw() {
     const cx = this.x, cy = this.y - this.h / 2;
+    const char = BASE_CHARS[STATE.baseCharacter] || BASE_CHARS[0];
+    // Skin overlay (tints the base char color)
     const skin = COSMETICS.skins[STATE.equippedSkin] || COSMETICS.skins[0];
     const eyeStyle = COSMETICS.eyes[STATE.equippedEyes] || COSMETICS.eyes[0];
     const hat = COSMETICS.hats[STATE.equippedHat];
     const trail = COSMETICS.trails[STATE.equippedTrail];
     ctx.save();
 
+    const hw = this.w / 2, hh = this.h / 2;
+    const wobbleAmt = this.wobble * 0.06;
+    const falling = this.vy > 2 && !this.grounded;
+    const excited = inputHeld && !this.grounded;
+
+    // Resolve body colors: skin overlay blends with base char
+    const bodyLight = skin.id === 0 ? char.bodyLight : skin.light;
+    const bodyMid   = skin.id === 0 ? char.bodyMid   : skin.mid;
+    const bodyDark  = skin.id === 0 ? char.bodyDark  : skin.dark;
+    const bodyGlow  = skin.id === 0 ? char.glow      : (skin.glow || char.glow);
+    const bodyBlush = skin.id === 0 ? char.blush     : (skin.blush || char.blush);
+    const bodyOutline = skin.id === 0 ? char.outline : (skin.outline || char.outline);
+
     // Trail / aura effect
     if (trail && trail.draw) trail.draw(ctx, cx, cy, this.w, this.h, frameCount);
 
-    // Glow shadow
-    ctx.shadowColor = skin.glow || '#7dff8f'; ctx.shadowBlur = 22;
+    // ── BODY SHADOW / GLOW ──────────────────────────────────
+    ctx.shadowColor = bodyGlow;
+    ctx.shadowBlur = 20;
 
-    // Body — organic blob shape using bezier curves
-    const hw = this.w / 2, hh = this.h / 2;
-    const wobbleAmt = this.wobble * 0.08;
+    // ── MAIN BODY — chubby round blob (wider than tall when squished) ──
     ctx.beginPath();
-    ctx.moveTo(cx, cy - hh);
+    // Top arc
+    ctx.moveTo(cx, cy - hh * 0.95);
     ctx.bezierCurveTo(
-      cx + hw * (1.1 + wobbleAmt), cy - hh * 0.6,
-      cx + hw * (1.1 - wobbleAmt), cy + hh * 0.6,
-      cx, cy + hh
+      cx + hw * (1.05 + wobbleAmt * 0.5), cy - hh * 0.7,
+      cx + hw * (1.12 - wobbleAmt * 0.3), cy + hh * 0.3,
+      cx + hw * 0.7,  cy + hh * 0.9
+    );
+    // Bottom arc
+    ctx.bezierCurveTo(
+      cx + hw * 0.3,  cy + hh * 1.02,
+      cx - hw * 0.3,  cy + hh * 1.02,
+      cx - hw * 0.7,  cy + hh * 0.9
     );
     ctx.bezierCurveTo(
-      cx - hw * (1.1 + wobbleAmt), cy + hh * 0.6,
-      cx - hw * (1.1 - wobbleAmt), cy - hh * 0.6,
-      cx, cy - hh
+      cx - hw * (1.12 + wobbleAmt * 0.3), cy + hh * 0.3,
+      cx - hw * (1.05 - wobbleAmt * 0.5), cy - hh * 0.7,
+      cx, cy - hh * 0.95
     );
     ctx.closePath();
 
-    // Body gradient
-    const grd = ctx.createRadialGradient(cx - hw * 0.2, cy - hh * 0.25, 2, cx, cy, Math.max(hw, hh) * 0.9);
-    grd.addColorStop(0, skin.light); grd.addColorStop(0.55, skin.mid); grd.addColorStop(1, skin.dark);
+    // Body radial gradient (light top-left, dark bottom-right)
+    const grd = ctx.createRadialGradient(
+      cx - hw * 0.25, cy - hh * 0.3, hw * 0.05,
+      cx + hw * 0.1,  cy + hh * 0.1, Math.max(hw, hh) * 1.1
+    );
+    grd.addColorStop(0,   bodyLight);
+    grd.addColorStop(0.5, bodyMid);
+    grd.addColorStop(1,   bodyDark);
     ctx.fillStyle = grd;
     ctx.fill();
     ctx.shadowBlur = 0;
 
     // Outline
-    ctx.strokeStyle = skin.outline || 'rgba(0,0,0,0.18)';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = bodyOutline;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Shine highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    // ── LITTLE NUB FEET (two small bumps at bottom) ──────────
+    for (let s of [-1, 1]) {
+      const fx = cx + s * hw * 0.38;
+      const fy = cy + hh * 0.95;
+      ctx.beginPath();
+      ctx.ellipse(fx, fy, hw * 0.22, hh * 0.18, 0, 0, Math.PI * 2);
+      const fgrd = ctx.createRadialGradient(fx - hw*0.05, fy - hh*0.05, 1, fx, fy, hw * 0.22);
+      fgrd.addColorStop(0, bodyLight); fgrd.addColorStop(1, bodyDark);
+      ctx.fillStyle = fgrd;
+      ctx.fill();
+      ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // ── LITTLE NUB ARMS (two small bumps on sides) ───────────
+    for (let s of [-1, 1]) {
+      const ax = cx + s * hw * 0.92;
+      const ay = cy + hh * 0.1 + (excited ? -hh * 0.15 : 0);
+      ctx.beginPath();
+      ctx.ellipse(ax, ay, hw * 0.2, hh * 0.16, s * 0.4, 0, Math.PI * 2);
+      const agrd = ctx.createRadialGradient(ax, ay - hh*0.05, 1, ax, ay, hw * 0.2);
+      agrd.addColorStop(0, bodyLight); agrd.addColorStop(1, bodyDark);
+      ctx.fillStyle = agrd;
+      ctx.fill();
+      ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // ── SHINE HIGHLIGHT (top-left glossy oval) ────────────────
+    ctx.fillStyle = char.shine || 'rgba(255,255,255,0.52)';
     ctx.beginPath();
-    ctx.ellipse(cx - hw * 0.22, cy - hh * 0.28, hw * 0.22, hh * 0.14, -0.4, 0, Math.PI * 2);
+    ctx.ellipse(cx - hw * 0.28, cy - hh * 0.35, hw * 0.26, hh * 0.16, -0.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Small secondary shine
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(cx - hw * 0.12, cy - hh * 0.15, hw * 0.1, hh * 0.07, -0.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Secondary shine
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    ctx.beginPath();
-    ctx.ellipse(cx + hw * 0.15, cy + hh * 0.2, hw * 0.12, hh * 0.08, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Pattern / texture overlay
+    // Pattern / texture overlay (from equipped skin)
     if (skin.pattern) skin.pattern(ctx, cx, cy, hw, hh);
 
-    // Eyes
-    const eyeSpacing = hw * 0.28;
-    const falling = this.vy > 2 && !this.grounded;
-    const excited = inputHeld && !this.grounded;
+    // ── EYES ─────────────────────────────────────────────────
+    const eyeSpacing = hw * 0.30;
+    const eyeW = hw * 0.38, eyeH = hh * 0.40;
     for (let s of [-1, 1]) {
       const ex = cx + s * eyeSpacing + this.eyeX;
-      const ey = cy - hh * 0.1 + this.eyeY;
-      // Eye white
+      const ey = cy - hh * 0.05 + this.eyeY;
+
+      // Eye white (large, round)
       ctx.fillStyle = '#fff';
-      ctx.shadowColor = 'rgba(255,255,255,0.5)'; ctx.shadowBlur = 4;
+      ctx.shadowColor = 'rgba(255,255,255,0.6)'; ctx.shadowBlur = 5;
       ctx.beginPath();
-      if (eyeStyle.shape === 'round') ctx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
-      else if (eyeStyle.shape === 'star') { drawStar(ctx, ex, ey, 5, 8, 4); }
-      else if (eyeStyle.shape === 'heart') { drawHeart(ctx, ex, ey, 7); }
-      else if (eyeStyle.shape === 'square') ctx.roundRect(ex-6, ey-7, 12, 14, 3);
-      else ctx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
+      if (eyeStyle.shape === 'star') { drawStar(ctx, ex, ey, 5, eyeW * 0.85, eyeW * 0.4); }
+      else if (eyeStyle.shape === 'heart') { drawHeart(ctx, ex, ey, eyeW * 0.75); }
+      else if (eyeStyle.shape === 'square') ctx.roundRect(ex - eyeW * 0.75, ey - eyeH * 0.9, eyeW * 1.5, eyeH * 1.8, eyeW * 0.3);
+      else ctx.ellipse(ex, ey, eyeW * 0.85, eyeH * 0.95, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
-      // Pupil
-      ctx.fillStyle = eyeStyle.pupilColor || '#1a0520';
-      const pupilX = ex + (excited ? 2 : falling ? 1 : 1.5);
-      const pupilY = ey + (excited ? -2 : falling ? 3 : 1);
-      ctx.beginPath(); ctx.ellipse(pupilX, pupilY, 4.5, 5.5, 0, 0, Math.PI * 2); ctx.fill();
-      // Iris color
+
+      // Pupil (dark, large)
+      const pupilX = ex + (excited ? 2.5 : falling ? 1.5 : 2);
+      const pupilY = ey + (excited ? -3 : falling ? eyeH * 0.35 : 1.5);
+      const pupilR = eyeW * 0.52;
+      ctx.fillStyle = eyeStyle.pupilColor || '#1a0a2a';
+      ctx.beginPath(); ctx.ellipse(pupilX, pupilY, pupilR, pupilR * 1.1, 0, 0, Math.PI * 2); ctx.fill();
+
+      // Iris tint
       if (eyeStyle.irisColor) {
         ctx.fillStyle = eyeStyle.irisColor;
-        ctx.globalAlpha = 0.6;
-        ctx.beginPath(); ctx.ellipse(pupilX, pupilY, 3, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath(); ctx.ellipse(pupilX, pupilY, pupilR * 0.65, pupilR * 0.72, 0, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
       }
-      // Shine dot
+
+      // Large shine dot (top-right of pupil)
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(pupilX + 2, pupilY - 1.5, 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(pupilX + pupilR * 0.45, pupilY - pupilR * 0.4, pupilR * 0.32, 0, Math.PI * 2); ctx.fill();
+      // Small secondary shine
+      ctx.beginPath(); ctx.arc(pupilX - pupilR * 0.2, pupilY + pupilR * 0.3, pupilR * 0.14, 0, Math.PI * 2); ctx.fill();
+
       // Excited sparkle
       if (excited) {
-        ctx.fillStyle = '#ffe066'; ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 6;
-        ctx.beginPath(); ctx.arc(ex + 8, ey - 8, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffe566'; ctx.shadowColor = '#ffe566'; ctx.shadowBlur = 8;
+        for (let a = 0; a < 4; a++) {
+          const ang = (a / 4) * Math.PI * 2 + frameCount * 0.08;
+          ctx.beginPath(); ctx.arc(ex + Math.cos(ang) * eyeW * 1.1, ey + Math.sin(ang) * eyeH * 1.1, 2, 0, Math.PI * 2); ctx.fill();
+        }
         ctx.shadowBlur = 0;
       }
     }
 
-    // Eyebrows
-    ctx.strokeStyle = skin.dark; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    // ── EYEBROWS ─────────────────────────────────────────────
+    ctx.strokeStyle = bodyDark; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
     for (let s of [-1, 1]) {
       const bx = cx + s * eyeSpacing + this.eyeX;
-      const by = cy - hh * 0.1 + this.eyeY - 12;
+      const by = cy - hh * 0.05 + this.eyeY - eyeH * 1.5;
       ctx.beginPath();
       if (falling) {
-        ctx.moveTo(bx - 6, by + (s === -1 ? 3 : 0));
-        ctx.lineTo(bx + 6, by + (s === -1 ? 0 : 3));
+        // Worried — inner ends raised
+        ctx.moveTo(bx - eyeW * 0.7, by + (s === -1 ? 4 : 0));
+        ctx.quadraticCurveTo(bx, by - 2, bx + eyeW * 0.7, by + (s === -1 ? 0 : 4));
       } else if (excited) {
-        ctx.moveTo(bx - 6, by - 2); ctx.lineTo(bx + 6, by - 2);
+        // Happy — arched high
+        ctx.moveTo(bx - eyeW * 0.7, by - 3);
+        ctx.quadraticCurveTo(bx, by - 7, bx + eyeW * 0.7, by - 3);
       } else {
-        ctx.moveTo(bx - 6, by); ctx.lineTo(bx + 6, by);
+        // Neutral — gentle arch
+        ctx.moveTo(bx - eyeW * 0.7, by);
+        ctx.quadraticCurveTo(bx, by - 4, bx + eyeW * 0.7, by);
       }
       ctx.stroke();
     }
 
-    // Mouth
-    const mouthY = cy + hh * 0.3;
-    ctx.strokeStyle = skin.dark || '#1a0520'; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
-    ctx.beginPath();
+    // ── MOUTH ────────────────────────────────────────────────
+    const mouthY = cy + hh * 0.38;
+    const mouthW = hw * 0.38;
+    ctx.strokeStyle = bodyDark; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
     if (excited) {
-      // Big open grin
-      ctx.arc(cx, mouthY - 2, hw * 0.26, 0.05, Math.PI - 0.05);
-    } else if (falling) {
-      // Worried O mouth
-      ctx.ellipse(cx, mouthY, hw * 0.12, hh * 0.1, 0, 0, Math.PI * 2);
-    } else {
-      // Happy smile
-      ctx.arc(cx, mouthY - 4, hw * 0.2, 0.15, Math.PI - 0.15);
-    }
-    ctx.stroke();
-
-    // Teeth when grinning
-    if (excited) {
+      // Big open happy mouth with teeth
+      ctx.beginPath();
+      ctx.arc(cx, mouthY, mouthW, 0.08, Math.PI - 0.08);
+      ctx.stroke();
+      // Teeth
       ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.arc(cx, mouthY - 2, hw * 0.22, 0.05, Math.PI - 0.05);
+      ctx.arc(cx, mouthY, mouthW * 0.85, 0.08, Math.PI - 0.08);
+      ctx.lineTo(cx - mouthW * 0.85, mouthY); ctx.closePath(); ctx.fill();
+      // Tongue
+      ctx.fillStyle = '#ff6eb4';
+      ctx.beginPath();
+      ctx.ellipse(cx, mouthY + mouthW * 0.35, mouthW * 0.42, mouthW * 0.28, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = skin.mid;
-      ctx.fillRect(cx - hw * 0.22, mouthY - 2, hw * 0.44, hh * 0.12);
+    } else if (falling) {
+      // Worried open O
+      ctx.beginPath();
+      ctx.ellipse(cx, mouthY, mouthW * 0.28, mouthW * 0.32, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      // Happy W-shaped smile (cute Candyland style)
+      ctx.beginPath();
+      ctx.moveTo(cx - mouthW, mouthY - 2);
+      ctx.quadraticCurveTo(cx - mouthW * 0.5, mouthY + mouthW * 0.55, cx, mouthY - 2);
+      ctx.quadraticCurveTo(cx + mouthW * 0.5, mouthY + mouthW * 0.55, cx + mouthW, mouthY - 2);
+      ctx.stroke();
     }
 
-    // Cheek blush
-    if (!falling) {
-      ctx.fillStyle = skin.blush || 'rgba(255,150,150,0.25)';
-      ctx.beginPath(); ctx.ellipse(cx - hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(cx + hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); ctx.fill();
-    }
+    // ── CHEEK BLUSH (rosy circles like reference image) ──────
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = bodyBlush;
+    ctx.beginPath(); ctx.ellipse(cx - hw * 0.52, cy + hh * 0.15, hw * 0.22, hh * 0.13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + hw * 0.52, cy + hh * 0.15, hw * 0.22, hh * 0.13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
 
-    // Hat / accessory
+    // ── HAT / ACCESSORY ──────────────────────────────────────
     if (hat && hat.draw) hat.draw(ctx, cx, cy - hh, hw, hh);
 
     ctx.restore();
@@ -2844,48 +3318,95 @@ function updateObstacles() {
 function drawObstacles() {
   for (let o of obstacles) {
     ctx.save();
-    ctx.shadowColor = o.color; ctx.shadowBlur = 14;
-    ctx.fillStyle = o.color;
+    const ox = o.x, oy = o.y, ow = o.w, oh = o.h;
 
     if (o.type === 'spike') {
-      // Triangle spike
+      // Candy corn / lollipop spike
+      ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 12;
+      // Stick
+      ctx.fillStyle = '#fff0c8';
       ctx.beginPath();
-      ctx.moveTo(o.x, o.y);
-      ctx.lineTo(o.x - o.w / 2, o.y - o.h);
-      ctx.lineTo(o.x + o.w / 2, o.y - o.h);
-      ctx.lineTo(o.x + o.w, o.y);
-      ctx.closePath(); ctx.fill();
-      // Highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.roundRect(ox - 4, oy - oh * 0.55, 8, oh * 0.55, 3);
+      ctx.fill();
+      // Lollipop head
+      const lolR = ow * 0.72;
+      const lolY = oy - oh * 0.55 - lolR;
+      const lolGrd = ctx.createRadialGradient(ox - lolR*0.25, lolY - lolR*0.25, 2, ox, lolY, lolR);
+      lolGrd.addColorStop(0, '#ffb8d8'); lolGrd.addColorStop(0.5, '#ff4d8b'); lolGrd.addColorStop(1, '#c0205a');
+      ctx.fillStyle = lolGrd;
+      ctx.beginPath(); ctx.arc(ox, lolY, lolR, 0, Math.PI * 2); ctx.fill();
+      // Swirl
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(o.x, o.y - 4);
-      ctx.lineTo(o.x - o.w * 0.3, o.y - o.h * 0.8);
-      ctx.lineTo(o.x + o.w * 0.1, o.y - o.h * 0.9);
-      ctx.closePath(); ctx.fill();
+      for (let a = 0; a < Math.PI * 1.5; a += 0.15) {
+        const r = lolR * 0.7 * (a / (Math.PI * 1.5));
+        const px = ox + Math.cos(a) * r, py = lolY + Math.sin(a) * r;
+        a < 0.15 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      // Shine
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.beginPath(); ctx.ellipse(ox - lolR*0.28, lolY - lolR*0.28, lolR*0.22, lolR*0.14, -0.5, 0, Math.PI*2); ctx.fill();
+
     } else if (o.type === 'wall') {
-      ctx.beginPath();
-      ctx.roundRect(o.x - o.w / 2, o.y - o.h, o.w, o.h, 4);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.15)';
-      ctx.beginPath();
-      ctx.roundRect(o.x - o.w / 2 + 3, o.y - o.h + 3, o.w * 0.4, o.h * 0.3, 3);
-      ctx.fill();
+      // Candy cane pillar
+      const wx = ox - ow / 2, wy = oy - oh;
+      ctx.shadowColor = '#ff6eb4'; ctx.shadowBlur = 10;
+      // Base pillar
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.roundRect(wx, wy, ow, oh, 6); ctx.fill();
+      // Candy stripes
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(wx, wy, ow, oh, 6); ctx.clip();
+      ctx.fillStyle = '#ff6eb4';
+      const stripeW = ow * 0.45;
+      for (let sy = wy - oh; sy < wy + oh * 2; sy += stripeW * 2) {
+        ctx.beginPath();
+        ctx.moveTo(wx, sy); ctx.lineTo(wx + ow, sy + stripeW);
+        ctx.lineTo(wx + ow, sy + stripeW * 2); ctx.lineTo(wx, sy + stripeW);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      ctx.strokeStyle = '#c0306e'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(wx, wy, ow, oh, 6); ctx.stroke();
+
     } else if (o.type === 'floater') {
-      ctx.beginPath();
-      ctx.ellipse(o.x, o.y - o.h / 2, o.w * 0.7, o.h * 0.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.25)';
-      ctx.beginPath();
-      ctx.ellipse(o.x - o.w * 0.15, o.y - o.h * 0.65, o.w * 0.2, o.h * 0.15, -0.3, 0, Math.PI * 2);
-      ctx.fill();
+      // Gummy bear / jelly blob floater
+      ctx.shadowColor = '#60d0ff'; ctx.shadowBlur = 14;
+      const fy = oy - oh / 2;
+      const fr = ow * 0.75;
+      const fgrd = ctx.createRadialGradient(ox - fr*0.2, fy - fr*0.2, 2, ox, fy, fr);
+      fgrd.addColorStop(0, '#c0f0ff'); fgrd.addColorStop(0.5, '#60d0ff'); fgrd.addColorStop(1, '#1a80c0');
+      ctx.fillStyle = fgrd;
+      ctx.beginPath(); ctx.ellipse(ox, fy, fr, fr * 0.85, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(20,100,180,0.4)'; ctx.lineWidth = 2; ctx.stroke();
+      // Smiley face on gummy
+      ctx.fillStyle = 'rgba(0,60,120,0.5)';
+      ctx.beginPath(); ctx.arc(ox - fr*0.28, fy - fr*0.1, fr*0.12, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(ox + fr*0.28, fy - fr*0.1, fr*0.12, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,60,120,0.5)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(ox, fy + fr*0.15, fr*0.22, 0.1, Math.PI-0.1); ctx.stroke();
+      // Shine
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath(); ctx.ellipse(ox - fr*0.2, fy - fr*0.3, fr*0.2, fr*0.12, -0.4, 0, Math.PI*2); ctx.fill();
+
     } else if (o.type === 'bouncer') {
-      ctx.beginPath();
-      ctx.arc(o.x, o.y - o.h / 2, o.w * 0.6, 0, Math.PI * 2);
-      ctx.fill();
+      // Bouncy gumball
+      const by = oy - oh / 2;
+      const br = ow * 0.65;
+      ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 14;
+      const bgrd = ctx.createRadialGradient(ox - br*0.25, by - br*0.25, 2, ox, by, br);
+      bgrd.addColorStop(0, '#fff5a0'); bgrd.addColorStop(0.5, '#ffe066'); bgrd.addColorStop(1, '#c08000');
+      ctx.fillStyle = bgrd;
+      ctx.beginPath(); ctx.arc(ox, by, br, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,100,0,0.4)'; ctx.lineWidth = 2; ctx.stroke();
+      // Star pattern
       ctx.fillStyle = 'rgba(255,255,255,0.3)';
-      ctx.beginPath();
-      ctx.arc(o.x - o.w * 0.15, o.y - o.h * 0.65, o.w * 0.2, 0, Math.PI * 2);
+      drawStar(ctx, ox, by, 5, br * 0.55, br * 0.25);
       ctx.fill();
+      // Shine
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.beginPath(); ctx.ellipse(ox - br*0.25, by - br*0.28, br*0.22, br*0.13, -0.4, 0, Math.PI*2); ctx.fill();
     }
     ctx.restore();
   }
@@ -2973,28 +3494,64 @@ function drawWords() {
 }
 
 function drawBg() {
+  // Sky
   ctx.fillStyle = skyGrd; ctx.fillRect(0, 0, GW, GH);
+
+  // Floating candy decorations (replace dark stars)
   if (env.stars) {
+    const candyColors = ['#ff6eb4','#ffe566','#6ec6ff','#a8ff78','#ffb347'];
     for (let s of bgStars) {
-      s.twinkle += 0.04 * dt;
-      ctx.globalAlpha = 0.4 + Math.sin(s.twinkle) * 0.4; ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
-      s.x -= speed * dt * 0.08; if (s.x < 0) { s.x = GW; s.y = Math.random() * (GROUND_Y - 40); }
+      s.twinkle += 0.025 * dt;
+      s.x -= speed * dt * 0.06;
+      if (s.x < -30) { s.x = GW + 30; s.y = Math.random() * (GROUND_Y * 0.55); s.type = Math.floor(Math.random()*4); }
+      ctx.save();
+      ctx.globalAlpha = 0.55 + Math.sin(s.twinkle) * 0.2;
+      const col = candyColors[Math.floor(s.r * 7) % candyColors.length];
+      ctx.fillStyle = col;
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.2;
+      if (s.type === 0) {
+        // Puffy cloud
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.arc(s.x + s.r * 0.9, s.y + s.r * 0.2, s.r * 0.75, 0, Math.PI * 2);
+        ctx.arc(s.x - s.r * 0.9, s.y + s.r * 0.2, s.r * 0.75, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.fill();
+      } else if (s.type === 1) {
+        // Star
+        drawStar(ctx, s.x, s.y, 5, s.r, s.r * 0.45);
+        ctx.fill(); ctx.stroke();
+      } else if (s.type === 2) {
+        // Heart
+        drawHeart(ctx, s.x, s.y, s.r * 0.8);
+        ctx.fill(); ctx.stroke();
+      } else {
+        // Candy dot
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 0.6, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+      }
+      ctx.restore();
     }
     ctx.globalAlpha = 1;
   }
+
+  // Ground (bright green grass)
   ctx.fillStyle = groundGrd; ctx.fillRect(0, GROUND_Y, GW, GH - GROUND_Y);
-  if (env.glow) {
-    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
-    ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2; ctx.shadowColor = '#a78bfa'; ctx.shadowBlur = 10;
-    ctx.stroke(); ctx.shadowBlur = 0;
-  } else {
-    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
-    ctx.strokeStyle = 'rgba(167,139,250,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Ground line — candy stripe
+  ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(GW, GROUND_Y);
+  ctx.strokeStyle = '#ff6eb4'; ctx.lineWidth = 3;
+  if (env.glow) { ctx.shadowColor = '#ff6eb4'; ctx.shadowBlur = 10; }
+  ctx.stroke(); ctx.shadowBlur = 0;
+
+  // Candy dots along ground
+  const ds = 36; dotOffset = (dotOffset + speed * dt * 0.5) % ds;
+  const dotColors = ['#ff6eb4','#ffe566','#6ec6ff','#a8ff78'];
+  for (let i = -ds; i < GW + ds; i += ds) {
+    const col = dotColors[Math.floor((i + ds * 10) / ds) % dotColors.length];
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(i + dotOffset, GROUND_Y + 10, 4, 0, Math.PI * 2); ctx.fill();
   }
-  const ds = 40; dotOffset = (dotOffset + speed * dt * 0.5) % ds;
-  ctx.fillStyle = 'rgba(167,139,250,0.25)';
-  for (let i = -ds; i < GW + ds; i += ds) { ctx.beginPath(); ctx.arc(i + dotOffset, GROUND_Y + 14, 3, 0, Math.PI * 2); ctx.fill(); }
 }
 
 function drawTouchHints() {
@@ -3753,6 +4310,206 @@ function equipCosmetic(key, id) {
 }
 
 // Wardrobe screen init is handled inside showScreen() above
+
+// ══════════════════════════════════════════
+//  DEVICE DETECTION & RESPONSIVE LAYOUT
+// ══════════════════════════════════════════
+const DEVICE = (function() {
+  const ua = navigator.userAgent || '';
+  const isIOS     = /iPhone|iPad|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+  const isMobile  = isIOS || isAndroid || window.innerWidth <= 480;
+  const isTablet  = !isMobile && (window.innerWidth <= 1024 || /iPad/.test(ua));
+  const isDesktop = !isMobile && !isTablet;
+  const dpr       = window.devicePixelRatio || 1;
+  const sw        = window.screen.width  * dpr;
+  const sh        = window.screen.height * dpr;
+  return { isIOS, isAndroid, isMobile, isTablet, isDesktop, dpr, sw, sh,
+    label: isMobile ? (isIOS ? 'iPhone' : 'Android') : isTablet ? 'Tablet' : 'Desktop' };
+})();
+
+function applyDeviceLayout() {
+  const r = document.documentElement;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const isPortrait = vh > vw;
+
+  // Orientation overlay: show on phone landscape
+  const oo = document.getElementById('orient-overlay');
+  if (DEVICE.isMobile && !isPortrait) {
+    oo.classList.add('show');
+  } else {
+    oo.classList.remove('show');
+  }
+
+  // Font scale: smaller on very small phones, larger on tablets/desktop
+  let fontScale = 1;
+  if (vw < 360) fontScale = 0.85;
+  else if (vw > 768) fontScale = 1.15;
+  else if (vw > 1024) fontScale = 1.3;
+  r.style.setProperty('--font-scale', fontScale);
+
+  // App max width
+  const maxW = DEVICE.isDesktop ? '480px' : '100%';
+  r.style.setProperty('--app-max-w', maxW);
+
+  // Nav height: taller on iPhone for home bar
+  const navH = DEVICE.isIOS ? '72px' : '60px';
+  r.style.setProperty('--nav-h', navH);
+
+  // Top bar height: taller on iPhone for notch
+  const topH = DEVICE.isIOS ? '60px' : '52px';
+  r.style.setProperty('--top-h', topH);
+
+  // Gloop size: scale with screen
+  const gloopBase = Math.max(36, Math.min(56, vw * 0.12));
+  r.style.setProperty('--gloop-base', gloopBase + 'px');
+}
+
+// Run on load and on resize/orientation change
+applyDeviceLayout();
+window.addEventListener('resize', applyDeviceLayout);
+window.addEventListener('orientationchange', () => setTimeout(applyDeviceLayout, 200));
+
+// Also update gloop size from CSS var
+function syncGloopSizeFromDevice() {
+  const base = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gloop-base')) || 46;
+  gloop.bw = base; gloop.bh = base;
+}
+
+// ══════════════════════════════════════════
+//  CHARACTER SELECT SCREEN
+// ══════════════════════════════════════════
+function renderCharSelect() {
+  const grid = document.getElementById('charselect-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  BASE_CHARS.forEach((char, i) => {
+    const card = document.createElement('div');
+    card.className = 'char-card' + (STATE.baseCharacter === i ? ' selected' : '');
+    card.innerHTML = `
+      <div class="cc-check">✔️</div>
+      <canvas id="cc-canvas-${i}" width="100" height="100" style="background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border-radius:12px;"></canvas>
+      <div class="cc-name">${char.name}</div>
+      <div class="cc-desc">${char.desc}</div>
+    `;
+    card.onclick = () => selectBaseChar(i);
+    grid.appendChild(card);
+
+    // Draw mini preview on the card canvas
+    setTimeout(() => drawCharPreview(i), 20);
+  });
+}
+
+function drawCharPreview(charIdx) {
+  const canvasEl = document.getElementById('cc-canvas-' + charIdx);
+  if (!canvasEl) return;
+  const c = canvasEl.getContext('2d');
+  const W = canvasEl.width, H = canvasEl.height;
+  c.clearRect(0, 0, W, H);
+
+  const char = BASE_CHARS[charIdx];
+  const cx = W / 2, cy = H * 0.52;
+  const hw = W * 0.32, hh = H * 0.34;
+
+  // Glow
+  c.shadowColor = char.glow; c.shadowBlur = 16;
+
+  // Body
+  c.beginPath();
+  c.moveTo(cx, cy - hh * 0.95);
+  c.bezierCurveTo(cx + hw * 1.05, cy - hh * 0.7, cx + hw * 1.12, cy + hh * 0.3, cx + hw * 0.7, cy + hh * 0.9);
+  c.bezierCurveTo(cx + hw * 0.3, cy + hh * 1.02, cx - hw * 0.3, cy + hh * 1.02, cx - hw * 0.7, cy + hh * 0.9);
+  c.bezierCurveTo(cx - hw * 1.12, cy + hh * 0.3, cx - hw * 1.05, cy - hh * 0.7, cx, cy - hh * 0.95);
+  c.closePath();
+  const grd = c.createRadialGradient(cx - hw*0.25, cy - hh*0.3, 2, cx, cy, Math.max(hw,hh)*1.1);
+  grd.addColorStop(0, char.bodyLight); grd.addColorStop(0.5, char.bodyMid); grd.addColorStop(1, char.bodyDark);
+  c.fillStyle = grd; c.fill();
+  c.shadowBlur = 0;
+  c.strokeStyle = char.outline; c.lineWidth = 2; c.stroke();
+
+  // Feet
+  for (let s of [-1,1]) {
+    c.beginPath(); c.ellipse(cx + s*hw*0.38, cy+hh*0.95, hw*0.22, hh*0.18, 0, 0, Math.PI*2);
+    c.fillStyle = char.bodyMid; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1.5; c.stroke();
+  }
+  // Arms
+  for (let s of [-1,1]) {
+    c.beginPath(); c.ellipse(cx+s*hw*0.92, cy+hh*0.1, hw*0.2, hh*0.16, s*0.4, 0, Math.PI*2);
+    c.fillStyle = char.bodyMid; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1.5; c.stroke();
+  }
+  // Shine
+  c.fillStyle = char.shine || 'rgba(255,255,255,0.5)';
+  c.beginPath(); c.ellipse(cx - hw*0.28, cy - hh*0.35, hw*0.26, hh*0.16, -0.5, 0, Math.PI*2); c.fill();
+
+  // Eyes
+  const eyeSpacing = hw * 0.3;
+  for (let s of [-1,1]) {
+    const ex = cx + s * eyeSpacing, ey = cy - hh*0.05;
+    const ew = hw*0.38, eh = hh*0.4;
+    c.fillStyle = '#fff'; c.beginPath(); c.ellipse(ex, ey, ew*0.85, eh*0.95, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#1a0a2a'; c.beginPath(); c.ellipse(ex+2, ey+1.5, ew*0.52, ew*0.57, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(ex + ew*0.25, ey - ew*0.22, ew*0.18, 0, Math.PI*2); c.fill();
+  }
+  // Blush
+  c.globalAlpha = 0.7; c.fillStyle = char.blush;
+  c.beginPath(); c.ellipse(cx-hw*0.52, cy+hh*0.15, hw*0.22, hh*0.13, 0, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.ellipse(cx+hw*0.52, cy+hh*0.15, hw*0.22, hh*0.13, 0, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  // Smile
+  c.strokeStyle = char.bodyDark; c.lineWidth = 2.5; c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(cx - hw*0.38, cy + hh*0.38 - 2);
+  c.quadraticCurveTo(cx - hw*0.19, cy + hh*0.38 + hw*0.55*0.55, cx, cy + hh*0.38 - 2);
+  c.quadraticCurveTo(cx + hw*0.19, cy + hh*0.38 + hw*0.55*0.55, cx + hw*0.38, cy + hh*0.38 - 2);
+  c.stroke();
+}
+
+function selectBaseChar(idx) {
+  STATE.baseCharacter = idx;
+  saveGame();
+  renderCharSelect();
+  const char = BASE_CHARS[idx];
+  showToast(char.emoji, `${char.name} selected!`, 'green');
+}
+
+// Wire charselect into showScreen (patch via monkey-patch, not redeclaration)
+(function patchShowScreenForCharSelect() {
+  const orig = showScreen;
+  window.showScreen = function(id) {
+    orig(id);
+    if (id === 'charselect-screen') setTimeout(renderCharSelect, 50);
+  };
+})();
+
+// Add "My Gloop" tile to hub if not already there
+(function addMyGloopTile() {
+  const grid = document.getElementById('hub-grid');
+  if (!grid) return;
+  const existing = grid.querySelector('[data-tile="mygloop"]');
+  if (existing) return;
+  const tile = document.createElement('div');
+  tile.className = 'hub-tile';
+  tile.setAttribute('data-tile','mygloop');
+  tile.onclick = () => showScreen('charselect-screen');
+  tile.innerHTML = `
+    <div class="ht-icon">🥷</div>
+    <div class="ht-label">My Gloop</div>
+    <div class="ht-sub">Pick character</div>
+  `;
+  // Insert as second tile (after Play)
+  const firstTile = grid.querySelector('.hub-tile');
+  if (firstTile && firstTile.nextSibling) {
+    grid.insertBefore(tile, firstTile.nextSibling);
+  } else {
+    grid.appendChild(tile);
+  }
+})();
+
+// Apply device layout after all JS is ready
+applyDeviceLayout();
+
 </script>
 </body>
 </html>
