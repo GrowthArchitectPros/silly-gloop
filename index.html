@@ -996,27 +996,36 @@ body{
 ═══════════════════════════════════════════════════════ -->
 <div id="hub-screen" class="screen">
   <!-- Currency Bar -->
-  <div class="top-bar">
-    <div class="currency-group">
-      <div class="cur-pill">
-        <span class="icon">⚡</span>
-        <span class="val" id="hub-energy">5/5</span>
+  <div class="top-bar" style="flex-wrap:wrap;gap:4px;">
+    <div class="currency-group" style="flex-wrap:wrap;gap:4px;">
+      <div class="cur-pill" title="Energy">
+        <span class="icon" style="color:#60d0ff;">⚡</span>
+        <span class="val cur-energy">5/5</span>
         <div class="add-btn" onclick="openVideoForEnergy()">+</div>
       </div>
-      <div class="cur-pill">
-        <span class="icon">🪙</span>
-        <span class="val" id="hub-gold">247,009</span>
+      <div class="cur-pill" title="Gold">
+        <span class="icon" style="color:#ffe066;">🪙</span>
+        <span class="val cur-gold" id="hub-gold">0</span>
         <div class="add-btn" onclick="openVideoForGold()">+</div>
       </div>
-      <div class="cur-pill">
-        <span class="icon">💎</span>
-        <span class="val" id="hub-gems">3,344</span>
+      <div class="cur-pill" title="Gems">
+        <span class="icon" style="color:#a78bfa;">💎</span>
+        <span class="val cur-gems" id="hub-gems">0</span>
         <div class="add-btn" onclick="openVideoForGems()">+</div>
+      </div>
+      <div class="cur-pill" title="Trophies — earn by playing">
+        <span class="icon" style="color:#ffe066;">🏆</span>
+        <span class="val cur-trophies" id="hub-trophies">0</span>
+      </div>
+      <div class="cur-pill" title="Mystic Tokens — earn from videos &amp; high scores">
+        <span class="icon" style="color:#c084fc;">🔮</span>
+        <span class="val cur-tokens" id="hub-tokens">0</span>
+        <div class="add-btn" onclick="openVideoForTokens()">+</div>
       </div>
     </div>
     <div class="top-bar-right">
       <div class="icon-btn" onclick="showToast('📬','Inbox coming soon!','purple')">🔔</div>
-      <div class="icon-btn" onclick="showScreen('settings-screen')">⚙</div>
+      <div class="icon-btn" onclick="showScreen('settings-screen')">&#9881;</div>
     </div>
   </div>
 
@@ -1089,6 +1098,12 @@ body{
       <div class="tile-icon">🥇</div>
       <div class="tile-label">Leaderboard</div>
       <div class="tile-sub">Rank #142</div>
+    </div>
+    <div class="hub-tile" onclick="showScreen('wardrobe-screen')">
+      <div class="tile-icon">🎨</div>
+      <div class="tile-label">Wardrobe</div>
+      <div class="tile-sub" id="wardrobe-sub">Customize Gloop</div>
+      <div class="tile-badge" id="wardrobe-badge" style="display:none;">NEW</div>
     </div>
   </div>
 
@@ -1444,6 +1459,47 @@ body{
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
+     WARDROBE / CUSTOMIZE SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="wardrobe-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="flex-row">
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">&#8249;</div>
+      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">WARDROBE</span>
+    </div>
+    <div class="currency-group">
+      <div class="cur-pill" title="Trophies">
+        <span class="icon">🏆</span>
+        <span class="val cur-trophies">0</span>
+      </div>
+      <div class="cur-pill" title="Mystic Tokens">
+        <span class="icon">🔮</span>
+        <span class="val cur-tokens">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview canvas -->
+  <div style="display:flex;justify-content:center;align-items:center;padding:12px 0 4px;flex-shrink:0;">
+    <canvas id="wardrobe-canvas" width="160" height="160" style="border-radius:20px;background:linear-gradient(135deg,#1e0a40,#0d0520);border:2px solid var(--border);"></canvas>
+  </div>
+  <div style="text-align:center;font-size:11px;color:var(--dim);margin-bottom:6px;letter-spacing:1px;">PREVIEW</div>
+
+  <!-- Category tabs -->
+  <div class="shop-tabs" id="wardrobe-tabs" style="flex-shrink:0;">
+    <div class="shop-tab active" onclick="setWardrobeTab('skins',this)">🎨 Skins</div>
+    <div class="shop-tab" onclick="setWardrobeTab('eyes',this)">👁 Eyes</div>
+    <div class="shop-tab" onclick="setWardrobeTab('hats',this)">🎩 Hats</div>
+    <div class="shop-tab" onclick="setWardrobeTab('trails',this)">✨ Trails</div>
+  </div>
+
+  <!-- Cosmetic grid -->
+  <div class="scroll-content" id="wardrobe-grid" style="padding:10px 14px 20px;">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      SETTINGS SCREEN
 ═══════════════════════════════════════════════════════ -->
 <div id="settings-screen" class="screen hidden">
@@ -1523,21 +1579,34 @@ body{
 //  GLOBAL STATE
 // ══════════════════════════════════════════
 const STATE = {
-  gold: 247009,
-  gems: 3344,
+  gold: 0,          // Will be set to 500 on first launch
+  gems: 0,          // Will be set to 500 on first launch
+  trophies: 0,      // Trophy currency - earned from gameplay milestones
+  tokens: 0,        // Special token - rarest, earned from videos & events
   energy: 5,
   maxEnergy: 5,
-  playerLevel: 7,
-  xp: 2340,
-  xpMax: 3000,
+  playerLevel: 1,
+  xp: 0,
+  xpMax: 1000,
   hiScore: 0,
   questProgress: {},
   passLevel: 1,
-  passXP: 980,
+  passXP: 0,
   claimedRewards: new Set(),
   questClaimed: new Set(),
   videoWatched: 0,
   interactions: { like:false, share:false, save:false },
+  // Cosmetics
+  equippedSkin: 0,
+  equippedEyes: 0,
+  equippedHat: 0,
+  equippedTrail: 0,
+  unlockedSkins: new Set([0]),
+  unlockedEyes: new Set([0]),
+  unlockedHats: new Set([0]),
+  unlockedTrails: new Set([0]),
+  trophiesEarned: 0,
+  firstLaunch: true,
 };
 
 const PLAYER_TITLES = ['Gloopy Newbie','Wobbly Apprentice','Slime Squire','Ooze Knight','Blob Baron','Gloop Lord','Supreme Sploosh'];
@@ -1568,21 +1637,44 @@ function showScreen(id) {
   if (id === 'quest-screen') renderQuests('daily');
   if (id === 'shop-screen') renderShop('video');
   if (id === 'pass-screen') renderPassTrack();
+  if (id === 'wardrobe-screen') {
+    setTimeout(() => {
+      if (!wardrobeCtx) initWardrobeCanvas();
+      wardrobeAnim = true;
+      renderWardrobePreview();
+      renderWardrobeGrid();
+    }, 50);
+  } else {
+    if (typeof wardrobeAnim !== 'undefined') wardrobeAnim = null;
+  }
   updateCurrencyDisplays();
 }
 
 function updateCurrencyDisplays() {
-  const g = STATE.gold >= 1000 ? Math.floor(STATE.gold/1000)+'k' : STATE.gold;
+  const fmt = n => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.floor(n/1000)+'k' : n;
+  document.querySelectorAll('.cur-gold').forEach(el => el.textContent = STATE.gold.toLocaleString());
+  document.querySelectorAll('.cur-gems').forEach(el => el.textContent = STATE.gems.toLocaleString());
+  document.querySelectorAll('.cur-trophies').forEach(el => el.textContent = STATE.trophies.toLocaleString());
+  document.querySelectorAll('.cur-tokens').forEach(el => el.textContent = STATE.tokens.toLocaleString());
+  document.querySelectorAll('.cur-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
+  // Legacy IDs
   document.querySelectorAll('#hub-gold').forEach(el => el.textContent = STATE.gold.toLocaleString());
   document.querySelectorAll('#hub-gems,#camp-gems,#shop-gems').forEach(el => el.textContent = STATE.gems.toLocaleString());
   document.querySelectorAll('#hub-energy,#camp-energy,#shop-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
-  document.querySelectorAll('#shop-gold').forEach(el => el.textContent = g);
-  document.getElementById('player-lv').textContent = STATE.playerLevel;
-  document.getElementById('player-title').textContent = PLAYER_TITLES[Math.min(STATE.playerLevel-1, PLAYER_TITLES.length-1)];
+  document.querySelectorAll('#shop-gold').forEach(el => el.textContent = fmt(STATE.gold));
+  document.querySelectorAll('#hub-trophies').forEach(el => el.textContent = STATE.trophies);
+  document.querySelectorAll('#hub-tokens').forEach(el => el.textContent = STATE.tokens);
+  const lv = document.getElementById('player-lv');
+  if (lv) lv.textContent = STATE.playerLevel;
+  const pt = document.getElementById('player-title');
+  if (pt) pt.textContent = PLAYER_TITLES[Math.min(STATE.playerLevel-1, PLAYER_TITLES.length-1)];
   const xpPct = Math.round((STATE.xp / STATE.xpMax) * 100);
-  document.getElementById('xp-bar').style.width = xpPct + '%';
-  document.getElementById('xp-cur').textContent = STATE.xp.toLocaleString();
-  document.getElementById('xp-max').textContent = STATE.xpMax.toLocaleString();
+  const xpBar = document.getElementById('xp-bar');
+  if (xpBar) xpBar.style.width = xpPct + '%';
+  const xpCur = document.getElementById('xp-cur');
+  if (xpCur) xpCur.textContent = STATE.xp.toLocaleString();
+  const xpMax = document.getElementById('xp-max');
+  if (xpMax) xpMax.textContent = STATE.xpMax.toLocaleString();
 }
 
 function earnGold(amount) {
@@ -1595,6 +1687,52 @@ function earnGems(amount) {
   updateCurrencyDisplays();
   saveGame();
 }
+function earnTrophies(amount) {
+  STATE.trophies += amount;
+  STATE.trophiesEarned += amount;
+  updateCurrencyDisplays();
+  checkCosmeticUnlocks();
+  saveGame();
+}
+function earnTokens(amount) {
+  STATE.tokens += amount;
+  updateCurrencyDisplays();
+  saveGame();
+}
+
+// Check if new cosmetics unlocked by level or trophies
+function checkCosmeticUnlocks() {
+  let newUnlock = false;
+  COSMETICS.skins.forEach(s => {
+    if (!s.seasonal && s.unlockLv <= STATE.playerLevel && !STATE.unlockedSkins.has(s.id)) {
+      STATE.unlockedSkins.add(s.id);
+      showToast('🎨', `New skin unlocked: ${s.name}!`, 'purple');
+      newUnlock = true;
+    }
+  });
+  COSMETICS.eyes.forEach(e => {
+    if (e.unlockLv <= STATE.playerLevel && !STATE.unlockedEyes.has(e.id)) {
+      STATE.unlockedEyes.add(e.id);
+      showToast('👁️', `New eyes unlocked: ${e.name}!`, 'purple');
+      newUnlock = true;
+    }
+  });
+  COSMETICS.hats.forEach(h => {
+    if (h && !h.seasonal && h.unlockLv <= STATE.playerLevel && !STATE.unlockedHats.has(h.id)) {
+      STATE.unlockedHats.add(h.id);
+      showToast('🎩', `New hat unlocked: ${h.name}!`, 'gold');
+      newUnlock = true;
+    }
+  });
+  COSMETICS.trails.forEach(t => {
+    if (t && !t.seasonal && t.unlockLv <= STATE.playerLevel && !STATE.unlockedTrails.has(t.id)) {
+      STATE.unlockedTrails.add(t.id);
+      showToast('✨', `New trail unlocked: ${t.name}!`, 'green');
+      newUnlock = true;
+    }
+  });
+  if (newUnlock) saveGame();
+}
 function earnXP(amount) {
   STATE.xp += amount;
   if (STATE.xp >= STATE.xpMax) {
@@ -1603,6 +1741,7 @@ function earnXP(amount) {
     STATE.xpMax = Math.floor(STATE.xpMax * 1.25);
     updateCurrencyDisplays();
     showLevelUp(STATE.playerLevel);
+    checkCosmeticUnlocks(); // Check for new unlocks on level up
   }
   updateCurrencyDisplays();
 }
@@ -2214,6 +2353,242 @@ const FALL_W    = ['SPLAT!','SQUISH!','BLOOP!','GLOB!','OOZE!','PLOP!','SQUELCH!
 const STRETCH_W = ['STRREEETCH!','ELONGATE!','GOING UP!','WHEEE!','ZOOOM!','SPRANG!'];
 const HIT_W     = ['OOF!','BONK!','SPLORP!','NOPE!','DENIED!','BLOCKED!'];
 
+// ══════════════════════════════════════════
+//  COSMETICS SYSTEM
+// ══════════════════════════════════════════
+
+// Helper drawing functions for eye shapes
+function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+  let rot = (Math.PI / 2) * 3, step = Math.PI / spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerR);
+  for (let i = 0; i < spikes; i++) {
+    ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR); rot += step;
+    ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR); rot += step;
+  }
+  ctx.closePath();
+}
+function drawHeart(ctx, cx, cy, size) {
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + size * 0.4);
+  ctx.bezierCurveTo(cx - size, cy - size * 0.3, cx - size * 1.2, cy - size, cx, cy - size * 0.5);
+  ctx.bezierCurveTo(cx + size * 1.2, cy - size, cx + size, cy - size * 0.3, cx, cy + size * 0.4);
+  ctx.closePath();
+}
+
+const COSMETICS = {
+  skins: [
+    // id 0 - Classic Gloop (default, always unlocked)
+    { id:0, name:'Classic Gloop', rarity:'common', unlockLv:0,
+      light:'#b8ffb8', mid:'#7dff8f', dark:'#2a7a38', glow:'#7dff8f',
+      outline:'rgba(30,80,40,0.3)', blush:'rgba(180,255,180,0.3)' },
+    // id 1 - Ocean Blue
+    { id:1, name:'Ocean Blue', rarity:'common', unlockLv:3,
+      light:'#b8e8ff', mid:'#60d0ff', dark:'#1a5a8a', glow:'#60d0ff',
+      outline:'rgba(20,60,100,0.3)', blush:'rgba(150,220,255,0.3)' },
+    // id 2 - Sunset Orange
+    { id:2, name:'Sunset Orange', rarity:'rare', unlockLv:7,
+      light:'#ffe8b8', mid:'#ff8c32', dark:'#8a3a10', glow:'#ff8c32',
+      outline:'rgba(100,40,10,0.3)', blush:'rgba(255,180,100,0.3)' },
+    // id 3 - Royal Purple
+    { id:3, name:'Royal Purple', rarity:'rare', unlockLv:12,
+      light:'#e8d0ff', mid:'#a78bfa', dark:'#4a2a8a', glow:'#a78bfa',
+      outline:'rgba(50,20,100,0.3)', blush:'rgba(200,160,255,0.3)' },
+    // id 4 - Lava Red
+    { id:4, name:'Lava Red', rarity:'epic', unlockLv:18,
+      light:'#ffb8c0', mid:'#ff4d6d', dark:'#8a1a2a', glow:'#ff4d6d',
+      outline:'rgba(100,10,20,0.3)', blush:'rgba(255,150,160,0.3)' },
+    // id 5 - Gold King
+    { id:5, name:'Gold King', rarity:'epic', unlockLv:25,
+      light:'#fff8b8', mid:'#ffe066', dark:'#8a6a00', glow:'#ffe066',
+      outline:'rgba(100,80,0,0.3)', blush:'rgba(255,240,150,0.3)' },
+    // id 6 - Void Black
+    { id:6, name:'Void Black', rarity:'legendary', unlockLv:35,
+      light:'#6a5a8a', mid:'#2a1a4a', dark:'#0a0514', glow:'#a78bfa',
+      outline:'rgba(100,80,160,0.5)', blush:'rgba(100,80,160,0.2)',
+      pattern:(ctx,cx,cy,hw,hh) => {
+        // Stars pattern on body
+        ctx.fillStyle = 'rgba(167,139,250,0.4)';
+        for (let i=0;i<5;i++) {
+          const sx = cx + (Math.sin(i*1.3)*hw*0.6);
+          const sy = cy + (Math.cos(i*1.7)*hh*0.5);
+          ctx.beginPath(); ctx.arc(sx,sy,1.5,0,Math.PI*2); ctx.fill();
+        }
+      }
+    },
+    // id 7 - Rainbow (seasonal)
+    { id:7, name:'Rainbow Gloop', rarity:'seasonal', unlockLv:0, seasonal:true,
+      light:'#ffb8ff', mid:'#ff80ff', dark:'#8a008a', glow:'#ff80ff',
+      outline:'rgba(100,0,100,0.3)', blush:'rgba(255,180,255,0.3)',
+      pattern:(ctx,cx,cy,hw,hh) => {
+        const colors = ['#ff4d6d','#ff8c32','#ffe066','#7dff8f','#60d0ff','#a78bfa'];
+        colors.forEach((c,i) => {
+          ctx.fillStyle = c; ctx.globalAlpha = 0.18;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy - hh*0.6 + i*(hh*0.22), hw*0.7, hh*0.08, 0, 0, Math.PI*2);
+          ctx.fill(); ctx.globalAlpha = 1;
+        });
+      }
+    },
+    // id 8 - Ice Crystal
+    { id:8, name:'Ice Crystal', rarity:'epic', unlockLv:20,
+      light:'#e0f8ff', mid:'#a0e8ff', dark:'#2060a0', glow:'#a0e8ff',
+      outline:'rgba(20,60,120,0.4)', blush:'rgba(160,230,255,0.3)',
+      pattern:(ctx,cx,cy,hw,hh) => {
+        ctx.strokeStyle = 'rgba(200,240,255,0.4)'; ctx.lineWidth = 1;
+        for (let i=0;i<3;i++) {
+          const a = i * Math.PI / 3;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a)*hw*0.8, cy + Math.sin(a)*hh*0.8);
+          ctx.stroke();
+        }
+      }
+    },
+  ],
+  eyes: [
+    { id:0, name:'Classic', shape:'round', pupilColor:'#1a0520', unlockLv:0 },
+    { id:1, name:'Blue Eyes', shape:'round', pupilColor:'#1a0520', irisColor:'#60d0ff', unlockLv:5 },
+    { id:2, name:'Star Eyes', shape:'star', pupilColor:'#1a0520', irisColor:'#ffe066', unlockLv:10 },
+    { id:3, name:'Heart Eyes', shape:'heart', pupilColor:'#ff4d6d', irisColor:'#ff80a0', unlockLv:15 },
+    { id:4, name:'Square Eyes', shape:'square', pupilColor:'#1a0520', irisColor:'#a78bfa', unlockLv:20 },
+    { id:5, name:'Galaxy Eyes', shape:'round', pupilColor:'#0a0514', irisColor:'#a78bfa', unlockLv:30, rarity:'legendary' },
+  ],
+  hats: [
+    null, // 0 = no hat
+    { id:1, name:'Party Hat', rarity:'common', unlockLv:2,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        ctx.fillStyle = '#ff4d6d'; ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.moveTo(cx, top-28); ctx.lineTo(cx-14, top+2); ctx.lineTo(cx+14, top+2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ffe066';
+        ctx.beginPath(); ctx.arc(cx, top-28, 4, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(cx-14, top+2); ctx.lineTo(cx+14, top+2); ctx.stroke();
+        ctx.setLineDash([]); ctx.restore();
+      }
+    },
+    { id:2, name:'Crown', rarity:'rare', unlockLv:8,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        ctx.fillStyle = '#ffe066'; ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(cx-16, top+2); ctx.lineTo(cx-16, top-14);
+        ctx.lineTo(cx-8, top-8); ctx.lineTo(cx, top-18);
+        ctx.lineTo(cx+8, top-8); ctx.lineTo(cx+16, top-14);
+        ctx.lineTo(cx+16, top+2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ff4d6d';
+        ctx.beginPath(); ctx.arc(cx, top-16, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx-14, top-12, 2, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx+14, top-12, 2, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+    },
+    { id:3, name:'Wizard Hat', rarity:'epic', unlockLv:15,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        ctx.fillStyle = '#4a2a8a'; ctx.shadowColor = '#a78bfa'; ctx.shadowBlur = 14;
+        ctx.beginPath(); ctx.moveTo(cx, top-36); ctx.lineTo(cx-18, top+2); ctx.lineTo(cx+18, top+2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#a78bfa';
+        ctx.beginPath(); ctx.ellipse(cx, top+2, 20, 5, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#ffe066'; ctx.font = '10px serif';
+        ctx.textAlign = 'center'; ctx.fillText('★', cx-4, top-16);
+        ctx.fillText('✦', cx+5, top-8);
+        ctx.restore();
+      }
+    },
+    { id:4, name:'Halo', rarity:'legendary', unlockLv:40,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 3;
+        ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 16;
+        ctx.beginPath(); ctx.ellipse(cx, top-10, 18, 6, 0, 0, Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }
+    },
+    { id:5, name:'Bunny Ears', rarity:'seasonal', unlockLv:0, seasonal:true,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        for (let s of [-1,1]) {
+          ctx.fillStyle = '#ffb8d0'; ctx.shadowColor = '#ff80a0'; ctx.shadowBlur = 8;
+          ctx.beginPath(); ctx.ellipse(cx+s*12, top-22, 5, 14, s*0.2, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#ff80a0';
+          ctx.beginPath(); ctx.ellipse(cx+s*12, top-22, 3, 10, s*0.2, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+    },
+    { id:6, name:'Sunglasses', rarity:'rare', unlockLv:6,
+      draw:(ctx,cx,top,hw,hh) => {
+        ctx.save();
+        const ey = top + hh*0.3 + 2; // approximate eye level from top
+        ctx.fillStyle = '#1a0520'; ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 1.5;
+        ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 6;
+        for (let s of [-1,1]) {
+          ctx.beginPath(); ctx.roundRect(cx+s*6-8, ey-5, 14, 10, 3);
+          ctx.fill(); ctx.stroke();
+        }
+        ctx.beginPath(); ctx.moveTo(cx-2, ey); ctx.lineTo(cx+2, ey); ctx.stroke();
+        ctx.restore();
+      }
+    },
+  ],
+  trails: [
+    null, // 0 = no trail
+    { id:1, name:'Sparkle Trail', rarity:'common', unlockLv:4,
+      draw:(ctx,cx,cy,w,h,frame) => {
+        for (let i=1;i<=4;i++) {
+          ctx.save();
+          ctx.globalAlpha = 0.15 * (5-i);
+          ctx.fillStyle = '#7dff8f'; ctx.shadowColor = '#7dff8f'; ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.ellipse(cx - i*8, cy, w/2*(1-i*0.12), h/2*(1-i*0.12), 0, 0, Math.PI*2);
+          ctx.fill(); ctx.restore();
+        }
+      }
+    },
+    { id:2, name:'Fire Trail', rarity:'epic', unlockLv:16,
+      draw:(ctx,cx,cy,w,h,frame) => {
+        for (let i=1;i<=5;i++) {
+          ctx.save();
+          ctx.globalAlpha = 0.2 * (6-i);
+          const colors = ['#ff4d6d','#ff8c32','#ffe066'];
+          ctx.fillStyle = colors[i%3]; ctx.shadowColor = colors[i%3]; ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.ellipse(cx - i*9, cy + Math.sin(frame*0.3+i)*3, w/2*(1-i*0.1), h/2*(1-i*0.1), 0, 0, Math.PI*2);
+          ctx.fill(); ctx.restore();
+        }
+      }
+    },
+    { id:3, name:'Rainbow Trail', rarity:'legendary', unlockLv:0, seasonal:true,
+      draw:(ctx,cx,cy,w,h,frame) => {
+        const colors = ['#ff4d6d','#ff8c32','#ffe066','#7dff8f','#60d0ff','#a78bfa'];
+        colors.forEach((c,i) => {
+          ctx.save();
+          ctx.globalAlpha = 0.18;
+          ctx.fillStyle = c; ctx.shadowColor = c; ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.ellipse(cx-(i+1)*7, cy+Math.sin(frame*0.2+i)*4, w/2*0.7, h/2*0.7, 0, 0, Math.PI*2);
+          ctx.fill(); ctx.restore();
+        });
+      }
+    },
+    { id:4, name:'Star Trail', rarity:'rare', unlockLv:11,
+      draw:(ctx,cx,cy,w,h,frame) => {
+        for (let i=0;i<5;i++) {
+          ctx.save();
+          ctx.globalAlpha = 0.3 - i*0.05;
+          ctx.fillStyle = '#ffe066'; ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 8;
+          const sx = cx - (i+1)*10 + Math.sin(frame*0.15+i)*3;
+          const sy = cy + Math.cos(frame*0.2+i)*4;
+          drawStar(ctx, sx, sy, 5, 5-i*0.5, 2-i*0.2);
+          ctx.fill(); ctx.restore();
+        }
+      }
+    },
+  ],
+};
+
 // Gloop character
 const gloop = {
   x: 0, y: 0, vy: 0,
@@ -2243,6 +2618,14 @@ const gloop = {
     }
     this.vy = Math.min(this.vy + c.grav * dt, MAX_FALL);
     this.y += this.vy * dt;
+
+    // Ceiling boundary — prevents flying off the top
+    const CEILING_Y = this.h + 8;
+    if (this.y - this.h < 0) {
+      this.y = this.h + 2;
+      this.vy = Math.abs(this.vy) * 0.4; // bounce back down
+      if (env.words) spawnWord(this.x, this.y, ['BONK!','CEILING!','TOO HIGH!','NOPE!'], '#ffe066');
+    }
 
     if (this.y >= GROUND_Y) {
       if (this.vy > 3) {
@@ -2276,49 +2659,156 @@ const gloop = {
 
   draw() {
     const cx = this.x, cy = this.y - this.h / 2;
+    const skin = COSMETICS.skins[STATE.equippedSkin] || COSMETICS.skins[0];
+    const eyeStyle = COSMETICS.eyes[STATE.equippedEyes] || COSMETICS.eyes[0];
+    const hat = COSMETICS.hats[STATE.equippedHat];
+    const trail = COSMETICS.trails[STATE.equippedTrail];
     ctx.save();
-    // Shadow
-    ctx.shadowColor = '#7dff8f'; ctx.shadowBlur = 18;
-    // Body gradient
-    const grd = ctx.createRadialGradient(cx - this.w * 0.15, cy - this.h * 0.18, 2, cx, cy, Math.max(this.w, this.h) * 0.7);
-    grd.addColorStop(0, '#b8ffb8'); grd.addColorStop(0.5, '#7dff8f'); grd.addColorStop(1, '#2a7a38');
-    ctx.fillStyle = grd;
+
+    // Trail / aura effect
+    if (trail && trail.draw) trail.draw(ctx, cx, cy, this.w, this.h, frameCount);
+
+    // Glow shadow
+    ctx.shadowColor = skin.glow || '#7dff8f'; ctx.shadowBlur = 22;
+
+    // Body — organic blob shape using bezier curves
+    const hw = this.w / 2, hh = this.h / 2;
+    const wobbleAmt = this.wobble * 0.08;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, this.w / 2, this.h / 2, 0, 0, Math.PI * 2);
+    ctx.moveTo(cx, cy - hh);
+    ctx.bezierCurveTo(
+      cx + hw * (1.1 + wobbleAmt), cy - hh * 0.6,
+      cx + hw * (1.1 - wobbleAmt), cy + hh * 0.6,
+      cx, cy + hh
+    );
+    ctx.bezierCurveTo(
+      cx - hw * (1.1 + wobbleAmt), cy + hh * 0.6,
+      cx - hw * (1.1 - wobbleAmt), cy - hh * 0.6,
+      cx, cy - hh
+    );
+    ctx.closePath();
+
+    // Body gradient
+    const grd = ctx.createRadialGradient(cx - hw * 0.2, cy - hh * 0.25, 2, cx, cy, Math.max(hw, hh) * 0.9);
+    grd.addColorStop(0, skin.light); grd.addColorStop(0.55, skin.mid); grd.addColorStop(1, skin.dark);
+    ctx.fillStyle = grd;
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Shine
-    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    // Outline
+    ctx.strokeStyle = skin.outline || 'rgba(0,0,0,0.18)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Shine highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
     ctx.beginPath();
-    ctx.ellipse(cx - this.w * 0.18, cy - this.h * 0.22, this.w * 0.18, this.h * 0.12, -0.4, 0, Math.PI * 2);
+    ctx.ellipse(cx - hw * 0.22, cy - hh * 0.28, hw * 0.22, hh * 0.14, -0.4, 0, Math.PI * 2);
     ctx.fill();
 
+    // Secondary shine
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.beginPath();
+    ctx.ellipse(cx + hw * 0.15, cy + hh * 0.2, hw * 0.12, hh * 0.08, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pattern / texture overlay
+    if (skin.pattern) skin.pattern(ctx, cx, cy, hw, hh);
+
     // Eyes
-    const eyeSpacing = this.w * 0.22;
+    const eyeSpacing = hw * 0.28;
+    const falling = this.vy > 2 && !this.grounded;
+    const excited = inputHeld && !this.grounded;
     for (let s of [-1, 1]) {
       const ex = cx + s * eyeSpacing + this.eyeX;
-      const ey = cy - this.h * 0.08 + this.eyeY;
+      const ey = cy - hh * 0.1 + this.eyeY;
+      // Eye white
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.ellipse(ex, ey, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#1a0520';
-      ctx.beginPath(); ctx.ellipse(ex + 1.5, ey + 1, 4, 5, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowColor = 'rgba(255,255,255,0.5)'; ctx.shadowBlur = 4;
+      ctx.beginPath();
+      if (eyeStyle.shape === 'round') ctx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
+      else if (eyeStyle.shape === 'star') { drawStar(ctx, ex, ey, 5, 8, 4); }
+      else if (eyeStyle.shape === 'heart') { drawHeart(ctx, ex, ey, 7); }
+      else if (eyeStyle.shape === 'square') ctx.roundRect(ex-6, ey-7, 12, 14, 3);
+      else ctx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // Pupil
+      ctx.fillStyle = eyeStyle.pupilColor || '#1a0520';
+      const pupilX = ex + (excited ? 2 : falling ? 1 : 1.5);
+      const pupilY = ey + (excited ? -2 : falling ? 3 : 1);
+      ctx.beginPath(); ctx.ellipse(pupilX, pupilY, 4.5, 5.5, 0, 0, Math.PI * 2); ctx.fill();
+      // Iris color
+      if (eyeStyle.irisColor) {
+        ctx.fillStyle = eyeStyle.irisColor;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.ellipse(pupilX, pupilY, 3, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      // Shine dot
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(ex + 2.5, ey - 1, 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(pupilX + 2, pupilY - 1.5, 1.8, 0, Math.PI * 2); ctx.fill();
+      // Excited sparkle
+      if (excited) {
+        ctx.fillStyle = '#ffe066'; ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 6;
+        ctx.beginPath(); ctx.arc(ex + 8, ey - 8, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // Eyebrows
+    ctx.strokeStyle = skin.dark; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    for (let s of [-1, 1]) {
+      const bx = cx + s * eyeSpacing + this.eyeX;
+      const by = cy - hh * 0.1 + this.eyeY - 12;
+      ctx.beginPath();
+      if (falling) {
+        ctx.moveTo(bx - 6, by + (s === -1 ? 3 : 0));
+        ctx.lineTo(bx + 6, by + (s === -1 ? 0 : 3));
+      } else if (excited) {
+        ctx.moveTo(bx - 6, by - 2); ctx.lineTo(bx + 6, by - 2);
+      } else {
+        ctx.moveTo(bx - 6, by); ctx.lineTo(bx + 6, by);
+      }
+      ctx.stroke();
     }
 
     // Mouth
-    const mouthY = cy + this.h * 0.22;
-    const happy = !inputHeld || this.grounded;
-    ctx.strokeStyle = '#1a0520'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    const mouthY = cy + hh * 0.3;
+    ctx.strokeStyle = skin.dark || '#1a0520'; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
     ctx.beginPath();
-    if (happy) {
-      ctx.arc(cx, mouthY, this.w * 0.2, 0.1, Math.PI - 0.1);
+    if (excited) {
+      // Big open grin
+      ctx.arc(cx, mouthY - 2, hw * 0.26, 0.05, Math.PI - 0.05);
+    } else if (falling) {
+      // Worried O mouth
+      ctx.ellipse(cx, mouthY, hw * 0.12, hh * 0.1, 0, 0, Math.PI * 2);
     } else {
-      ctx.moveTo(cx - this.w * 0.18, mouthY + 4);
-      ctx.quadraticCurveTo(cx, mouthY - 4, cx + this.w * 0.18, mouthY + 4);
+      // Happy smile
+      ctx.arc(cx, mouthY - 4, hw * 0.2, 0.15, Math.PI - 0.15);
     }
     ctx.stroke();
+
+    // Teeth when grinning
+    if (excited) {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(cx, mouthY - 2, hw * 0.22, 0.05, Math.PI - 0.05);
+      ctx.fill();
+      ctx.fillStyle = skin.mid;
+      ctx.fillRect(cx - hw * 0.22, mouthY - 2, hw * 0.44, hh * 0.12);
+    }
+
+    // Cheek blush
+    if (!falling) {
+      ctx.fillStyle = skin.blush || 'rgba(255,150,150,0.25)';
+      ctx.beginPath(); ctx.ellipse(cx - hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Hat / accessory
+    if (hat && hat.draw) hat.draw(ctx, cx, cy - hh, hw, hh);
+
     ctx.restore();
   }
 };
@@ -2560,6 +3050,12 @@ function die() {
   const xpEarned = Math.floor(score * 0.8) + 10;
   earnGold(goldEarned);
   earnXP(xpEarned);
+  // Earn trophies every 10 points
+  const trophiesEarned = Math.floor(score / 10);
+  if (trophiesEarned > 0) earnTrophies(trophiesEarned);
+  // Earn tokens for high scores (every 50 pts)
+  const tokensEarned = Math.floor(score / 50);
+  if (tokensEarned > 0) { earnTokens(tokensEarned); showToast('🔮', `+${tokensEarned} Mystic Token${tokensEarned>1?'s':''}!`, 'purple'); }
 
   // Update daily quest
   QUESTS.daily.find(q => q.id === 'd1').cur = Math.min(3, (QUESTS.daily.find(q => q.id === 'd1').cur || 0) + 1);
@@ -2904,18 +3400,25 @@ const SAVE_KEY = 'silly_gloop_v1';
 function saveGame() {
   try {
     const data = {
-      gold: STATE.gold,
-      gems: STATE.gems,
+      gold: STATE.gold, gems: STATE.gems,
+      trophies: STATE.trophies, tokens: STATE.tokens,
+      trophiesEarned: STATE.trophiesEarned,
       energy: STATE.energy,
-      playerLevel: STATE.playerLevel,
-      xp: STATE.xp,
-      xpMax: STATE.xpMax,
+      playerLevel: STATE.playerLevel, xp: STATE.xp, xpMax: STATE.xpMax,
       hiScore: STATE.hiScore,
-      passLevel: STATE.passLevel,
-      passXP: STATE.passXP,
+      passLevel: STATE.passLevel, passXP: STATE.passXP,
       videoWatched: STATE.videoWatched,
       questClaimed: [...STATE.questClaimed],
       claimedRewards: [...STATE.claimedRewards],
+      equippedSkin: STATE.equippedSkin,
+      equippedEyes: STATE.equippedEyes,
+      equippedHat: STATE.equippedHat,
+      equippedTrail: STATE.equippedTrail,
+      unlockedSkins: [...STATE.unlockedSkins],
+      unlockedEyes: [...STATE.unlockedEyes],
+      unlockedHats: [...STATE.unlockedHats],
+      unlockedTrails: [...STATE.unlockedTrails],
+      firstLaunch: false,
       lastSave: Date.now(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -2925,10 +3428,21 @@ function saveGame() {
 function loadGame() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      // FIRST LAUNCH — give 500 of each currency
+      STATE.gold = 500;
+      STATE.gems = 500;
+      STATE.trophies = 500;
+      STATE.tokens = 50;
+      STATE.firstLaunch = true;
+      return;
+    }
     const d = JSON.parse(raw);
     STATE.gold = d.gold ?? STATE.gold;
     STATE.gems = d.gems ?? STATE.gems;
+    STATE.trophies = d.trophies ?? 0;
+    STATE.tokens = d.tokens ?? 0;
+    STATE.trophiesEarned = d.trophiesEarned ?? 0;
     STATE.energy = d.energy ?? STATE.energy;
     STATE.playerLevel = d.playerLevel ?? STATE.playerLevel;
     STATE.xp = d.xp ?? STATE.xp;
@@ -2939,13 +3453,26 @@ function loadGame() {
     STATE.videoWatched = d.videoWatched ?? STATE.videoWatched;
     if (d.questClaimed) STATE.questClaimed = new Set(d.questClaimed);
     if (d.claimedRewards) STATE.claimedRewards = new Set(d.claimedRewards);
+    // Cosmetics
+    STATE.equippedSkin = d.equippedSkin ?? 0;
+    STATE.equippedEyes = d.equippedEyes ?? 0;
+    STATE.equippedHat = d.equippedHat ?? 0;
+    STATE.equippedTrail = d.equippedTrail ?? 0;
+    if (d.unlockedSkins) STATE.unlockedSkins = new Set(d.unlockedSkins);
+    if (d.unlockedEyes) STATE.unlockedEyes = new Set(d.unlockedEyes);
+    if (d.unlockedHats) STATE.unlockedHats = new Set(d.unlockedHats);
+    if (d.unlockedTrails) STATE.unlockedTrails = new Set(d.unlockedTrails);
+    STATE.firstLaunch = d.firstLaunch ?? false;
     // Offline energy regen: 1 energy per 10 min
     if (d.lastSave && STATE.energy < STATE.maxEnergy) {
       const mins = Math.floor((Date.now() - d.lastSave) / 60000);
       const regen = Math.floor(mins / 10);
       STATE.energy = Math.min(STATE.maxEnergy, STATE.energy + regen);
     }
-    document.getElementById('g-hi').textContent = STATE.hiScore;
+    const hiEl = document.getElementById('g-hi');
+    if (hiEl) hiEl.textContent = STATE.hiScore;
+    // Re-check unlocks based on current level
+    checkCosmeticUnlocks();
   } catch(e) {}
 }
 
@@ -2974,12 +3501,258 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 requestAnimationFrame(gameLoop);
 
 // Show welcome toast
-setTimeout(() => {
-  showToast('🫧', 'Welcome to Silly Gloop! Tap PLAY to start!', 'green');
-}, 500);
-setTimeout(() => {
-  showToast('📺', 'Watch videos to earn FREE rewards!', 'gold');
-}, 2000);
+if (STATE.firstLaunch) {
+  setTimeout(() => showToast('🎉', 'Welcome! You got 500 Gold, 500 Gems, 500 Trophies + 50 Tokens!', 'gold'), 600);
+  setTimeout(() => showToast('🎨', 'Customize your Gloop in the Wardrobe!', 'purple'), 2500);
+  setTimeout(() => showToast('📺', 'Watch videos to earn rare rewards!', 'green'), 4200);
+  saveGame(); // Mark first launch done
+} else {
+  setTimeout(() => showToast('🫧', 'Welcome back to Silly Gloop!', 'green'), 500);
+  setTimeout(() => showToast('📺', 'Watch videos to earn FREE rewards!', 'gold'), 2000);
+}
+
+// ══════════════════════════════════════════
+//  VIDEO FOR TOKENS
+// ══════════════════════════════════════════
+function openVideoForTokens() {
+  openVideo({
+    title: '🔮 Watch for Mystic Tokens!',
+    rewardIcon: '🔮',
+    rewardName: '+5 Mystic Tokens',
+    rewardDesc: 'Rare currency for exclusive cosmetics',
+    onClaim: () => { earnTokens(5); showToast('🔮', '+5 Mystic Tokens earned!', 'purple'); }
+  });
+}
+
+// ══════════════════════════════════════════
+//  WARDROBE SYSTEM
+// ══════════════════════════════════════════
+let wardrobeTab = 'skins';
+let wardrobeCtx = null;
+let wardrobeAnim = null;
+let wardrobeFrame = 0;
+
+function initWardrobeCanvas() {
+  const wc = document.getElementById('wardrobe-canvas');
+  if (!wc) return;
+  wardrobeCtx = wc.getContext('2d');
+  renderWardrobePreview();
+}
+
+function renderWardrobePreview() {
+  if (!wardrobeCtx) return;
+  const wc = document.getElementById('wardrobe-canvas');
+  const W = wc.width, H = wc.height;
+  wardrobeCtx.clearRect(0, 0, W, H);
+
+  // Background
+  const bg = wardrobeCtx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0d0520'); bg.addColorStop(1, '#1e0a40');
+  wardrobeCtx.fillStyle = bg; wardrobeCtx.fillRect(0, 0, W, H);
+
+  // Animated ground dots
+  wardrobeCtx.fillStyle = 'rgba(167,139,250,0.2)';
+  for (let i = 0; i < 5; i++) {
+    wardrobeCtx.beginPath();
+    wardrobeCtx.arc(20 + i * 30 + (wardrobeFrame * 0.5 % 30), H * 0.82, 3, 0, Math.PI * 2);
+    wardrobeCtx.fill();
+  }
+
+  // Draw gloop preview using current equipped cosmetics
+  const skin = COSMETICS.skins[STATE.equippedSkin] || COSMETICS.skins[0];
+  const eyeStyle = COSMETICS.eyes[STATE.equippedEyes] || COSMETICS.eyes[0];
+  const hat = COSMETICS.hats[STATE.equippedHat];
+  const trail = COSMETICS.trails[STATE.equippedTrail];
+
+  const cx = W / 2, cy = H * 0.52;
+  const wobble = Math.sin(wardrobeFrame * 0.04) * 0.3;
+  const hw = 38 + Math.sin(wardrobeFrame * 0.06) * 3;
+  const hh = 42 + Math.cos(wardrobeFrame * 0.05) * 3;
+
+  // Trail preview
+  if (trail && trail.draw) trail.draw(wardrobeCtx, cx, cy, hw*2, hh*2, wardrobeFrame);
+
+  // Glow
+  wardrobeCtx.shadowColor = skin.glow || '#7dff8f';
+  wardrobeCtx.shadowBlur = 20;
+
+  // Body
+  wardrobeCtx.beginPath();
+  wardrobeCtx.moveTo(cx, cy - hh);
+  wardrobeCtx.bezierCurveTo(cx + hw * (1.1 + wobble), cy - hh * 0.6, cx + hw * (1.1 - wobble), cy + hh * 0.6, cx, cy + hh);
+  wardrobeCtx.bezierCurveTo(cx - hw * (1.1 + wobble), cy + hh * 0.6, cx - hw * (1.1 - wobble), cy - hh * 0.6, cx, cy - hh);
+  wardrobeCtx.closePath();
+  const grd = wardrobeCtx.createRadialGradient(cx - hw * 0.2, cy - hh * 0.25, 2, cx, cy, Math.max(hw, hh) * 0.9);
+  grd.addColorStop(0, skin.light); grd.addColorStop(0.55, skin.mid); grd.addColorStop(1, skin.dark);
+  wardrobeCtx.fillStyle = grd; wardrobeCtx.fill();
+  wardrobeCtx.shadowBlur = 0;
+  wardrobeCtx.strokeStyle = skin.outline || 'rgba(0,0,0,0.18)';
+  wardrobeCtx.lineWidth = 1.5; wardrobeCtx.stroke();
+
+  // Shine
+  wardrobeCtx.fillStyle = 'rgba(255,255,255,0.3)';
+  wardrobeCtx.beginPath();
+  wardrobeCtx.ellipse(cx - hw * 0.22, cy - hh * 0.28, hw * 0.22, hh * 0.14, -0.4, 0, Math.PI * 2);
+  wardrobeCtx.fill();
+
+  // Pattern
+  if (skin.pattern) skin.pattern(wardrobeCtx, cx, cy, hw, hh);
+
+  // Eyes
+  const eyeSpacing = hw * 0.28;
+  for (let s of [-1, 1]) {
+    const ex = cx + s * eyeSpacing;
+    const ey = cy - hh * 0.1;
+    wardrobeCtx.fillStyle = '#fff';
+    wardrobeCtx.shadowColor = 'rgba(255,255,255,0.5)'; wardrobeCtx.shadowBlur = 4;
+    wardrobeCtx.beginPath();
+    if (eyeStyle.shape === 'round') wardrobeCtx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
+    else if (eyeStyle.shape === 'star') { drawStar(wardrobeCtx, ex, ey, 5, 8, 4); }
+    else if (eyeStyle.shape === 'heart') { drawHeart(wardrobeCtx, ex, ey, 7); }
+    else if (eyeStyle.shape === 'square') wardrobeCtx.roundRect(ex-6, ey-7, 12, 14, 3);
+    else wardrobeCtx.ellipse(ex, ey, 8, 9, 0, 0, Math.PI * 2);
+    wardrobeCtx.fill(); wardrobeCtx.shadowBlur = 0;
+    wardrobeCtx.fillStyle = eyeStyle.pupilColor || '#1a0520';
+    wardrobeCtx.beginPath(); wardrobeCtx.ellipse(ex + 1.5, ey + 1, 4.5, 5.5, 0, 0, Math.PI * 2); wardrobeCtx.fill();
+    if (eyeStyle.irisColor) {
+      wardrobeCtx.fillStyle = eyeStyle.irisColor; wardrobeCtx.globalAlpha = 0.6;
+      wardrobeCtx.beginPath(); wardrobeCtx.ellipse(ex + 1.5, ey + 1, 3, 3.5, 0, 0, Math.PI * 2); wardrobeCtx.fill();
+      wardrobeCtx.globalAlpha = 1;
+    }
+    wardrobeCtx.fillStyle = '#fff';
+    wardrobeCtx.beginPath(); wardrobeCtx.arc(ex + 3.5, ey - 0.5, 1.8, 0, Math.PI * 2); wardrobeCtx.fill();
+  }
+
+  // Blush
+  wardrobeCtx.fillStyle = skin.blush || 'rgba(255,150,150,0.25)';
+  wardrobeCtx.beginPath(); wardrobeCtx.ellipse(cx - hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); wardrobeCtx.fill();
+  wardrobeCtx.beginPath(); wardrobeCtx.ellipse(cx + hw * 0.42, cy + hh * 0.08, hw * 0.18, hh * 0.1, 0, 0, Math.PI * 2); wardrobeCtx.fill();
+
+  // Smile
+  wardrobeCtx.strokeStyle = skin.dark || '#1a0520'; wardrobeCtx.lineWidth = 2.8; wardrobeCtx.lineCap = 'round';
+  wardrobeCtx.beginPath();
+  wardrobeCtx.arc(cx, cy + hh * 0.3 - 4, hw * 0.2, 0.15, Math.PI - 0.15);
+  wardrobeCtx.stroke();
+
+  // Hat
+  if (hat && hat.draw) hat.draw(wardrobeCtx, cx, cy - hh, hw, hh);
+
+  wardrobeFrame++;
+  if (wardrobeAnim) wardrobeAnim = requestAnimationFrame(renderWardrobePreview);
+}
+
+function setWardrobeTab(tab, el) {
+  wardrobeTab = tab;
+  document.querySelectorAll('#wardrobe-tabs .shop-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderWardrobeGrid();
+}
+
+const RARITY_COLORS = { common:'#a0a0b0', rare:'#60d0ff', epic:'#a78bfa', legendary:'#ffe066', seasonal:'#ff80ff' };
+const RARITY_LABELS = { common:'Common', rare:'Rare', epic:'Epic', legendary:'Legendary', seasonal:'✨ Seasonal' };
+
+function renderWardrobeGrid() {
+  const grid = document.getElementById('wardrobe-grid');
+  if (!grid) return;
+  let items, equippedKey, unlockedKey;
+  if (wardrobeTab === 'skins') { items = COSMETICS.skins; equippedKey = 'equippedSkin'; unlockedKey = 'unlockedSkins'; }
+  else if (wardrobeTab === 'eyes') { items = COSMETICS.eyes; equippedKey = 'equippedEyes'; unlockedKey = 'unlockedEyes'; }
+  else if (wardrobeTab === 'hats') { items = COSMETICS.hats.filter(h => h !== null); equippedKey = 'equippedHat'; unlockedKey = 'unlockedHats'; }
+  else { items = COSMETICS.trails.filter(t => t !== null); equippedKey = 'equippedTrail'; unlockedKey = 'unlockedTrails'; }
+
+  grid.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:10px;';
+
+  items.forEach(item => {
+    if (!item) return;
+    const unlocked = STATE[unlockedKey].has(item.id);
+    const equipped = STATE[equippedKey] === item.id;
+    const rarity = item.rarity || 'common';
+    const rarityColor = RARITY_COLORS[rarity] || '#a0a0b0';
+
+    const card = document.createElement('div');
+    card.style.cssText = `background:rgba(255,255,255,0.04);border:2px solid ${equipped ? rarityColor : 'rgba(255,255,255,0.08)'};border-radius:14px;padding:12px 10px;text-align:center;cursor:pointer;position:relative;transition:all 0.2s;`;
+    if (equipped) card.style.background = `rgba(${rarity==='legendary'?'255,224,102':'167,139,250'},0.08)`;
+
+    // Rarity badge
+    const badge = document.createElement('div');
+    badge.style.cssText = `position:absolute;top:6px;right:6px;font-size:9px;font-weight:900;color:${rarityColor};letter-spacing:0.5px;text-transform:uppercase;`;
+    badge.textContent = RARITY_LABELS[rarity] || rarity;
+    card.appendChild(badge);
+
+    // Seasonal badge
+    if (item.seasonal) {
+      const sb = document.createElement('div');
+      sb.style.cssText = 'position:absolute;top:6px;left:6px;font-size:9px;background:rgba(255,128,255,0.2);color:#ff80ff;border-radius:4px;padding:1px 4px;font-weight:900;';
+      sb.textContent = 'SEASON';
+      card.appendChild(sb);
+    }
+
+    // Preview swatch
+    const swatch = document.createElement('div');
+    if (wardrobeTab === 'skins') {
+      swatch.style.cssText = `width:52px;height:52px;border-radius:50%;margin:8px auto 6px;background:radial-gradient(circle at 35% 35%, ${item.light}, ${item.mid}, ${item.dark});box-shadow:0 0 12px ${item.glow || item.mid};`;
+    } else if (wardrobeTab === 'eyes') {
+      swatch.style.cssText = `width:52px;height:52px;border-radius:50%;margin:8px auto 6px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;`;
+      swatch.textContent = item.shape === 'star' ? '⭐' : item.shape === 'heart' ? '❤️' : item.shape === 'square' ? '🔲' : '👁️';
+    } else if (wardrobeTab === 'hats') {
+      swatch.style.cssText = `width:52px;height:52px;border-radius:50%;margin:8px auto 6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:26px;`;
+      swatch.textContent = item.id===1?'🎉':item.id===2?'👑':item.id===3?'🧙':item.id===4?'😇':item.id===5?'🐰':item.id===6?'😎':'🎩';
+    } else {
+      swatch.style.cssText = `width:52px;height:52px;border-radius:50%;margin:8px auto 6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:26px;`;
+      swatch.textContent = item.id===1?'✨':item.id===2?'🔥':item.id===3?'🌈':item.id===4?'⭐':'✨';
+    }
+    card.appendChild(swatch);
+
+    // Name
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;';
+    name.textContent = item.name;
+    card.appendChild(name);
+
+    // Unlock info or equip button
+    if (!unlocked) {
+      const lockInfo = document.createElement('div');
+      if (item.seasonal) {
+        lockInfo.style.cssText = 'font-size:10px;color:#ff80ff;';
+        lockInfo.textContent = '✨ Seasonal Event';
+      } else {
+        lockInfo.style.cssText = 'font-size:10px;color:var(--dim);';
+        lockInfo.textContent = `🔒 Unlock at Lv ${item.unlockLv}`;
+      }
+      card.appendChild(lockInfo);
+      card.style.opacity = '0.6';
+      card.onclick = () => showToast('🔒', item.seasonal ? 'Available in seasonal events!' : `Reach Level ${item.unlockLv} to unlock!`, 'purple');
+    } else if (equipped) {
+      const eq = document.createElement('div');
+      eq.style.cssText = `font-size:11px;font-weight:900;color:${rarityColor};letter-spacing:1px;`;
+      eq.textContent = '✓ EQUIPPED';
+      card.appendChild(eq);
+      card.onclick = () => {};
+    } else {
+      const btn = document.createElement('button');
+      btn.style.cssText = 'background:rgba(167,139,250,0.15);border:1.5px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-size:11px;font-weight:900;padding:4px 12px;cursor:pointer;letter-spacing:0.5px;';
+      btn.textContent = 'EQUIP';
+      card.appendChild(btn);
+      card.onclick = () => equipCosmetic(equippedKey, item.id);
+    }
+
+    wrap.appendChild(card);
+  });
+
+  grid.appendChild(wrap);
+}
+
+function equipCosmetic(key, id) {
+  STATE[key] = id;
+  renderWardrobeGrid();
+  renderWardrobePreview();
+  saveGame();
+  showToast('🎨', 'Equipped! Looking fresh!', 'green');
+}
+
+// Wardrobe screen init is handled inside showScreen() above
 </script>
 </body>
 </html>
