@@ -151,11 +151,18 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 ══════════════════════════════════════════ */
 .screen{
   position:fixed;inset:0;
-  display:flex;flex-direction:column;align-items:center;
+  display:flex;flex-direction:column;
+  align-items:center;
   overflow-y:auto;overflow-x:hidden;
   z-index:10;
   background:transparent;
   transition:opacity .28s, transform .28s;
+}
+/* Full-bleed screens override centering */
+#hub-screen, #campaign-screen, #game-screen {
+  align-items:stretch;
+  width:100%;
+  max-width:100%;
 }
 .screen.hidden{display:none!important;}
 .screen-enter{animation:screenIn .28s cubic-bezier(.34,1.56,.64,1) forwards;}
@@ -1346,7 +1353,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <!-- ════════════════════════════════════════════════════════
      HUB SCREEN (Candy Crush-style start)
 ════════════════════════════════════════════════════════ -->
-<div id="hub-screen" class="screen" style="overflow:hidden;padding:0;position:fixed;inset:0;display:flex;flex-direction:column;">
+<div id="hub-screen" class="screen" style="overflow:hidden;padding:0;position:fixed;inset:0;display:flex;flex-direction:column;align-items:stretch;width:100%;max-width:100%;height:100%;">
 
   <!-- ── PINK TOP BAR (Candy Crush style) ───────────────────────── -->
   <div id="hub-topbar" style="
