@@ -161,6 +161,34 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 .screen-enter{animation:screenIn .28s cubic-bezier(.34,1.56,.64,1) forwards;}
 @keyframes screenIn{from{opacity:0;transform:scale(0.94) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
 
+/* Hub start screen animations */
+@keyframes logoSway{
+  0%{transform:rotate(-4deg) translateY(0);}
+  50%{transform:rotate(4deg) translateY(-6px);}
+  100%{transform:rotate(-4deg) translateY(0);}
+}
+@keyframes playPulse{
+  0%{transform:scale(1);box-shadow:0 6px 32px rgba(255,110,180,0.6);}
+  50%{transform:scale(1.06);box-shadow:0 10px 48px rgba(255,110,180,0.9);}
+  100%{transform:scale(1);box-shadow:0 6px 32px rgba(255,110,180,0.6);}
+}
+@keyframes candyFloat{
+  0%{transform:translateY(0) rotate(0deg);}
+  33%{transform:translateY(-10px) rotate(8deg);}
+  66%{transform:translateY(-5px) rotate(-5deg);}
+  100%{transform:translateY(0) rotate(0deg);}
+}
+@keyframes heartBeat{
+  0%,100%{transform:scale(1);}
+  15%{transform:scale(1.25);}
+  30%{transform:scale(0.95);}
+  45%{transform:scale(1.15);}
+}
+@keyframes shimmer{
+  0%{background-position:-200% center;}
+  100%{background-position:200% center;}
+}
+
 /* ══════════════════════════════════════════
    GLOBAL TOP BAR (currency bar)
 ══════════════════════════════════════════ */
@@ -1315,151 +1343,227 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     HUB SCREEN
-═══════════════════════════════════════════════════════ -->
-<div id="hub-screen" class="screen">
-  <!-- Currency Bar -->
-  <div class="top-bar" style="flex-wrap:wrap;gap:4px;">
-    <div class="currency-group" style="flex-wrap:wrap;gap:4px;">
-      <div class="cur-pill" title="Energy">
-        <span class="icon" style="color:#60d0ff;">⚡</span>
-        <span class="val cur-energy">5/5</span>
-        <div class="add-btn" onclick="openVideoForEnergy()">+</div>
+<!-- ════════════════════════════════════════════════════════
+     HUB SCREEN (Candy Crush-style start)
+════════════════════════════════════════════════════════ -->
+<div id="hub-screen" class="screen" style="overflow:hidden;padding:0;position:relative;">
+
+  <!-- ── PINK TOP BAR (Candy Crush style) ───────────────────────── -->
+  <div id="hub-topbar" style="
+    position:relative;z-index:10;
+    background:linear-gradient(180deg,#ffb6d9 0%,#ff80b5 100%);
+    border-bottom:3px solid #e0509a;
+    padding:8px 14px;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 3px 12px rgba(220,60,120,0.3);
+    flex-shrink:0;
+  ">
+    <!-- Lives -->
+    <div style="display:flex;align-items:center;gap:6px;
+      background:rgba(255,255,255,0.35);border-radius:30px;
+      padding:5px 12px;border:2px solid rgba(255,255,255,0.6);">
+      <span style="font-size:20px;">❤️</span>
+      <span id="hub-energy-lives" style="font-size:15px;font-family:'Fredoka One',cursive;color:#a0003a;">5 Full</span>
+    </div>
+    <!-- Avatar + notification -->
+    <div style="position:relative;cursor:pointer;" onclick="showScreen('charselect-screen')">
+      <div style="width:46px;height:46px;border-radius:12px;
+        background:linear-gradient(135deg,#60d0ff,#a78bfa);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:26px;box-shadow:0 3px 10px rgba(0,0,0,0.2);">
+        <canvas id="hub-avatar-canvas" width="40" height="40" style="border-radius:8px;"></canvas>
       </div>
-      <div class="cur-pill" title="Gold">
-        <span class="icon" style="color:#ffe066;">🪙</span>
-        <span class="val cur-gold" id="hub-gold">0</span>
-        <div class="add-btn" onclick="openVideoForGold()">+</div>
-      </div>
-      <div class="cur-pill" title="Gems">
-        <span class="icon" style="color:#a78bfa;">💎</span>
-        <span class="val cur-gems" id="hub-gems">0</span>
-        <div class="add-btn" onclick="openVideoForGems()">+</div>
-      </div>
-      <div class="cur-pill" title="Trophies — earn by playing">
-        <span class="icon" style="color:#ffe066;">🏆</span>
-        <span class="val cur-trophies" id="hub-trophies">0</span>
-      </div>
-      <div class="cur-pill" title="Mystic Tokens — earn from videos &amp; high scores">
-        <span class="icon" style="color:#c084fc;">🔮</span>
-        <span class="val cur-tokens" id="hub-tokens">0</span>
-        <div class="add-btn" onclick="openVideoForTokens()">+</div>
+      <div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;
+        background:#ff3366;border-radius:50%;border:2px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:9px;color:#fff;font-family:'Fredoka One',cursive;">!</div>
+    </div>
+    <!-- Gold -->
+    <div style="display:flex;align-items:center;gap:6px;
+      background:rgba(255,255,255,0.35);border-radius:30px;
+      padding:5px 12px;border:2px solid rgba(255,255,255,0.6);">
+      <span style="font-size:18px;">🥇</span>
+      <span class="cur-gold" id="hub-gold" style="font-size:15px;font-family:'Fredoka One',cursive;color:#7a4400;">0</span>
+    </div>
+    <!-- Settings -->
+    <div onclick="showScreen('settings-screen')" style="
+      width:38px;height:38px;border-radius:50%;
+      background:linear-gradient(135deg,#e0509a,#c0308a);
+      border:3px solid rgba(255,255,255,0.6);
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,0.2);
+    ">⚙️</div>
+  </div>
+
+  <!-- ── HIDDEN currency fields for JS compatibility ───────────────── -->
+  <span class="cur-gems" id="hub-gems" style="display:none">0</span>
+  <span class="cur-trophies" id="hub-trophies" style="display:none">0</span>
+  <span class="cur-tokens" id="hub-tokens" style="display:none">0</span>
+  <span class="cur-energy" style="display:none">5/5</span>
+
+  <!-- ── FULL-SCREEN CANDY WORLD CANVAS ───────────────────────── -->
+  <div style="position:relative;flex:1;overflow:hidden;">
+    <canvas id="hub-canvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+
+    <!-- Hanging logo -->
+    <div id="hub-logo-wrap" style="
+      position:absolute;top:0;left:50%;transform:translateX(-50%);
+      display:flex;flex-direction:column;align-items:center;
+      pointer-events:none;
+    ">
+      <!-- String -->
+      <div style="width:3px;height:40px;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(200,140,80,0.8));
+        border-radius:2px;"></div>
+      <!-- Logo tag -->
+      <div style="
+        background:linear-gradient(160deg,#fff8e0,#ffe4a0);
+        border:4px solid #d4a040;
+        border-radius:20px;
+        padding:14px 28px 10px;
+        box-shadow:0 8px 30px rgba(0,0,0,0.25),inset 0 2px 0 rgba(255,255,255,0.8);
+        position:relative;
+        animation:logoSway 3s ease-in-out infinite;
+      ">
+        <!-- Hole at top -->
+        <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+          width:14px;height:14px;border-radius:50%;
+          background:#fff8e0;border:3px solid #d4a040;"></div>
+        <div style="
+          font-family:'Fredoka One',cursive;
+          font-size:clamp(36px,9vw,52px);
+          line-height:1;
+          background:linear-gradient(180deg,#ffe566 0%,#ff8c00 50%,#c05000 100%);
+          -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+          filter:drop-shadow(0 3px 0 rgba(120,50,0,0.4));
+          text-align:center;
+          letter-spacing:2px;
+        ">SILLY<br>GLOOP!</div>
       </div>
     </div>
-    <div class="top-bar-right">
-      <div class="icon-btn" onclick="showToast('📬','Inbox coming soon!','purple')">🔔</div>
-      <div class="icon-btn" onclick="showScreen('settings-screen')">&#9881;</div>
+
+    <!-- Bottom play area (overlaid on canvas) -->
+    <div style="
+      position:absolute;bottom:0;left:0;right:0;
+      display:flex;flex-direction:column;align-items:center;
+      gap:10px;padding:0 20px 20px;
+    ">
+      <!-- XP / level pill -->
+      <div style="
+        background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);
+        border:2px solid rgba(255,255,255,0.5);
+        border-radius:30px;padding:5px 18px;
+        display:flex;align-items:center;gap:8px;
+      ">
+        <span style="font-size:13px;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;">
+          Lv <span id="player-lv">7</span> · <span id="player-title">Wobbly Apprentice</span>
+        </span>
+      </div>
+      <!-- XP bar -->
+      <div style="width:min(260px,70vw);">
+        <div style="height:8px;background:rgba(255,255,255,0.3);border-radius:10px;overflow:hidden;border:1.5px solid rgba(255,255,255,0.5);">
+          <div id="xp-bar" style="height:100%;width:78%;background:linear-gradient(90deg,#ffe566,#ff8c00);border-radius:10px;transition:width .5s;"></div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.8);text-align:center;margin-top:2px;font-family:'Nunito',sans-serif;font-weight:700;">
+          XP: <span id="xp-cur">2,340</span> / <span id="xp-max">3,000</span>
+        </div>
+      </div>
+
+      <!-- BIG PLAY BUTTON -->
+      <button onclick="showScreen('campaign-screen')" style="
+        width:min(280px,75vw);
+        padding:18px 0;
+        border-radius:50px;
+        border:none;
+        background:linear-gradient(180deg,#ff80c8 0%,#e8007a 50%,#b0005a 100%);
+        box-shadow:0 6px 0 #7a0040,0 10px 30px rgba(220,0,100,0.45);
+        font-family:'Fredoka One',cursive;
+        font-size:clamp(28px,7vw,38px);
+        color:#fff;
+        text-shadow:0 2px 6px rgba(0,0,0,0.3);
+        letter-spacing:3px;
+        cursor:pointer;
+        transform:translateY(0);
+        transition:transform .1s,box-shadow .1s;
+        animation:playPulse 2.5s ease-in-out infinite;
+      " onmousedown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #7a0040,0 6px 20px rgba(220,0,100,0.45)'"
+         onmouseup="this.style.transform='';this.style.boxShadow=''"
+         ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #7a0040,0 6px 20px rgba(220,0,100,0.45)'"
+         ontouchend="this.style.transform='';this.style.boxShadow=''"
+      >Play</button>
+
+      <!-- Quick-access row -->
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="showScreen('game-screen')" style="
+          background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);
+          border:2px solid rgba(255,255,255,0.6);
+          border-radius:30px;padding:8px 18px;
+          font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
+          cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.15);
+        ">🫧 Quick Play</button>
+        <button onclick="openVideoForDailyBonus()" style="
+          background:rgba(255,229,102,0.35);backdrop-filter:blur(8px);
+          border:2px solid rgba(255,229,102,0.7);
+          border-radius:30px;padding:8px 18px;
+          font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
+          cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.15);
+        ">📺 Daily Bonus</button>
+      </div>
     </div>
   </div>
 
-  <!-- Hero Canvas Area -->
-  <div class="hub-hero">
-    <canvas id="hub-canvas"></canvas>
-    <div class="hub-hero-overlay">
-      <div class="hub-title">GLOOP!</div>
-      <div class="hub-sub">The Silliest Game Ever Made</div>
+  <!-- ── PINK BOTTOM NAV (Candy Crush style) ──────────────────────── -->
+  <div style="
+    background:linear-gradient(180deg,#ff80b5 0%,#e8509a 100%);
+    border-top:3px solid #c03080;
+    display:flex;justify-content:space-around;align-items:center;
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+    flex-shrink:0;
+    box-shadow:0 -3px 12px rgba(200,40,100,0.25);
+  ">
+    <div onclick="showScreen('hub-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;
+        background:linear-gradient(135deg,#60d0ff,#3a8fff);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">🗺️</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Map</span>
     </div>
-  </div>
-
-  <!-- Player Row -->
-  <div class="player-row">
-    <div class="player-avatar">🫧</div>
-    <div class="player-info">
-      <div class="player-name">GloopMaster</div>
-      <div class="player-level">Lv <span id="player-lv">7</span> · <span id="player-title">Wobbly Apprentice</span></div>
-      <div class="xp-bar-wrap">
-        <div class="xp-label">XP: <span id="xp-cur">2,340</span> / <span id="xp-max">3,000</span></div>
-        <div class="prog-bar"><div class="prog-fill" id="xp-bar" style="width:78%"></div></div>
-      </div>
+    <div onclick="showScreen('quest-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;
+        background:linear-gradient(135deg,#ffe566,#ff8c00);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">📋</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Tasks</span>
     </div>
-  </div>
-
-  <!-- Event Banner -->
-  <div class="event-banner" onclick="showToast('🎉','Gloop Festival event coming soon!','purple')">
-    <div class="ev-icon">🎪</div>
-    <div class="ev-info">
-      <div class="ev-title">GLOOP FESTIVAL!</div>
-      <div class="ev-sub">Limited time event — earn exclusive skins</div>
-      <div class="ev-timer">⏱ 13h 22m remaining</div>
+    <div onclick="showScreen('wardrobe-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;
+        background:linear-gradient(135deg,#a8ff78,#3ab84a);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">👤</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Gloop</span>
     </div>
-    <div style="font-size:20px;color:var(--dim)">›</div>
-  </div>
-
-  <!-- Hub Grid -->
-  <div class="hub-grid" style="margin-top:4px;">
-    <div class="hub-tile featured" onclick="showScreen('game-screen')">
-      <div class="tile-icon">🫧</div>
-      <div class="tile-info">
-        <div class="tile-label">PLAY NOW</div>
-        <div class="tile-sub">Quick Match · Endless Run</div>
-      </div>
+    <div onclick="showScreen('pass-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative;">
+      <div style="width:44px;height:44px;border-radius:14px;
+        background:linear-gradient(135deg,#c084fc,#7c3aed);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">⭐</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Stars</span>
+      <div style="position:absolute;top:-2px;right:2px;width:16px;height:16px;
+        background:#ff3366;border-radius:50%;border:2px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:9px;color:#fff;font-family:'Fredoka One',cursive;">1</div>
     </div>
-    <div class="hub-tile" onclick="showScreen('campaign-screen')">
-      <div class="tile-icon">🗺️</div>
-      <div class="tile-label">Campaign</div>
-      <div class="tile-sub">Chapter 3</div>
-      <div class="tile-badge">NEW</div>
-    </div>
-    <div class="hub-tile" onclick="showScreen('quest-screen')">
-      <div class="tile-icon">📜</div>
-      <div class="tile-label">Quests</div>
-      <div class="tile-sub">3 claimable</div>
-      <div class="tile-badge">3</div>
-    </div>
-    <div class="hub-tile" onclick="showScreen('shop-screen')">
-      <div class="tile-icon">🏪</div>
-      <div class="tile-label">Shop</div>
-      <div class="tile-sub">Refresh in 11h</div>
-    </div>
-    <div class="hub-tile" onclick="showScreen('pass-screen')">
-      <div class="tile-icon">🏆</div>
-      <div class="tile-label">Battle Pass</div>
-      <div class="tile-sub">Lv 1 · 980/1000</div>
-      <div class="tile-badge">!</div>
-    </div>
-    <div class="hub-tile" onclick="showLeaderboard()">
-      <div class="tile-icon">🥇</div>
-      <div class="tile-label">Leaderboard</div>
-      <div class="tile-sub">Rank #142</div>
-    </div>
-    <div class="hub-tile" onclick="showScreen('wardrobe-screen')">
-      <div class="tile-icon">🎨</div>
-      <div class="tile-label">Wardrobe</div>
-      <div class="tile-sub" id="wardrobe-sub">Customize Gloop</div>
-      <div class="tile-badge" id="wardrobe-badge" style="display:none;">NEW</div>
-    </div>
-  </div>
-
-  <!-- Daily Ad Bonus -->
-  <div style="width:100%;max-width:520px;padding:8px 14px;flex-shrink:0;">
-    <div class="card glow-gold" style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openVideoForDailyBonus()">
-      <div style="font-size:36px;">📺</div>
-      <div style="flex:1;">
-        <div style="font-size:16px;color:var(--gold);">Daily Video Bonus</div>
-        <div class="text-dim">Watch a short video · Get 500 Gold + 30 Gems</div>
-      </div>
-      <button class="btn gold sm">WATCH</button>
-    </div>
-  </div>
-
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="showScreen('hub-screen')">
-      <div class="nav-icon">🏠</div><div class="nav-label">Hub</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('campaign-screen')">
-      <div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('game-screen')">
-      <div class="nav-icon">🫧</div><div class="nav-label">Play</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('shop-screen')">
-      <div class="nav-icon">🏪</div><div class="nav-label">Shop</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('pass-screen')">
-      <div class="nav-icon">🏆</div><div class="nav-label">Pass</div>
-      <div class="nav-badge">!</div>
+    <div onclick="showScreen('shop-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;
+        background:linear-gradient(135deg,#ff8c6e,#e03030);
+        border:3px solid #fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">🏪</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Shop</span>
     </div>
   </div>
 </div>
@@ -1476,6 +1580,23 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
       <div class="hud-pill">SCORE: <span id="g-score">0</span></div>
       <button id="game-pause-btn">⏸</button>
       <div class="hud-pill hi">BEST: <span id="g-hi">0</span></div>
+    </div>
+
+    <!-- Power-Up Slot Bar (shown during play) -->
+    <div id="powerup-bar" style="
+      position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+      display:flex;gap:8px;z-index:12;pointer-events:all;
+      opacity:0;transition:opacity 0.3s;
+    ">
+      <button class="pu-slot" id="pu-slot-0" onclick="activateEquippedPowerup(0)" title="Tap to use">
+        <span class="pu-icon">?</span><span class="pu-count">0</span>
+      </button>
+      <button class="pu-slot" id="pu-slot-1" onclick="activateEquippedPowerup(1)" title="Tap to use">
+        <span class="pu-icon">?</span><span class="pu-count">0</span>
+      </button>
+      <button class="pu-slot" id="pu-slot-2" onclick="activateEquippedPowerup(2)" title="Tap to use">
+        <span class="pu-icon">?</span><span class="pu-count">0</span>
+      </button>
     </div>
 
     <!-- Menu Overlay -->
@@ -1552,113 +1673,83 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-     CAMPAIGN SCREEN
+     CAMPAIGN SCREEN (Candy Crush map style)
 ═══════════════════════════════════════════════════════ -->
-<div id="campaign-screen" class="screen hidden">
-  <div class="top-bar">
-    <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">CAMPAIGN</span>
-    </div>
-    <div class="currency-group">
-      <div class="cur-pill"><span class="icon">⚡</span><span class="val" id="camp-energy">5/5</span></div>
-      <div class="cur-pill"><span class="icon">💎</span><span class="val" id="camp-gems">3,344</span></div>
-    </div>
-    <div class="icon-btn" onclick="showScreen('settings-screen')">⚙</div>
-  </div>
-
-  <div class="chapter-header">
-    <div class="ch-num">Chapter 3</div>
-    <div class="ch-name">🌊 GLOOPY SWAMP</div>
-    <div class="ch-sub">Survive the wobbly marshlands</div>
-  </div>
-
-  <!-- Stage Map -->
-  <div class="stage-map">
-    <div class="stage-row">
-      <div class="stage-node completed" onclick="openStage(1,'3-1','Gloopy Entrance','🌿')">
-        <div class="node-label">3-1</div>
-        <div class="node-stars">⭐⭐⭐</div>
+<div id="campaign-screen" class="screen hidden" style="padding:0;overflow:hidden;">
+  <!-- Pink top bar -->
+  <div style="
+    background:linear-gradient(180deg,#ffb6d9 0%,#ff80b5 100%);
+    border-bottom:3px solid #e0509a;
+    padding:8px 14px;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 3px 12px rgba(220,60,120,0.3);
+    flex-shrink:0;z-index:10;position:relative;
+  ">
+    <div onclick="showScreen('hub-screen')" style="
+      width:38px;height:38px;border-radius:50%;
+      background:rgba(255,255,255,0.35);border:2px solid rgba(255,255,255,0.7);
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;cursor:pointer;
+    ">←</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#a0003a;">Gloopy World</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:4px;
+        background:rgba(255,255,255,0.35);border-radius:20px;
+        padding:4px 10px;border:2px solid rgba(255,255,255,0.6);">
+        <span style="font-size:16px;">❤️</span>
+        <span id="camp-energy" style="font-family:'Fredoka One',cursive;font-size:14px;color:#a0003a;">5</span>
       </div>
-      <div class="stage-connector done"></div>
-      <div class="stage-node completed" onclick="openStage(2,'3-2','Bubble Bog','🫧')">
-        <div class="node-label">3-2</div>
-        <div class="node-stars">⭐⭐⭐</div>
-      </div>
-      <div class="stage-connector done"></div>
-      <div class="stage-node completed" onclick="openStage(3,'3-3','Slime Falls','💧')">
-        <div class="node-label">3-3</div>
-        <div class="node-stars">⭐⭐⭐</div>
-      </div>
-      <div class="stage-connector done"></div>
-      <div class="stage-node current" onclick="openStage(4,'3-4','Ooze Canyon','🟢')">
-        <div class="node-label">3-4</div>
-        <div class="node-stars">⭐⭐☆</div>
-      </div>
-    </div>
-    <div style="height:20px;"></div>
-    <div class="stage-row">
-      <div class="stage-node locked">
-        <div class="lock-icon">🔒</div>
-        <div class="node-label" style="font-size:10px;">3-5</div>
-      </div>
-      <div class="stage-connector"></div>
-      <div class="stage-node locked">
-        <div class="lock-icon">🔒</div>
-        <div class="node-label" style="font-size:10px;">3-6</div>
-      </div>
-      <div class="stage-connector"></div>
-      <div class="stage-node locked">
-        <div class="lock-icon">🔒</div>
-        <div class="node-label" style="font-size:10px;">3-7</div>
-      </div>
-      <div class="stage-connector"></div>
-      <div class="stage-node boss locked">
-        <div class="lock-icon">💀</div>
-        <div class="node-label" style="font-size:10px;">BOSS</div>
+      <div style="display:flex;align-items:center;gap:4px;
+        background:rgba(255,255,255,0.35);border-radius:20px;
+        padding:4px 10px;border:2px solid rgba(255,255,255,0.6);">
+        <span style="font-size:16px;">🥇</span>
+        <span id="camp-gems" style="font-family:'Fredoka One',cursive;font-size:14px;color:#7a4400;">0</span>
       </div>
     </div>
   </div>
 
-  <!-- Chapter Nav -->
-  <div class="chapter-nav">
-    <div class="chapter-btn" onclick="showToast('📖','Chapter 2 complete!','green')">
-      <div class="cb-icon">‹</div>
-      <div class="cb-label">Ch. 2</div>
-    </div>
-    <div style="text-align:center;">
-      <div style="font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;">Progress</div>
-      <div style="font-size:18px;color:var(--gold);">4 / 8</div>
-      <div class="prog-bar" style="width:160px;margin-top:4px;"><div class="prog-fill gold" style="width:50%"></div></div>
-    </div>
-    <div class="chapter-btn" onclick="showToast('🔒','Complete Chapter 3 to unlock!','purple')">
-      <div class="cb-icon">›</div>
-      <div class="cb-label">Ch. 4</div>
+  <!-- Scrollable candy world map -->
+  <div id="camp-map-scroll" style="flex:1;overflow-y:auto;overflow-x:hidden;position:relative;
+    background:linear-gradient(180deg,#87ceeb 0%,#b8f0a0 40%,#90ee60 100%);
+  ">
+    <!-- SVG winding path drawn by JS -->
+    <canvas id="camp-map-canvas" style="position:absolute;top:0;left:0;pointer-events:none;"></canvas>
+
+    <!-- Stage nodes container -->
+    <div id="camp-nodes" style="position:relative;width:100%;">
+      <!-- Populated by JS -->
     </div>
   </div>
 
-  <!-- Sidebar buttons -->
-  <div style="width:100%;max-width:520px;padding:0 14px;display:flex;gap:10px;flex-shrink:0;">
-    <div class="hub-tile" style="flex:1;" onclick="showToast('🧙','Merchant coming soon!','purple')">
-      <div class="tile-icon">🧙</div>
-      <div class="tile-label">Merchant</div>
+  <!-- Pink bottom nav -->
+  <div style="
+    background:linear-gradient(180deg,#ff80b5 0%,#e8509a 100%);
+    border-top:3px solid #c03080;
+    display:flex;justify-content:space-around;align-items:center;
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+    flex-shrink:0;
+    box-shadow:0 -3px 12px rgba(200,40,100,0.25);
+  ">
+    <div onclick="showScreen('hub-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#60d0ff,#3a8fff);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">🗺️</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Map</span>
     </div>
-    <div class="hub-tile" style="flex:1;" onclick="showToast('📖','All chapters view coming soon!','purple')">
-      <div class="tile-icon">📖</div>
-      <div class="tile-label">Chapters</div>
+    <div onclick="showScreen('quest-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ffe566,#ff8c00);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">📋</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Tasks</span>
     </div>
-    <div class="hub-tile" style="flex:1;" onclick="showToast('👹','Boss Mode coming soon!','red')">
-      <div class="tile-icon">👹</div>
-      <div class="tile-label">Boss Mode</div>
+    <div onclick="showScreen('wardrobe-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#a8ff78,#3ab84a);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">👤</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Gloop</span>
     </div>
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('hub-screen')"><div class="nav-icon">🏠</div><div class="nav-label">Hub</div></div>
-    <div class="nav-item active" onclick="showScreen('campaign-screen')"><div class="nav-icon">🗺️</div><div class="nav-label">Campaign</div></div>
-    <div class="nav-item" onclick="showScreen('game-screen')"><div class="nav-icon">🫧</div><div class="nav-label">Play</div></div>
-    <div class="nav-item" onclick="showScreen('shop-screen')"><div class="nav-icon">🏪</div><div class="nav-label">Shop</div></div>
-    <div class="nav-item" onclick="showScreen('pass-screen')"><div class="nav-icon">🏆</div><div class="nav-label">Pass</div><div class="nav-badge">!</div></div>
+    <div onclick="showScreen('pass-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#c084fc,#7c3aed);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">⭐</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Stars</span>
+    </div>
+    <div onclick="showScreen('shop-screen')" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ff8c6e,#e03030);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">🏪</div>
+      <span style="font-size:11px;color:#fff;font-family:'Fredoka One',cursive;">Shop</span>
+    </div>
   </div>
 </div>
 
@@ -2030,6 +2121,7 @@ function showScreen(id) {
   if (id === 'quest-screen') renderQuests('daily');
   if (id === 'shop-screen') renderShop('video');
   if (id === 'pass-screen') renderPassTrack();
+  if (id === 'campaign-screen') setTimeout(buildCampaignMap, 60);
   if (id === 'wardrobe-screen') {
     setTimeout(() => {
       if (!wardrobeCtx) initWardrobeCanvas();
@@ -2050,13 +2142,20 @@ function updateCurrencyDisplays() {
   document.querySelectorAll('.cur-trophies').forEach(el => el.textContent = STATE.trophies.toLocaleString());
   document.querySelectorAll('.cur-tokens').forEach(el => el.textContent = STATE.tokens.toLocaleString());
   document.querySelectorAll('.cur-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
-  // Legacy IDs
+  // New hub IDs
+  const hubLives = document.getElementById('hub-energy-lives');
+  if (hubLives) hubLives.textContent = STATE.energy >= STATE.maxEnergy ? `${STATE.maxEnergy} Full` : `${STATE.energy}/${STATE.maxEnergy}`;
   document.querySelectorAll('#hub-gold').forEach(el => el.textContent = STATE.gold.toLocaleString());
-  document.querySelectorAll('#hub-gems,#camp-gems,#shop-gems').forEach(el => el.textContent = STATE.gems.toLocaleString());
-  document.querySelectorAll('#hub-energy,#camp-energy,#shop-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
+  document.querySelectorAll('#hub-gems,#shop-gems').forEach(el => el.textContent = STATE.gems.toLocaleString());
+  document.querySelectorAll('#shop-energy').forEach(el => el.textContent = STATE.energy+'/'+STATE.maxEnergy);
   document.querySelectorAll('#shop-gold').forEach(el => el.textContent = fmt(STATE.gold));
   document.querySelectorAll('#hub-trophies').forEach(el => el.textContent = STATE.trophies);
   document.querySelectorAll('#hub-tokens').forEach(el => el.textContent = STATE.tokens);
+  // Campaign screen new IDs
+  const campE = document.getElementById('camp-energy');
+  if (campE) campE.textContent = STATE.energy;
+  const campG = document.getElementById('camp-gems');
+  if (campG) campG.textContent = STATE.gold.toLocaleString();
   const lv = document.getElementById('player-lv');
   if (lv) lv.textContent = STATE.playerLevel;
   const pt = document.getElementById('player-title');
@@ -2068,6 +2167,22 @@ function updateCurrencyDisplays() {
   if (xpCur) xpCur.textContent = STATE.xp.toLocaleString();
   const xpMax = document.getElementById('xp-max');
   if (xpMax) xpMax.textContent = STATE.xpMax.toLocaleString();
+  // Draw avatar canvas
+  const avatarC = document.getElementById('hub-avatar-canvas');
+  if (avatarC) {
+    const ac = avatarC.getContext('2d');
+    const aw = avatarC.width, ah = avatarC.height;
+    ac.clearRect(0,0,aw,ah);
+    const skin = COSMETICS.skins[STATE.equippedSkin] || COSMETICS.skins[0];
+    ac.fillStyle = skin.color;
+    ac.beginPath(); ac.ellipse(aw/2, ah/2+2, aw*0.38, ah*0.38, 0, 0, Math.PI*2); ac.fill();
+    ac.fillStyle = '#1a0520';
+    ac.beginPath(); ac.arc(aw*0.36, ah*0.42, aw*0.07, 0, Math.PI*2); ac.fill();
+    ac.beginPath(); ac.arc(aw*0.64, ah*0.42, aw*0.07, 0, Math.PI*2); ac.fill();
+    ac.fillStyle = 'rgba(255,120,160,0.5)';
+    ac.beginPath(); ac.ellipse(aw*0.26, ah*0.52, aw*0.09, ah*0.06, 0, 0, Math.PI*2); ac.fill();
+    ac.beginPath(); ac.ellipse(aw*0.74, ah*0.52, aw*0.09, ah*0.06, 0, 0, Math.PI*2); ac.fill();
+  }
 }
 
 function earnGold(amount) {
@@ -2720,6 +2835,45 @@ let inputHeld = false;
 let lastWordTime = 0, scoreAccum = 0;
 let nextObstacleIn = 100, deathFlash = 0, idleTime = 0, dotOffset = 0;
 let obstacles = [], particles = [], floatingWords = [], bgStars = [];
+let collectibles = [];   // in-game floating pickups
+let nextCollectibleIn = 60;
+
+// ── POWER-UP STATE ────────────────────────────────────────
+const POWERUP_DEFS = {
+  shield:    { name:'Bubble Shield',  icon:'🛡️',  color:'#60d0ff', duration:0,    desc:'One free hit!' },
+  magnet:    { name:'Gloop Magnet',   icon:'🧲',  color:'#ffe066', duration:300,  desc:'Pulls collectibles!' },
+  rainbow:   { name:'Rainbow Mode',   icon:'🌈',  color:'#ff6eb4', duration:180,  desc:'Invincible for 3s!' },
+  sugar:     { name:'Sugar Rush',     icon:'🍭',  color:'#a8ff78', duration:480,  desc:'2x score for 8s!' },
+  tiny:      { name:'Tiny Mode',      icon:'🔬',  color:'#c084fc', duration:360,  desc:'Shrink to dodge!' },
+  boost:     { name:'Speed Boost',    icon:'⚡',  color:'#ffe566', duration:180,  desc:'Zoom + score burst!' },
+};
+
+const activePowerups = {}; // key -> frames remaining (0 = inactive)
+let shieldActive = false;
+let scoreMultiplier = 1;
+
+// Candy inventory (gloopy consumables)
+const CANDY_TYPES = [
+  { id:'pink',   name:'Pink Candy',   icon:'🍬', color:'#ff6eb4', rarity:0 },
+  { id:'yellow', name:'Lemon Drop',   icon:'🍋', color:'#ffe566', rarity:0 },
+  { id:'blue',   name:'Blue Gummy',   icon:'🫐', color:'#60d0ff', rarity:1 },
+  { id:'green',  name:'Lime Slime',   icon:'🍏', color:'#a8ff78', rarity:1 },
+  { id:'purple', name:'Magic Grape',  icon:'🍇', color:'#c084fc', rarity:2 },
+  { id:'star',   name:'Star Candy',   icon:'⭐', color:'#ffe566', rarity:2 },
+];
+const candyInventory = { pink:0, yellow:0, blue:0, green:0, purple:0, star:0 };
+
+// Craft recipes: candy -> powerup
+const CRAFT_RECIPES = [
+  { id:'shield',  needs:{ pink:3 },           powerup:'shield' },
+  { id:'magnet',  needs:{ yellow:3 },         powerup:'magnet' },
+  { id:'rainbow', needs:{ blue:2, pink:2 },   powerup:'rainbow' },
+  { id:'sugar',   needs:{ green:2, yellow:2 },powerup:'sugar' },
+  { id:'tiny',    needs:{ purple:2 },         powerup:'tiny' },
+  { id:'boost',   needs:{ star:2 },           powerup:'boost' },
+];
+const powerupInventory = { shield:0, magnet:0, rainbow:0, sugar:0, tiny:0, boost:0 };
+let equippedPowerups = [null, null, null]; // 3 slots for in-run use
 
 function buildStars() {
   // In Candyland mode, stars = floating candy/cloud decorations
@@ -3412,6 +3566,327 @@ function drawObstacles() {
   }
 }
 
+// ══════════════════════════════════════════
+//  COLLECTIBLES SYSTEM
+// ══════════════════════════════════════════
+
+// Collectible type definitions
+const COLL_TYPES = [
+  // id, minScore, weight, yBand [0=ground..1=top], value, color, size, label
+  { id:'coin',   minScore:0,  weight:40, yBand:[0.05,0.55], value:50,  color:'#ffe566', size:12, label:'+50🪙' },
+  { id:'coin2',  minScore:5,  weight:25, yBand:[0.15,0.70], value:150, color:'#ffd700', size:14, label:'+150🪙' },
+  { id:'gem',    minScore:10, weight:18, yBand:[0.25,0.75], value:5,   color:'#c084fc', size:13, label:'+5💎' },
+  { id:'token',  minScore:20, weight:8,  yBand:[0.40,0.85], value:1,   color:'#9333ea', size:14, label:'+1🔮' },
+  { id:'candy_pink',  minScore:0,  weight:20, yBand:[0.05,0.50], value:1, color:'#ff6eb4', size:11, label:'+🍬' },
+  { id:'candy_yellow',minScore:0,  weight:18, yBand:[0.05,0.50], value:1, color:'#ffe566', size:11, label:'+🍋' },
+  { id:'candy_blue',  minScore:8,  weight:12, yBand:[0.20,0.65], value:1, color:'#60d0ff', size:12, label:'+🫐' },
+  { id:'candy_green', minScore:8,  weight:12, yBand:[0.20,0.65], value:1, color:'#a8ff78', size:12, label:'+🍏' },
+  { id:'candy_purple',minScore:15, weight:7,  yBand:[0.35,0.75], value:1, color:'#c084fc', size:13, label:'+🍇' },
+  { id:'candy_star',  minScore:25, weight:4,  yBand:[0.45,0.85], value:1, color:'#ffe566', size:14, label:'+⭐' },
+  { id:'powerup',     minScore:12, weight:5,  yBand:[0.30,0.80], value:1, color:'#7dff8f', size:16, label:'⚡POWER!' },
+];
+
+function pickCollectibleType() {
+  const available = COLL_TYPES.filter(t => score >= t.minScore);
+  const totalW = available.reduce((s,t) => s + t.weight, 0);
+  let r = Math.random() * totalW;
+  for (const t of available) { r -= t.weight; if (r <= 0) return t; }
+  return available[0];
+}
+
+function spawnCollectible() {
+  const t = pickCollectibleType();
+  // Y position: yBand is fraction of GROUND_Y from top (0=top, 1=ground)
+  const yMin = GROUND_Y * t.yBand[0];
+  const yMax = GROUND_Y * t.yBand[1];
+  const y = yMin + Math.random() * (yMax - yMin);
+  // Moving collectibles at higher scores
+  const moving = score > 15 && Math.random() < 0.35;
+  const bobDir = Math.random() < 0.5 ? 1 : -1;
+  collectibles.push({
+    x: GW + 40, y, baseY: y, type: t.id, color: t.color, size: t.size,
+    value: t.value, label: t.label,
+    moving, bobDir, bobAmp: 20 + Math.random() * 30, bobSpeed: 0.04 + Math.random() * 0.03,
+    phase: Math.random() * Math.PI * 2,
+    pulse: 0, collected: false, alpha: 1,
+    // Powerup capsule: pick a random powerup
+    powerupId: t.id === 'powerup' ? Object.keys(POWERUP_DEFS)[Math.floor(Math.random() * Object.keys(POWERUP_DEFS).length)] : null,
+  });
+}
+
+function updateCollectibles() {
+  const magnetOn = activePowerups.magnet > 0;
+  for (let c of collectibles) {
+    if (c.collected) { c.alpha -= 0.08; continue; }
+    c.x -= speed * dt;
+    c.phase += c.bobSpeed * dt;
+    if (c.moving) c.y = c.baseY + Math.sin(c.phase) * c.bobAmp;
+    c.pulse += 0.06 * dt;
+    // Magnet: pull toward gloop
+    if (magnetOn) {
+      const dx = gloop.x - c.x, dy = gloop.y - c.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < GW * 0.45) {
+        c.x += (dx / dist) * 5 * dt;
+        c.y += (dy / dist) * 5 * dt;
+      }
+    }
+  }
+  collectibles = collectibles.filter(c => c.x > -60 && c.alpha > 0);
+}
+
+function drawCollectibles() {
+  for (let c of collectibles) {
+    if (c.alpha <= 0) continue;
+    ctx.save();
+    ctx.globalAlpha = c.alpha;
+    const pulse = 1 + Math.sin(c.pulse) * 0.12;
+    const r = c.size * pulse;
+    const cx = c.x, cy = c.y;
+
+    if (c.type === 'coin' || c.type === 'coin2') {
+      // Gold coin with $ symbol
+      ctx.shadowColor = c.color; ctx.shadowBlur = 14;
+      const grd = ctx.createRadialGradient(cx-r*0.25, cy-r*0.25, 1, cx, cy, r);
+      grd.addColorStop(0, '#fff8c0'); grd.addColorStop(0.5, c.color); grd.addColorStop(1, '#b8860b');
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#b8860b'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = '#7a5800'; ctx.font = `bold ${r*1.1}px 'Fredoka One',cursive`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(c.type==='coin2'?'◆':'○', cx, cy+1);
+
+    } else if (c.type === 'gem') {
+      // Diamond gem
+      ctx.shadowColor = '#c084fc'; ctx.shadowBlur = 18;
+      ctx.fillStyle = c.color;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r*1.1);
+      ctx.lineTo(cx + r*0.8, cy - r*0.2);
+      ctx.lineTo(cx + r*0.6, cy + r*0.9);
+      ctx.lineTo(cx, cy + r*1.1);
+      ctx.lineTo(cx - r*0.6, cy + r*0.9);
+      ctx.lineTo(cx - r*0.8, cy - r*0.2);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.beginPath(); ctx.moveTo(cx, cy-r*1.1); ctx.lineTo(cx+r*0.8, cy-r*0.2); ctx.lineTo(cx, cy-r*0.1); ctx.closePath(); ctx.fill();
+
+    } else if (c.type === 'token') {
+      // Mystic token — swirling purple orb
+      ctx.shadowColor = '#9333ea'; ctx.shadowBlur = 20;
+      const tgrd = ctx.createRadialGradient(cx-r*0.3, cy-r*0.3, 1, cx, cy, r*1.1);
+      tgrd.addColorStop(0,'#e0b0ff'); tgrd.addColorStop(0.5,'#9333ea'); tgrd.addColorStop(1,'#4a0080');
+      ctx.fillStyle = tgrd;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+      // Swirl
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let a=0; a<Math.PI*1.5; a+=0.2) {
+        const sr = r*0.7*(a/(Math.PI*1.5));
+        const px = cx+Math.cos(a+c.phase)*sr, py = cy+Math.sin(a+c.phase)*sr;
+        a<0.2 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.5)';
+      ctx.beginPath(); ctx.arc(cx-r*0.28, cy-r*0.28, r*0.18, 0, Math.PI*2); ctx.fill();
+
+    } else if (c.type.startsWith('candy_')) {
+      // Cute candy pill
+      const cid = c.type.replace('candy_','');
+      const cdef = CANDY_TYPES.find(t=>t.id===cid) || CANDY_TYPES[0];
+      ctx.shadowColor = cdef.color; ctx.shadowBlur = 12;
+      ctx.fillStyle = cdef.color;
+      ctx.beginPath(); ctx.roundRect(cx-r*0.8, cy-r*0.55, r*1.6, r*1.1, r*0.5); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.beginPath(); ctx.ellipse(cx-r*0.15, cy-r*0.18, r*0.45, r*0.22, -0.3, 0, Math.PI*2); ctx.fill();
+      // Stripe
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(cx, cy-r*0.55); ctx.lineTo(cx, cy+r*0.55); ctx.stroke();
+
+    } else if (c.type === 'powerup') {
+      // Glowing power-up capsule
+      const pdef = POWERUP_DEFS[c.powerupId] || POWERUP_DEFS.shield;
+      ctx.shadowColor = pdef.color; ctx.shadowBlur = 22;
+      const pgrd = ctx.createLinearGradient(cx-r, cy-r, cx+r, cy+r);
+      pgrd.addColorStop(0,'rgba(255,255,255,0.9)'); pgrd.addColorStop(0.4,pdef.color); pgrd.addColorStop(1,'rgba(0,0,0,0.3)');
+      ctx.fillStyle = pgrd;
+      ctx.beginPath(); ctx.roundRect(cx-r*1.1, cy-r*0.75, r*2.2, r*1.5, r*0.6); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+      // Icon
+      ctx.font = `${r*1.1}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(pdef.icon, cx, cy+1);
+      // Sparkle ring
+      ctx.strokeStyle = pdef.color; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.5 + Math.sin(c.pulse)*0.3;
+      ctx.beginPath(); ctx.arc(cx, cy, r*1.6+Math.sin(c.pulse)*3, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function collectItem(c) {
+  c.collected = true;
+  spawnSplat(c.x, c.y);
+  if (c.type === 'coin')  { earnGold(c.value); spawnWord(c.x, c.y-20, [c.label], '#ffe566'); }
+  else if (c.type === 'coin2') { earnGold(c.value); spawnWord(c.x, c.y-20, [c.label], '#ffd700'); }
+  else if (c.type === 'gem')   { earnGems(c.value); spawnWord(c.x, c.y-20, [c.label], '#c084fc'); }
+  else if (c.type === 'token') { earnTokens(c.value); spawnWord(c.x, c.y-20, [c.label], '#9333ea'); }
+  else if (c.type.startsWith('candy_')) {
+    const cid = c.type.replace('candy_','');
+    candyInventory[cid] = (candyInventory[cid]||0) + 1;
+    const cdef = CANDY_TYPES.find(t=>t.id===cid);
+    spawnWord(c.x, c.y-20, [c.label], cdef ? cdef.color : '#fff');
+    updateCandyHUD();
+  } else if (c.type === 'powerup') {
+    const pid = c.powerupId;
+    powerupInventory[pid] = (powerupInventory[pid]||0) + 1;
+    const pdef = POWERUP_DEFS[pid];
+    spawnWord(c.x, c.y-20, [pdef.icon+' '+pdef.name+'!'], pdef.color);
+    updatePowerupHUD();
+  }
+}
+
+function checkCollectibles() {
+  for (let c of collectibles) {
+    if (c.collected) continue;
+    const dx = gloop.x - c.x, dy = (gloop.y - gloop.h*0.5) - c.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const grabR = c.size * 1.8 + (activePowerups.magnet > 0 ? 20 : 0);
+    if (dist < grabR) collectItem(c);
+  }
+}
+
+// ══════════════════════════════════════════
+//  POWER-UP ACTIVATION & EFFECTS
+// ══════════════════════════════════════════
+
+function activatePowerup(id) {
+  if (gameState !== 'playing') return;
+  if (!powerupInventory[id] || powerupInventory[id] <= 0) return;
+  powerupInventory[id]--;
+  const def = POWERUP_DEFS[id];
+  if (id === 'shield') {
+    shieldActive = true;
+    showToast(def.icon, 'Bubble Shield activated!', 'blue');
+  } else {
+    activePowerups[id] = def.duration;
+  }
+  if (id === 'sugar') scoreMultiplier = 2;
+  if (id === 'tiny')  { gloop.bw *= 0.55; gloop.bh *= 0.55; }
+  if (id === 'boost') { speed += 2.5; scoreMultiplier = Math.max(scoreMultiplier, 1.5); }
+  spawnWord(gloop.x, gloop.y - gloop.h - 20, [def.icon+' '+def.name+'!'], def.color);
+  updatePowerupHUD();
+}
+
+function tickPowerups() {
+  for (const id of Object.keys(activePowerups)) {
+    if (activePowerups[id] > 0) {
+      activePowerups[id] -= dt;
+      if (activePowerups[id] <= 0) {
+        activePowerups[id] = 0;
+        // Deactivate effects
+        if (id === 'sugar') scoreMultiplier = 1;
+        if (id === 'tiny')  { gloop.bw = gloop.bw / 0.55; gloop.bh = gloop.bh / 0.55; }
+        if (id === 'boost') { scoreMultiplier = Math.max(1, scoreMultiplier - 0.5); }
+        showToast(POWERUP_DEFS[id].icon, POWERUP_DEFS[id].name+' wore off!', 'gray');
+        updatePowerupHUD();
+      }
+    }
+  }
+}
+
+function drawActivePowerupEffects() {
+  // Rainbow mode: colorful glow ring around gloop
+  if (activePowerups.rainbow > 0) {
+    const t = frameCount * 0.08;
+    const r = Math.max(gloop.w, gloop.h) * 0.9;
+    for (let i = 0; i < 6; i++) {
+      const a = (i/6)*Math.PI*2 + t;
+      const hue = (i*60 + frameCount*3) % 360;
+      ctx.save();
+      ctx.strokeStyle = `hsl(${hue},100%,65%)`;
+      ctx.lineWidth = 3; ctx.globalAlpha = 0.7;
+      ctx.shadowColor = `hsl(${hue},100%,65%)`; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(gloop.x + Math.cos(a)*4, gloop.y - gloop.h*0.5 + Math.sin(a)*4, r + Math.sin(t+i)*5, 0, Math.PI*2);
+      ctx.stroke(); ctx.restore();
+    }
+  }
+  // Shield: blue bubble
+  if (shieldActive) {
+    const r = Math.max(gloop.w, gloop.h) * 1.0;
+    ctx.save();
+    ctx.strokeStyle = '#60d0ff'; ctx.lineWidth = 3;
+    ctx.shadowColor = '#60d0ff'; ctx.shadowBlur = 18;
+    ctx.globalAlpha = 0.6 + Math.sin(frameCount*0.1)*0.2;
+    ctx.beginPath(); ctx.arc(gloop.x, gloop.y - gloop.h*0.5, r, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+  // Magnet: yellow field
+  if (activePowerups.magnet > 0) {
+    ctx.save();
+    ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.2 + Math.sin(frameCount*0.08)*0.1;
+    ctx.shadowColor = '#ffe066'; ctx.shadowBlur = 12;
+    ctx.setLineDash([6,8]);
+    ctx.beginPath(); ctx.arc(gloop.x, gloop.y - gloop.h*0.5, GW*0.45, 0, Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+  // Sugar rush: candy sparkles
+  if (activePowerups.sugar > 0 && frameCount % 4 === 0) {
+    const colors = ['#ff6eb4','#ffe566','#a8ff78','#60d0ff'];
+    particles.push({
+      x: gloop.x + (Math.random()-0.5)*gloop.w*2,
+      y: gloop.y - gloop.h*0.5 + (Math.random()-0.5)*gloop.h,
+      vx: (Math.random()-0.5)*2, vy: -2-Math.random()*2,
+      r: 3+Math.random()*4, alpha:1,
+      color: colors[Math.floor(Math.random()*colors.length)], gravity:0.1
+    });
+  }
+}
+
+function drawPowerupHUD() {
+  // Draw active powerup timers as small icons top-left of game canvas
+  let xi = 8;
+  const yi = 48;
+  for (const id of Object.keys(activePowerups)) {
+    const frames = activePowerups[id];
+    if (frames <= 0 && id !== 'shield') continue;
+    if (id === 'shield' && !shieldActive) continue;
+    const def = POWERUP_DEFS[id];
+    const total = def.duration || 1;
+    const pct = id === 'shield' ? 1 : Math.min(1, frames / total);
+    ctx.save();
+    // Background pill
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath(); ctx.roundRect(xi, yi, 44, 22, 8); ctx.fill();
+    // Progress bar
+    ctx.fillStyle = def.color;
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath(); ctx.roundRect(xi+2, yi+16, 40*pct, 4, 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    // Icon
+    ctx.font = '14px serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(def.icon, xi+4, yi+9);
+    ctx.restore();
+    xi += 50;
+  }
+}
+
+function drawCollectibleHUD() {
+  // Score multiplier badge
+  if (scoreMultiplier > 1) {
+    ctx.save();
+    ctx.fillStyle = '#a8ff78'; ctx.shadowColor='#a8ff78'; ctx.shadowBlur=12;
+    ctx.font = `bold 13px 'Fredoka One',cursive`;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillText(`x${scoreMultiplier} SCORE`, GW - 8, 44);
+    ctx.restore();
+  }
+}
+
+function updateCandyHUD() { /* future: update a candy count overlay */ }
+function updatePowerupHUD() { /* future: update powerup slot UI */ }
+
 function checkCollisions() {
   const gl = gloop;
   for (let o of obstacles) {
@@ -3580,8 +4055,13 @@ function startGame(continueRun = false) {
   }
   gameState = 'playing';
   speed = cfg().base;
-  frameCount = 0; obstacles = []; particles = []; floatingWords = [];
-  nextObstacleIn = 100; idleTime = 0; deathFlash = 0;
+  frameCount = 0; obstacles = []; particles = []; floatingWords = []; collectibles = [];
+  nextObstacleIn = 100; nextCollectibleIn = 60; idleTime = 0; deathFlash = 0;
+  // Reset power-up effects
+  for (const k of Object.keys(activePowerups)) activePowerups[k] = 0;
+  shieldActive = false; scoreMultiplier = 1;
+  // Restore gloop size if tiny was active
+  gloop.bw = null; gloop.bh = null; // will be reset in gloop.reset()
   gloop.reset();
   document.getElementById('menu-overlay').classList.add('hidden');
   document.getElementById('death-overlay').classList.add('hidden');
@@ -3806,55 +4286,110 @@ function initHubCanvas() {
 function animateHub() {
   requestAnimationFrame(animateHub);
   if (currentScreen !== 'hub-screen') return;
-  hubTime += 0.02;
+  hubTime += 0.016;
   const hw = hubCanvas.width, hh = hubCanvas.height;
+  if (!hw || !hh) return;
   hctx.clearRect(0, 0, hw, hh);
 
-  // Stars
-  hctx.fillStyle = '#0d0520';
+  // ── SKY GRADIENT ─────────────────────────────────────────────
+  const sky = hctx.createLinearGradient(0, 0, 0, hh);
+  sky.addColorStop(0, '#87ceeb');
+  sky.addColorStop(0.55, '#c8f0ff');
+  sky.addColorStop(0.75, '#ffe4c8');
+  sky.addColorStop(1, '#b8f0a0');
+  hctx.fillStyle = sky;
   hctx.fillRect(0, 0, hw, hh);
-  for (let i = 0; i < 40; i++) {
-    const sx = (i * 137.5) % hw;
-    const sy = (i * 73.1) % (hh * 0.7);
-    const twinkle = 0.3 + Math.sin(hubTime * 2 + i) * 0.3;
-    hctx.globalAlpha = twinkle;
-    hctx.fillStyle = '#fff';
-    hctx.beginPath(); hctx.arc(sx, sy, 0.8 + Math.sin(hubTime + i) * 0.4, 0, Math.PI * 2); hctx.fill();
+
+  // ── CLOUDS ───────────────────────────────────────────────────
+  const clouds = [
+    {x:0.15, y:0.12, r:0.08}, {x:0.55, y:0.08, r:0.07},
+    {x:0.82, y:0.15, r:0.06}, {x:0.35, y:0.18, r:0.05}
+  ];
+  hctx.fillStyle = 'rgba(255,255,255,0.88)';
+  for (let c of clouds) {
+    const cx = ((c.x * hw + hubTime * 8) % (hw + 80)) - 40;
+    const cy = c.y * hh;
+    const r = c.r * hw;
+    hctx.beginPath();
+    hctx.arc(cx, cy, r, 0, Math.PI*2);
+    hctx.arc(cx + r*0.8, cy - r*0.2, r*0.75, 0, Math.PI*2);
+    hctx.arc(cx + r*1.5, cy, r*0.65, 0, Math.PI*2);
+    hctx.fill();
   }
-  hctx.globalAlpha = 1;
 
-  // Ground
-  const grd = hctx.createLinearGradient(0, hh * 0.75, 0, hh);
-  grd.addColorStop(0, '#3b1a6b'); grd.addColorStop(1, '#1a0a2e');
-  hctx.fillStyle = grd;
-  hctx.fillRect(0, hh * 0.75, hw, hh * 0.25);
+  // ── ROLLING HILLS ────────────────────────────────────────────
+  // Back hill (lighter)
+  hctx.fillStyle = '#a8e870';
+  hctx.beginPath();
+  hctx.moveTo(0, hh);
+  hctx.bezierCurveTo(hw*0.15, hh*0.55, hw*0.35, hh*0.45, hw*0.5, hh*0.52);
+  hctx.bezierCurveTo(hw*0.65, hh*0.59, hw*0.85, hh*0.48, hw, hh*0.55);
+  hctx.lineTo(hw, hh); hctx.closePath(); hctx.fill();
 
-  // Ground glow
-  hctx.beginPath(); hctx.moveTo(0, hh * 0.75); hctx.lineTo(hw, hh * 0.75);
-  hctx.strokeStyle = '#a78bfa'; hctx.lineWidth = 1.5;
-  hctx.shadowColor = '#a78bfa'; hctx.shadowBlur = 8;
-  hctx.stroke(); hctx.shadowBlur = 0;
+  // Front hill (darker green)
+  hctx.fillStyle = '#78d840';
+  hctx.beginPath();
+  hctx.moveTo(0, hh);
+  hctx.bezierCurveTo(hw*0.1, hh*0.72, hw*0.3, hh*0.62, hw*0.5, hh*0.68);
+  hctx.bezierCurveTo(hw*0.7, hh*0.74, hw*0.88, hh*0.63, hw, hh*0.70);
+  hctx.lineTo(hw, hh); hctx.closePath(); hctx.fill();
 
-  // Floating gloops
+  // ── CANDY DECORATIONS ────────────────────────────────────────
+  const candies = [
+    {x:0.08, y:0.82, type:'lollipop', color:'#ff6eb4'},
+    {x:0.22, y:0.88, type:'ball', color:'#ffe566'},
+    {x:0.72, y:0.85, type:'ball', color:'#a78bfa'},
+    {x:0.88, y:0.80, type:'lollipop', color:'#60d0ff'},
+    {x:0.62, y:0.90, type:'ball', color:'#ff8c32'},
+    {x:0.42, y:0.86, type:'ball', color:'#a8ff78'},
+  ];
+  for (let c of candies) {
+    const cx = c.x * hw, cy = c.y * hh;
+    const bob = Math.sin(hubTime * 1.8 + c.x * 10) * 3;
+    hctx.save();
+    if (c.type === 'lollipop') {
+      // Stick
+      hctx.strokeStyle = '#d4a040'; hctx.lineWidth = 3;
+      hctx.beginPath(); hctx.moveTo(cx, cy + bob + 18); hctx.lineTo(cx, cy + bob - 4); hctx.stroke();
+      // Ball
+      hctx.fillStyle = c.color;
+      hctx.shadowColor = c.color; hctx.shadowBlur = 8;
+      hctx.beginPath(); hctx.arc(cx, cy + bob - 10, 11, 0, Math.PI*2); hctx.fill();
+      // Shine
+      hctx.fillStyle = 'rgba(255,255,255,0.5)';
+      hctx.beginPath(); hctx.arc(cx - 3, cy + bob - 14, 4, 0, Math.PI*2); hctx.fill();
+    } else {
+      hctx.fillStyle = c.color;
+      hctx.shadowColor = c.color; hctx.shadowBlur = 8;
+      hctx.beginPath(); hctx.arc(cx, cy + bob, 9, 0, Math.PI*2); hctx.fill();
+      hctx.fillStyle = 'rgba(255,255,255,0.45)';
+      hctx.beginPath(); hctx.arc(cx - 2, cy + bob - 3, 3.5, 0, Math.PI*2); hctx.fill();
+    }
+    hctx.shadowBlur = 0;
+    hctx.restore();
+  }
+
+  // ── FLOATING GLOOPS ──────────────────────────────────────────
   for (let g of hubGloops) {
     g.x -= g.speed;
-    if (g.x < -30) g.x = hw + 30;
-    const floatY = g.y + Math.sin(hubTime * 1.5 + g.phase) * 8;
-    const scaleX = 1 + Math.sin(hubTime * 2 + g.phase) * 0.08;
-    const scaleY = 1 - Math.sin(hubTime * 2 + g.phase) * 0.08;
-
+    if (g.x < -40) g.x = hw + 40;
+    const floatY = g.y + Math.sin(hubTime * 1.5 + g.phase) * 7;
+    const sx = 1 + Math.sin(hubTime * 2.2 + g.phase) * 0.1;
+    const sy = 1 - Math.sin(hubTime * 2.2 + g.phase) * 0.1;
     hctx.save();
-    hctx.shadowColor = g.color; hctx.shadowBlur = 12;
-    hctx.globalAlpha = 0.7;
+    hctx.shadowColor = g.color; hctx.shadowBlur = 10;
+    hctx.globalAlpha = 0.88;
     hctx.fillStyle = g.color;
-    hctx.beginPath();
-    hctx.ellipse(g.x, floatY, g.size * scaleX, g.size * scaleY, 0, 0, Math.PI * 2);
-    hctx.fill();
+    hctx.beginPath(); hctx.ellipse(g.x, floatY, g.size*sx, g.size*sy, 0, 0, Math.PI*2); hctx.fill();
     // Eyes
-    hctx.globalAlpha = 1;
+    hctx.globalAlpha = 1; hctx.shadowBlur = 0;
     hctx.fillStyle = '#1a0520';
-    hctx.beginPath(); hctx.arc(g.x - g.size * 0.2, floatY - g.size * 0.1, g.size * 0.12, 0, Math.PI * 2); hctx.fill();
-    hctx.beginPath(); hctx.arc(g.x + g.size * 0.2, floatY - g.size * 0.1, g.size * 0.12, 0, Math.PI * 2); hctx.fill();
+    hctx.beginPath(); hctx.arc(g.x - g.size*0.2, floatY - g.size*0.1, g.size*0.13, 0, Math.PI*2); hctx.fill();
+    hctx.beginPath(); hctx.arc(g.x + g.size*0.2, floatY - g.size*0.1, g.size*0.13, 0, Math.PI*2); hctx.fill();
+    // Blush
+    hctx.fillStyle = 'rgba(255,120,160,0.45)';
+    hctx.beginPath(); hctx.ellipse(g.x - g.size*0.38, floatY + g.size*0.08, g.size*0.18, g.size*0.1, 0, 0, Math.PI*2); hctx.fill();
+    hctx.beginPath(); hctx.ellipse(g.x + g.size*0.38, floatY + g.size*0.08, g.size*0.18, g.size*0.1, 0, 0, Math.PI*2); hctx.fill();
     hctx.restore();
   }
 }
@@ -3899,7 +4434,30 @@ function gameLoop(timestamp) {
     }
     if (inputHeld && !gloop.grounded && frameCount % 40 === 0) spawnWord(gloop.x, gloop.top - 15, STRETCH_W, '#ffe066');
     updateObstacles(); gloop.update();
-    if (checkCollisions()) die();
+    // Spawn collectibles
+    nextCollectibleIn -= dt;
+    if (nextCollectibleIn <= 0) {
+      spawnCollectible();
+      // Collectibles spawn more frequently as score rises, but always less than obstacles
+      const base = Math.max(45, 90 - Math.floor(score / 5) * 3);
+      nextCollectibleIn = base + Math.random() * 40;
+    }
+    updateCollectibles();
+    checkCollectibles();
+    tickPowerups();
+    // Score multiplier from sugar rush / boost
+    if (scoreMultiplier > 1) {
+      scoreAccum += (scoreMultiplier - 1) * dt * 0.5; // extra score ticks
+    }
+    // Rainbow = invincible
+    if (activePowerups.rainbow > 0) { /* skip collision */ }
+    else if (checkCollisions()) {
+      if (shieldActive) {
+        shieldActive = false;
+        spawnWord(gloop.x, gloop.y - gloop.h - 20, ['🛡️ BLOCKED!'], '#60d0ff');
+        spawnSplat(gloop.x, gloop.y);
+      } else { die(); }
+    }
 
   } else if (gameState === 'menu' || gameState === 'dead') {
     idleTime += dt;
@@ -3909,9 +4467,13 @@ function gameLoop(timestamp) {
   }
 
   drawObstacles();
+  drawCollectibles();
   updateParticles(); drawParticles();
+  drawActivePowerupEffects();
   gloop.draw();
   updateWords(); drawWords();
+  drawPowerupHUD();
+  drawCollectibleHUD();
   drawTouchHints();
 }
 
@@ -4509,6 +5071,169 @@ function selectBaseChar(idx) {
 
 // Apply device layout after all JS is ready
 applyDeviceLayout();
+
+// ══════════════════════════════════════════
+//  CAMPAIGN MAP BUILDER (Candy Crush style)
+// ══════════════════════════════════════════
+function buildCampaignMap() {
+  const scroll = document.getElementById('camp-map-scroll');
+  const nodes  = document.getElementById('camp-nodes');
+  const canvas = document.getElementById('camp-map-canvas');
+  if (!scroll || !nodes || !canvas) return;
+
+  const W = scroll.clientWidth || 390;
+  const TOTAL_STAGES = 30;
+  const NODE_H = 110; // vertical space per stage
+  const TOTAL_H = TOTAL_STAGES * NODE_H + 80;
+
+  canvas.width  = W;
+  canvas.height = TOTAL_H;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = TOTAL_H + 'px';
+  nodes.style.height  = TOTAL_H + 'px';
+
+  const ctx2 = canvas.getContext('2d');
+
+  // ── Background: sky→grass gradient ──
+  const bgGrd = ctx2.createLinearGradient(0, 0, 0, TOTAL_H);
+  bgGrd.addColorStop(0,   '#87ceeb');
+  bgGrd.addColorStop(0.3, '#b8f0a0');
+  bgGrd.addColorStop(0.6, '#90ee60');
+  bgGrd.addColorStop(1,   '#78d840');
+  ctx2.fillStyle = bgGrd;
+  ctx2.fillRect(0, 0, W, TOTAL_H);
+
+  // ── Scattered candy decorations ──
+  const candyColors = ['#ff6eb4','#ffe566','#a78bfa','#60d0ff','#ff8c32','#a8ff78'];
+  for (let i = 0; i < 40; i++) {
+    const cx = 20 + Math.random() * (W - 40);
+    const cy = 20 + Math.random() * (TOTAL_H - 40);
+    const r  = 6 + Math.random() * 10;
+    const col = candyColors[Math.floor(Math.random() * candyColors.length)];
+    ctx2.save();
+    ctx2.fillStyle = col;
+    ctx2.globalAlpha = 0.35;
+    ctx2.beginPath(); ctx2.arc(cx, cy, r, 0, Math.PI*2); ctx2.fill();
+    ctx2.globalAlpha = 1;
+    ctx2.restore();
+  }
+
+  // ── Compute node positions (winding S-curve) ──
+  const positions = [];
+  for (let s = 0; s < TOTAL_STAGES; s++) {
+    const row = TOTAL_STAGES - 1 - s; // stage 1 at bottom, 30 at top
+    const y   = 40 + row * NODE_H;
+    // Alternate left/center/right in a gentle wave
+    const wave = Math.sin((row / 4) * Math.PI) * (W * 0.28);
+    const x    = W * 0.5 + wave;
+    positions.push({ x, y, stage: s + 1 });
+  }
+
+  // ── Draw candy-stripe path connecting nodes ──
+  ctx2.save();
+  ctx2.lineWidth = 22;
+  ctx2.lineCap   = 'round';
+  ctx2.lineJoin  = 'round';
+  // White base
+  ctx2.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx2.beginPath();
+  ctx2.moveTo(positions[0].x, positions[0].y);
+  for (let i = 1; i < positions.length; i++) {
+    const p = positions[i], pp = positions[i-1];
+    const mx = (p.x + pp.x) / 2, my = (p.y + pp.y) / 2;
+    ctx2.quadraticCurveTo(pp.x, pp.y, mx, my);
+  }
+  ctx2.stroke();
+  // Pink stripe overlay (dashed)
+  ctx2.strokeStyle = 'rgba(255,110,180,0.7)';
+  ctx2.lineWidth   = 8;
+  ctx2.setLineDash([18, 14]);
+  ctx2.beginPath();
+  ctx2.moveTo(positions[0].x, positions[0].y);
+  for (let i = 1; i < positions.length; i++) {
+    const p = positions[i], pp = positions[i-1];
+    const mx = (p.x + pp.x) / 2, my = (p.y + pp.y) / 2;
+    ctx2.quadraticCurveTo(pp.x, pp.y, mx, my);
+  }
+  ctx2.stroke();
+  ctx2.setLineDash([]);
+  ctx2.restore();
+
+  // ── Build DOM stage nodes ──
+  nodes.innerHTML = '';
+  const currentStage = STATE.hiScore > 0 ? Math.min(Math.floor(STATE.hiScore / 5) + 1, TOTAL_STAGES) : 1;
+
+  positions.forEach(({ x, y, stage }) => {
+    const unlocked = stage <= currentStage;
+    const completed = stage < currentStage;
+    const stars = completed ? (stage % 3 === 0 ? 3 : stage % 2 === 0 ? 2 : 3) : 0;
+    const isCurrent = stage === currentStage;
+
+    const node = document.createElement('div');
+    node.style.cssText = `
+      position:absolute;
+      left:${x}px; top:${y}px;
+      transform:translate(-50%,-50%);
+      display:flex;flex-direction:column;align-items:center;gap:3px;
+      cursor:${unlocked ? 'pointer' : 'default'};
+      z-index:2;
+    `;
+
+    // Circle
+    const circle = document.createElement('div');
+    circle.style.cssText = `
+      width:${isCurrent ? 58 : 50}px;
+      height:${isCurrent ? 58 : 50}px;
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:${isCurrent ? 20 : 17}px;
+      color:#fff;
+      font-weight:900;
+      box-shadow:0 4px 0 ${unlocked ? '#a0003a' : '#666'},0 6px 16px rgba(0,0,0,0.25);
+      border:3px solid rgba(255,255,255,0.8);
+      background:${isCurrent
+        ? 'linear-gradient(160deg,#ff80c8,#e8007a)'
+        : completed
+          ? 'linear-gradient(160deg,#ffe566,#ff8c00)'
+          : unlocked
+            ? 'linear-gradient(160deg,#ff80c8,#c0408a)'
+            : 'linear-gradient(160deg,#aaa,#777)'};
+      ${isCurrent ? 'animation:playPulse 2s ease-in-out infinite;' : ''}
+    `;
+    circle.textContent = unlocked ? stage : '🔒';
+    node.appendChild(circle);
+
+    // Stars
+    if (stars > 0) {
+      const starRow = document.createElement('div');
+      starRow.style.cssText = 'display:flex;gap:2px;';
+      for (let s = 0; s < 3; s++) {
+        const star = document.createElement('span');
+        star.style.cssText = `font-size:12px;filter:${s < stars ? 'none' : 'grayscale(1) opacity(0.4)'};`;
+        star.textContent = '⭐';
+        starRow.appendChild(star);
+      }
+      node.appendChild(starRow);
+    }
+
+    // Click to play
+    if (unlocked) {
+      node.onclick = () => {
+        showToast('🫧', `Stage ${stage} — Score target: ${stage * 5}!`, 'pink');
+        setTimeout(() => showScreen('game-screen'), 600);
+      };
+    }
+
+    nodes.appendChild(node);
+  });
+
+  // Scroll to current stage
+  const cur = positions[currentStage - 1];
+  if (cur) {
+    scroll.scrollTop = Math.max(0, cur.y - scroll.clientHeight * 0.5);
+  }
+}
 
 </script>
 </body>
