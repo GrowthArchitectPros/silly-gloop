@@ -2042,7 +2042,7 @@ const STATE = {
   videoWatched: 0,
   interactions: { like:false, share:false, save:false },
   // Cosmetics
-  baseCharacter: 0,   // 0=Blobby 1=Goopster 2=Splat 3=Wiggles
+  baseCharacter: 0,   // 0=Blobby 1=Goopster 2=Splat 3=Wiggles 4=Axie
   equippedSkin: 0,
   equippedEyes: 0,
   equippedHat: 0,
@@ -2098,6 +2098,20 @@ const BASE_CHARS = [
     blush: 'rgba(255,180,100,0.45)',
     shine: 'rgba(255,255,255,0.55)',
     desc: 'Wiggles like crazy!',
+  },
+  {
+    id: 4, name: 'Axie', emoji: '🦎',
+    // Axolotl — soft pink with feathery gill fronds
+    bodyLight: '#ffd6e8', bodyMid: '#ffadd2', bodyDark: '#d4608a',
+    glow: 'rgba(255,173,210,0.8)',
+    outline: 'rgba(180,60,110,0.5)',
+    blush: 'rgba(255,200,220,0.55)',
+    shine: 'rgba(255,255,255,0.6)',
+    gillColor: '#ff6eb4',   // bright pink gill fronds
+    gillDark:  '#c0306e',
+    tailColor: '#ffadd2',
+    isAxolotl: true,
+    desc: 'The cutest water gloop!',
   },
 ];
 
@@ -3291,32 +3305,92 @@ const gloop = {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // ── LITTLE NUB FEET (two small bumps at bottom) ──────────
-    for (let s of [-1, 1]) {
-      const fx = cx + s * hw * 0.38;
-      const fy = cy + hh * 0.95;
-      ctx.beginPath();
-      ctx.ellipse(fx, fy, hw * 0.22, hh * 0.18, 0, 0, Math.PI * 2);
-      const fgrd = ctx.createRadialGradient(fx - hw*0.05, fy - hh*0.05, 1, fx, fy, hw * 0.22);
-      fgrd.addColorStop(0, bodyLight); fgrd.addColorStop(1, bodyDark);
-      ctx.fillStyle = fgrd;
-      ctx.fill();
+    // ── AXOLOTL GILL FRONDS (before body so they appear behind) ─
+    if (char.isAxolotl) {
+      const gillC = char.gillColor || '#ff6eb4';
+      const gillD = char.gillDark  || '#c0306e';
+      // 3 fronds per side, fanning outward from top of head
+      for (let s of [-1, 1]) {
+        const baseX = cx + s * hw * 0.72;
+        const baseY = cy - hh * 0.55;
+        const frondAngles = s === -1 ? [-0.9, -1.25, -1.6] : [0.9, 1.25, 1.6];
+        const frondLens   = [hh * 0.75, hh * 0.95, hh * 0.7];
+        for (let f = 0; f < 3; f++) {
+          const ang = frondAngles[f];
+          const len = frondLens[f];
+          const tipX = baseX + Math.cos(ang) * len;
+          const tipY = baseY + Math.sin(ang) * len;
+          // Stem
+          ctx.save();
+          ctx.strokeStyle = gillD; ctx.lineWidth = hw * 0.09; ctx.lineCap = 'round';
+          ctx.shadowColor = gillC; ctx.shadowBlur = 8;
+          ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.lineTo(tipX, tipY); ctx.stroke();
+          // 3 little bubble-bumps along the frond
+          for (let b = 1; b <= 3; b++) {
+            const t = b / 3.5;
+            const bx = baseX + (tipX - baseX) * t;
+            const by = baseY + (tipY - baseY) * t;
+            const br = hw * (0.09 - b * 0.015);
+            ctx.fillStyle = b === 2 ? gillC : gillD;
+            ctx.beginPath(); ctx.arc(bx, by, Math.max(br, 2), 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.restore();
+        }
+      }
+      // Tail nub (right side, behind body)
+      ctx.save();
+      ctx.fillStyle = char.tailColor || bodyMid;
       ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5;
-      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(cx + hw * 1.05, cy + hh * 0.55, hw * 0.28, hh * 0.18, 0.5, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
     }
 
-    // ── LITTLE NUB ARMS (two small bumps on sides) ───────────
+    // ── LITTLE NUB FEET (chubby rounded feet with 3 tiny toe-bumps) ──
     for (let s of [-1, 1]) {
-      const ax = cx + s * hw * 0.92;
-      const ay = cy + hh * 0.1 + (excited ? -hh * 0.15 : 0);
+      const fx = cx + s * hw * 0.38;
+      const fy = cy + hh * 0.92;
+      // Main foot pad
       ctx.beginPath();
-      ctx.ellipse(ax, ay, hw * 0.2, hh * 0.16, s * 0.4, 0, Math.PI * 2);
-      const agrd = ctx.createRadialGradient(ax, ay - hh*0.05, 1, ax, ay, hw * 0.2);
+      ctx.ellipse(fx, fy, hw * 0.26, hh * 0.2, s * 0.15, 0, Math.PI * 2);
+      const fgrd = ctx.createRadialGradient(fx - hw*0.05, fy - hh*0.06, 1, fx, fy, hw * 0.26);
+      fgrd.addColorStop(0, bodyLight); fgrd.addColorStop(1, bodyDark);
+      ctx.fillStyle = fgrd; ctx.fill();
+      ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5; ctx.stroke();
+      // 3 tiny toe bumps along top of foot
+      for (let t = -1; t <= 1; t++) {
+        const tx = fx + t * hw * 0.1;
+        const ty = fy - hh * 0.17;
+        ctx.beginPath(); ctx.arc(tx, ty, hw * 0.07, 0, Math.PI * 2);
+        ctx.fillStyle = bodyLight; ctx.fill();
+        ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1; ctx.stroke();
+      }
+    }
+
+    // ── LITTLE NUB ARMS (chubby with 2 finger bumps, raise when excited) ─
+    for (let s of [-1, 1]) {
+      const armRaise = excited ? -hh * 0.22 : (falling ? hh * 0.08 : 0);
+      const armTilt  = excited ? s * 0.6 : s * 0.3;
+      const ax = cx + s * hw * 0.94;
+      const ay = cy + hh * 0.08 + armRaise;
+      // Arm pad
+      ctx.beginPath();
+      ctx.ellipse(ax, ay, hw * 0.22, hh * 0.17, armTilt, 0, Math.PI * 2);
+      const agrd = ctx.createRadialGradient(ax - hw*0.04, ay - hh*0.04, 1, ax, ay, hw * 0.22);
       agrd.addColorStop(0, bodyLight); agrd.addColorStop(1, bodyDark);
-      ctx.fillStyle = agrd;
-      ctx.fill();
-      ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5;
-      ctx.stroke();
+      ctx.fillStyle = agrd; ctx.fill();
+      ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1.5; ctx.stroke();
+      // 2 finger bumps at tip of arm
+      for (let f of [-1, 1]) {
+        const perpX = Math.cos(armTilt + Math.PI/2) * hw * 0.08 * f;
+        const perpY = Math.sin(armTilt + Math.PI/2) * hh * 0.08 * f;
+        const tipX = ax + Math.cos(armTilt) * hw * 0.18 + perpX;
+        const tipY = ay + Math.sin(armTilt) * hh * 0.18 + perpY;
+        ctx.beginPath(); ctx.arc(tipX, tipY, hw * 0.07, 0, Math.PI * 2);
+        ctx.fillStyle = bodyLight; ctx.fill();
+        ctx.strokeStyle = bodyOutline; ctx.lineWidth = 1; ctx.stroke();
+      }
     }
 
     // ── SHINE HIGHLIGHT (top-left glossy oval) ────────────────
@@ -5014,15 +5088,56 @@ function drawCharPreview(charIdx) {
   c.shadowBlur = 0;
   c.strokeStyle = char.outline; c.lineWidth = 2; c.stroke();
 
-  // Feet
-  for (let s of [-1,1]) {
-    c.beginPath(); c.ellipse(cx + s*hw*0.38, cy+hh*0.95, hw*0.22, hh*0.18, 0, 0, Math.PI*2);
-    c.fillStyle = char.bodyMid; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1.5; c.stroke();
+  // Axolotl gill fronds
+  if (char.isAxolotl) {
+    const gillC = char.gillColor || '#ff6eb4';
+    const gillD = char.gillDark  || '#c0306e';
+    for (let s of [-1,1]) {
+      const baseX = cx + s * hw * 0.72, baseY = cy - hh * 0.55;
+      const frondAngles = s === -1 ? [-0.9,-1.25,-1.6] : [0.9,1.25,1.6];
+      const frondLens   = [hh*0.75, hh*0.95, hh*0.7];
+      for (let f = 0; f < 3; f++) {
+        const ang = frondAngles[f], len = frondLens[f];
+        const tipX = baseX + Math.cos(ang)*len, tipY = baseY + Math.sin(ang)*len;
+        c.save(); c.strokeStyle = gillD; c.lineWidth = hw*0.09; c.lineCap='round';
+        c.shadowColor = gillC; c.shadowBlur = 6;
+        c.beginPath(); c.moveTo(baseX, baseY); c.lineTo(tipX, tipY); c.stroke();
+        for (let b = 1; b <= 3; b++) {
+          const t = b/3.5;
+          const bx = baseX+(tipX-baseX)*t, by = baseY+(tipY-baseY)*t;
+          const br = Math.max(hw*(0.09-b*0.015), 2);
+          c.fillStyle = b===2 ? gillC : gillD;
+          c.beginPath(); c.arc(bx, by, br, 0, Math.PI*2); c.fill();
+        }
+        c.restore();
+      }
+    }
+    // Tail nub
+    c.fillStyle = char.tailColor || char.bodyMid;
+    c.strokeStyle = char.outline; c.lineWidth = 1.5;
+    c.beginPath(); c.ellipse(cx+hw*1.05, cy+hh*0.55, hw*0.28, hh*0.18, 0.5, 0, Math.PI*2);
+    c.fill(); c.stroke();
   }
-  // Arms
+  // Feet with toe bumps
   for (let s of [-1,1]) {
-    c.beginPath(); c.ellipse(cx+s*hw*0.92, cy+hh*0.1, hw*0.2, hh*0.16, s*0.4, 0, Math.PI*2);
+    c.beginPath(); c.ellipse(cx+s*hw*0.38, cy+hh*0.92, hw*0.26, hh*0.2, s*0.15, 0, Math.PI*2);
     c.fillStyle = char.bodyMid; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1.5; c.stroke();
+    for (let t=-1;t<=1;t++) {
+      c.beginPath(); c.arc(cx+s*hw*0.38+t*hw*0.1, cy+hh*0.75, hw*0.07, 0, Math.PI*2);
+      c.fillStyle = char.bodyLight; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1; c.stroke();
+    }
+  }
+  // Arms with finger bumps
+  for (let s of [-1,1]) {
+    c.beginPath(); c.ellipse(cx+s*hw*0.94, cy+hh*0.1, hw*0.22, hh*0.17, s*0.3, 0, Math.PI*2);
+    c.fillStyle = char.bodyMid; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1.5; c.stroke();
+    for (let f of [-1,1]) {
+      const tilt = s*0.3;
+      const tipX = cx+s*hw*0.94 + Math.cos(tilt)*hw*0.18 + Math.cos(tilt+Math.PI/2)*hw*0.08*f;
+      const tipY = cy+hh*0.1 + Math.sin(tilt)*hh*0.18 + Math.sin(tilt+Math.PI/2)*hh*0.08*f;
+      c.beginPath(); c.arc(tipX, tipY, hw*0.07, 0, Math.PI*2);
+      c.fillStyle = char.bodyLight; c.fill(); c.strokeStyle = char.outline; c.lineWidth=1; c.stroke();
+    }
   }
   // Shine
   c.fillStyle = char.shine || 'rgba(255,255,255,0.5)';
