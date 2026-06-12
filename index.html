@@ -200,24 +200,23 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
    GLOBAL TOP BAR (currency bar)
 ══════════════════════════════════════════ */
 .top-bar{
-  width:100%;max-width:var(--app-max-w);
+  width:100%;
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 12px 6px;flex-shrink:0;
-  background:rgba(26,6,53,0.88);
-  border-bottom:2px solid rgba(255,110,180,0.22);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  padding:10px 14px;flex-shrink:0;
+  background:linear-gradient(180deg,#ffb6d9 0%,#ff80b5 100%);
+  border-bottom:3px solid #e0509a;
+  box-shadow:0 3px 12px rgba(220,60,120,0.25);
   position:sticky;top:0;z-index:50;
 }
 .currency-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .cur-pill{
   display:flex;align-items:center;gap:3px;
-  background:rgba(255,255,255,0.07);
-  border:1.5px solid rgba(255,110,180,0.22);
-  border-radius:20px;padding:3px 9px 3px 5px;
-  font-size:calc(13px * var(--font-scale));color:#fff;
+  background:rgba(255,255,255,0.4);
+  border:2px solid rgba(255,255,255,0.7);
+  border-radius:20px;padding:4px 10px 4px 7px;
+  font-size:calc(13px * var(--font-scale));color:#a0003a;
   font-family:'Fredoka One',cursive;
-  box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  box-shadow:0 2px 6px rgba(200,60,100,0.15);
 }
 .cur-pill .icon{font-size:calc(15px * var(--font-scale));}
 .cur-pill .val{min-width:32px;text-align:right;}
@@ -231,24 +230,25 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 .cur-pill .add-btn:hover{background:rgba(255,110,180,0.38);transform:scale(1.15);}
 .top-bar-right{display:flex;gap:7px;align-items:center;}
 .icon-btn{
-  width:32px;height:32px;border-radius:10px;
-  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,110,180,0.22);
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#e0509a,#c0308a);
+  border:2.5px solid rgba(255,255,255,0.7);
   display:flex;align-items:center;justify-content:center;
   font-size:17px;cursor:pointer;transition:all .15s;color:#fff;
+  box-shadow:0 3px 8px rgba(180,30,80,0.3);
 }
-.icon-btn:hover{background:rgba(255,110,180,0.18);transform:scale(1.08);}
+.icon-btn:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(180,30,80,0.4);}
 
 /* ══════════════════════════════════════════
    BOTTOM NAV BAR
 ══════════════════════════════════════════ */
 .bottom-nav{
-  width:100%;max-width:var(--app-max-w);
+  width:100%;
   display:flex;align-items:center;justify-content:space-around;
-  padding:6px 4px 10px;
-  background:rgba(26,6,53,0.92);
-  border-top:2px solid rgba(255,110,180,0.22);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#ff80b5 0%,#e8509a 100%);
+  border-top:3px solid #c03080;
+  box-shadow:0 -3px 12px rgba(200,40,100,0.25);
   position:sticky;bottom:0;z-index:50;flex-shrink:0;
 }
 .nav-item{
@@ -258,7 +258,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   position:relative;
 }
 .nav-item:hover,.nav-item.active{
-  background:rgba(255,110,180,0.12);
+  background:rgba(255,255,255,0.2);
+  border-radius:14px;
 }
 .nav-item .nav-icon{
   font-size:var(--nav-icon-sz);line-height:1;
@@ -266,12 +267,12 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 }
 .nav-item.active .nav-icon{transform:scale(1.18);}
 .nav-item .nav-label{
-  font-size:var(--nav-label-sz);color:var(--dim);
-  font-family:'Nunito',sans-serif;font-weight:700;
-  letter-spacing:.5px;text-transform:uppercase;
+  font-size:var(--nav-label-sz);color:rgba(255,255,255,0.85);
+  font-family:'Fredoka One',cursive;
+  letter-spacing:.3px;
 }
-.nav-item.active .nav-label{color:var(--candy-pink);}
-.nav-item.active .nav-icon{filter:drop-shadow(0 0 8px var(--candy-pink));}
+.nav-item.active .nav-label{color:#fff;font-weight:bold;}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,0.8));}
 .nav-badge{
   position:absolute;top:0;right:4px;
   background:var(--red);color:#fff;
@@ -766,38 +767,39 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 /* ══════════════════════════════════════════
    ★ QUEST SCREEN
 ══════════════════════════════════════════ */
-#quest-screen{background:linear-gradient(180deg,#0d0520 0%,#0a1a0a 100%);}
+#quest-screen{background:linear-gradient(180deg,#ffe8f5 0%,#ffd0e8 40%,#ffe8f5 100%);}
 .quest-tabs{
   width:100%;max-width:520px;
   display:flex;gap:0;padding:0 14px 10px;flex-shrink:0;
 }
 .quest-tab{
   flex:1;padding:8px;text-align:center;
-  font-size:14px;color:var(--dim);
-  border-bottom:2px solid transparent;
+  font-size:14px;color:#a0607a;
+  border-bottom:3px solid transparent;
   cursor:pointer;transition:all .15s;
   font-family:'Fredoka One',cursive;letter-spacing:.5px;
 }
-.quest-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.quest-tab.active{color:#e0006a;border-bottom-color:#e0006a;}
 
 .quest-item{
-  background:rgba(255,255,255,0.04);
-  border:1.5px solid var(--border);
-  border-radius:14px;padding:14px;
+  background:rgba(255,255,255,0.75);
+  border:2px solid rgba(255,110,180,0.3);
+  border-radius:18px;padding:14px;
   display:flex;align-items:center;gap:12px;
   cursor:pointer;transition:all .15s;
+  box-shadow:0 3px 12px rgba(255,110,180,0.12);
 }
-.quest-item:hover{background:rgba(255,255,255,0.07);}
+.quest-item:hover{background:rgba(255,255,255,0.92);transform:translateY(-1px);}
 .quest-item.claimable{
-  border-color:rgba(125,255,143,0.4);
-  background:rgba(125,255,143,0.05);
+  border-color:rgba(255,80,140,0.5);
+  background:rgba(255,200,230,0.4);
   animation:questGlow .8s ease-in-out infinite alternate;
 }
-@keyframes questGlow{from{box-shadow:0 0 8px rgba(125,255,143,0.1);}to{box-shadow:0 0 18px rgba(125,255,143,0.25);}}
+@keyframes questGlow{from{box-shadow:0 0 8px rgba(255,80,140,0.15);}to{box-shadow:0 0 20px rgba(255,80,140,0.35);}}
 .quest-item .qi-icon{font-size:28px;flex-shrink:0;}
 .quest-item .qi-info{flex:1;}
-.quest-item .qi-title{font-size:15px;color:var(--text);letter-spacing:.3px;}
-.quest-item .qi-prog-text{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.quest-item .qi-title{font-size:15px;color:#3a1a2e;letter-spacing:.3px;font-family:'Fredoka One',cursive;}
+.quest-item .qi-prog-text{font-size:12px;color:#a06080;font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
 .quest-item .qi-reward{
   display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;
 }
@@ -808,21 +810,24 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 }
 .quest-item .qi-reward-val{font-size:12px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;}
 .quest-item .claim-btn{
-  padding:6px 14px;border-radius:9px;font-size:13px;
-  background:rgba(125,255,143,0.18);border:1.5px solid var(--green);
-  color:var(--green);cursor:pointer;font-family:'Fredoka One',cursive;
-  transition:all .14s;
+  padding:8px 18px;border-radius:20px;font-size:14px;
+  background:linear-gradient(180deg,#ff80c8,#e0006a);
+  border:none;
+  color:#fff;cursor:pointer;font-family:'Fredoka One',cursive;
+  box-shadow:0 3px 0 #a00040;
+  transition:all .12s;
 }
-.quest-item .claim-btn:hover{background:rgba(125,255,143,0.32);}
+.quest-item .claim-btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 #a00040;}
+.quest-item .claim-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #a00040;}
 .quest-item .claim-btn.claimed{
-  background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.14);
-  color:var(--dim);cursor:default;
+  background:rgba(200,180,200,0.3);border:2px solid rgba(200,180,200,0.5);
+  color:#a08090;cursor:default;box-shadow:none;
 }
 
 /* ══════════════════════════════════════════
    ★ SHOP SCREEN
 ══════════════════════════════════════════ */
-#shop-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0a2e 100%);}
+#shop-screen{background:linear-gradient(180deg,#e8f0ff 0%,#d8e8ff 40%,#e8f0ff 100%);}
 .shop-tabs{
   width:100%;max-width:520px;
   display:flex;gap:6px;padding:0 14px 10px;overflow-x:auto;flex-shrink:0;
@@ -830,13 +835,13 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 }
 .shop-tabs::-webkit-scrollbar{display:none;}
 .shop-tab{
-  flex-shrink:0;padding:6px 16px;border-radius:20px;
-  font-size:13px;color:var(--dim);
-  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  flex-shrink:0;padding:7px 18px;border-radius:20px;
+  font-size:13px;color:#6060a0;
+  background:rgba(255,255,255,0.7);border:2px solid rgba(100,100,200,0.2);
   cursor:pointer;transition:all .15s;font-family:'Fredoka One',cursive;
   white-space:nowrap;
 }
-.shop-tab.active{background:rgba(167,139,250,0.14);border-color:var(--purple);color:var(--purple);}
+.shop-tab.active{background:linear-gradient(180deg,#a080ff,#7040e0);border-color:#7040e0;color:#fff;box-shadow:0 3px 8px rgba(112,64,224,0.3);}
 
 .shop-grid{
   width:100%;max-width:520px;
@@ -844,13 +849,14 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   gap:10px;padding:0 14px;flex-shrink:0;
 }
 .shop-item{
-  background:rgba(255,255,255,0.04);
-  border:1.5px solid var(--border);
-  border-radius:14px;padding:14px 12px;
+  background:rgba(255,255,255,0.85);
+  border:2px solid rgba(100,100,220,0.2);
+  border-radius:18px;padding:14px 12px;
   display:flex;flex-direction:column;align-items:center;gap:8px;
   cursor:pointer;transition:all .18s;position:relative;
+  box-shadow:0 3px 10px rgba(100,100,220,0.1);
 }
-.shop-item:hover{background:rgba(255,255,255,0.08);transform:scale(0.98);}
+.shop-item:hover{background:rgba(255,255,255,0.98);transform:translateY(-2px);box-shadow:0 6px 16px rgba(100,100,220,0.18);}
 .shop-item .si-icon{
   width:64px;height:64px;border-radius:12px;
   background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.25);
@@ -863,10 +869,10 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   border-radius:8px;font-size:10px;padding:1px 5px;
   font-family:'Nunito',sans-serif;font-weight:900;
 }
-.shop-item .si-name{font-size:13px;color:var(--text);text-align:center;letter-spacing:.3px;}
+.shop-item .si-name{font-size:13px;color:#2a1a4e;text-align:center;letter-spacing:.3px;font-family:'Fredoka One',cursive;}
 .shop-item .si-price{
   display:flex;align-items:center;gap:4px;
-  font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;
+  font-size:13px;color:#7a4400;font-family:'Nunito',sans-serif;font-weight:700;
 }
 .shop-item .si-price .price-icon{font-size:16px;}
 .shop-item.video-item{
@@ -885,23 +891,24 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 .shop-refresh{
   width:100%;max-width:520px;
   padding:8px 14px;
-  text-align:center;font-size:12px;color:var(--dim);
+  text-align:center;font-size:12px;color:#8060a0;
   font-family:'Nunito',sans-serif;font-weight:700;flex-shrink:0;
 }
-.shop-refresh span{color:var(--gold);}
+.shop-refresh span{color:#c06000;}
 
 /* ══════════════════════════════════════════
    ★ BATTLE PASS SCREEN
 ══════════════════════════════════════════ */
-#pass-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0a1a 100%);}
+#pass-screen{background:linear-gradient(180deg,#f0e8ff 0%,#e0d0ff 40%,#f0e8ff 100%);}
 .pass-header-card{
   width:100%;max-width:520px;
   padding:14px;flex-shrink:0;
 }
 .pass-level-row{
   display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
-  border-radius:14px;padding:14px;
+  background:rgba(255,255,255,0.8);border:2px solid rgba(160,100,220,0.25);
+  border-radius:18px;padding:14px;
+  box-shadow:0 3px 12px rgba(160,100,220,0.15);
 }
 .pass-level-badge{
   width:52px;height:52px;border-radius:12px;
@@ -911,11 +918,11 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   box-shadow:0 0 14px rgba(255,224,102,0.4);
 }
 .pass-level-info{flex:1;}
-.pass-level-label{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.pass-level-label{font-size:12px;color:#8060a0;font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
 .pass-level-num{font-size:24px;color:var(--gold);}
-.pass-xp-text{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
-.pass-season{font-size:12px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:6px;text-align:right;}
-.pass-season span{color:var(--gold);}
+.pass-xp-text{font-size:11px;color:#8060a0;font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
+.pass-season{font-size:12px;color:#8060a0;font-family:'Nunito',sans-serif;font-weight:700;margin-top:6px;text-align:right;}
+.pass-season span{color:#c06000;}
 
 .pass-tabs{
   width:100%;max-width:520px;
@@ -923,12 +930,12 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 }
 .pass-tab{
   flex:1;padding:8px;text-align:center;
-  font-size:14px;color:var(--dim);
-  border-bottom:2px solid transparent;
+  font-size:14px;color:#8060a0;
+  border-bottom:3px solid transparent;
   cursor:pointer;transition:all .15s;
   font-family:'Fredoka One',cursive;
 }
-.pass-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.pass-tab.active{color:#c06000;border-bottom-color:#c06000;}
 
 .pass-track{
   width:100%;max-width:520px;
@@ -941,11 +948,12 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 .pass-row-label{
   width:100px;flex-shrink:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  background:rgba(255,255,255,0.03);border:1.5px solid var(--border);
-  border-radius:12px;padding:8px;
+  background:rgba(255,255,255,0.75);border:2px solid rgba(160,100,220,0.2);
+  border-radius:14px;padding:8px;
+  box-shadow:0 2px 6px rgba(160,100,220,0.1);
 }
 .pass-row-label .prl-icon{font-size:24px;}
-.pass-row-label .prl-name{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
+.pass-row-label .prl-name{font-size:11px;color:#6040a0;font-family:'Nunito',sans-serif;font-weight:700;text-align:center;}
 .pass-row-label.premium{
   background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.3);
 }
@@ -961,11 +969,12 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 }
 .pass-reward-box{
   width:64px;height:64px;border-radius:12px;
-  background:rgba(255,255,255,0.04);border:1.5px solid var(--border);
+  background:rgba(255,255,255,0.8);border:2px solid rgba(160,100,220,0.2);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:22px;position:relative;cursor:pointer;transition:all .15s;
+  box-shadow:0 2px 6px rgba(160,100,220,0.1);
 }
-.pass-reward-box:hover{background:rgba(255,255,255,0.1);}
+.pass-reward-box:hover{background:rgba(255,255,255,0.98);transform:scale(1.06);}
 .pass-reward-box.claimed{
   background:rgba(125,255,143,0.08);border-color:rgba(125,255,143,0.3);
 }
@@ -980,7 +989,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   font-size:11px;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:900;
 }
 .pass-reward-cell .prb-level{
-  font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;
+  font-size:11px;color:#8060a0;font-family:'Nunito',sans-serif;font-weight:700;
 }
 .pass-unlock-row{
   width:100%;max-width:520px;
@@ -1102,7 +1111,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 /* ══════════════════════════════════════════
    ★ SETTINGS SCREEN
 ══════════════════════════════════════════ */
-#settings-screen{background:linear-gradient(180deg,#0d0520 0%,#1a0840 100%);}
+#settings-screen{background:linear-gradient(180deg,#e8f8ff 0%,#d8f0ff 40%,#e8f8ff 100%);}
 .settings-section{
   width:100%;max-width:520px;
   padding:0 14px;flex-shrink:0;
@@ -1199,18 +1208,18 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
    ★ CHARACTER SELECT SCREEN
 ══════════════════════════════════════════ */
 #charselect-screen{
-  background:linear-gradient(160deg,#3a1a6e 0%,#6a1a8e 50%,#2a0a50 100%);
+  background:linear-gradient(180deg,#ffe8f5 0%,#f0d0ff 50%,#ffe8f5 100%);
 }
 .charselect-title{
   text-align:center;padding:18px 16px 4px;
   font-size:calc(26px * var(--font-scale));
-  color:var(--candy-lemon);
-  text-shadow:0 0 20px rgba(255,229,102,0.5);
+  color:#a0003a;
+  text-shadow:0 2px 8px rgba(220,60,120,0.3);
   flex-shrink:0;
 }
 .charselect-sub{
   text-align:center;font-size:calc(14px * var(--font-scale));
-  color:rgba(255,255,255,0.75);
+  color:#a06080;
   font-family:'Nunito',sans-serif;font-weight:700;
   padding:0 16px 12px;flex-shrink:0;
 }
@@ -1220,27 +1229,28 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   width:100%;max-width:var(--app-max-w);
 }
 .char-card{
-  background:rgba(255,255,255,0.07);
-  border:2.5px solid rgba(255,255,255,0.15);
-  border-radius:20px;padding:16px 12px;
+  background:rgba(255,255,255,0.8);
+  border:3px solid rgba(255,110,180,0.25);
+  border-radius:24px;padding:16px 12px;
   display:flex;flex-direction:column;align-items:center;gap:8px;
   cursor:pointer;transition:all .2s;
   position:relative;
+  box-shadow:0 4px 16px rgba(255,110,180,0.15);
 }
 .char-card:hover,.char-card:active{transform:scale(1.04);}
 .char-card.selected{
-  border-color:var(--candy-lemon);
-  background:rgba(255,229,102,0.1);
-  box-shadow:0 0 24px rgba(255,229,102,0.35);
+  border-color:#e0006a;
+  background:rgba(255,180,220,0.3);
+  box-shadow:0 0 24px rgba(220,0,100,0.3);
 }
 .char-card canvas{border-radius:12px;}
 .char-card .cc-name{
   font-size:calc(16px * var(--font-scale));
-  color:#fff;letter-spacing:.5px;
+  color:#3a1a2e;letter-spacing:.5px;
 }
 .char-card .cc-desc{
   font-size:calc(11px * var(--font-scale));
-  color:rgba(255,255,255,0.6);
+  color:#a06080;
   font-family:'Nunito',sans-serif;font-weight:700;
   text-align:center;
 }
@@ -1767,8 +1777,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <div id="quest-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">QUESTS</span>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#a0003a;">‹</div>
+      <span style="font-size:18px;color:#a0003a;letter-spacing:1px;font-family:'Fredoka One',cursive;">QUESTS</span>
     </div>
     <div class="cur-pill"><span class="icon">💎</span><span class="val">3,344</span></div>
   </div>
@@ -1798,8 +1808,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <div id="shop-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">SHOP</span>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#a0003a;">‹</div>
+      <span style="font-size:18px;color:#a0003a;letter-spacing:1px;font-family:'Fredoka One',cursive;">SHOP</span>
     </div>
     <div class="currency-group">
       <div class="cur-pill"><span class="icon">⚡</span><span class="val" id="shop-energy">5/5</span></div>
@@ -1837,8 +1847,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <div id="pass-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">‹</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">BATTLE PASS</span>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#a0003a;">‹</div>
+      <span style="font-size:18px;color:#a0003a;letter-spacing:1px;font-family:'Fredoka One',cursive;">BATTLE PASS</span>
     </div>
     <div class="cur-pill"><span class="icon">💎</span><span class="val">3,344</span></div>
   </div>
@@ -1887,8 +1897,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <div id="wardrobe-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">&#8249;</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">WARDROBE</span>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#a0003a;">‹</div>
+      <span style="font-size:18px;color:#a0003a;letter-spacing:1px;font-family:'Fredoka One',cursive;">WARDROBE</span>
     </div>
     <div class="currency-group">
       <div class="cur-pill" title="Trophies">
@@ -1928,8 +1938,8 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <div id="charselect-screen" class="screen hidden">
   <div class="top-bar">
     <div class="flex-row">
-      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.07);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text);">&#8249;</div>
-      <span style="font-size:16px;color:var(--text);letter-spacing:1px;">MY GLOOP</span>
+      <div class="back-btn" onclick="showScreen('hub-screen')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#a0003a;">‹</div>
+      <span style="font-size:18px;color:#a0003a;letter-spacing:1px;font-family:'Fredoka One',cursive;">MY GLOOP</span>
     </div>
   </div>
   <div class="charselect-title">Choose Your Gloop!</div>
@@ -2837,12 +2847,27 @@ let ctrlScheme = 'normal';
 let difficulty = 'normal';
 const env = { stars:true, glow:true, particles:true, words:true, flash:true, hints:true };
 
+// Difficulty curve: Flappy Bird (slow start) → Temple Run (exponential ramp) → Angry Birds (precision)
+// Speed formula: base + score^exponent * scale  (exponential, not linear)
+// Spawn formula: spawnBase - log(score+1) * spawnDecay  (logarithmic tightening)
 const DIFF = {
-  easy:       { base:2.2, scale:0.04, grav:0.52, force:-8.0,  spawnBase:155, spawnMin:88 },
-  normal:     { base:3.0, scale:0.06, grav:0.72, force:-9.5,  spawnBase:128, spawnMin:54 },
-  hard:       { base:3.9, scale:0.09, grav:0.90, force:-10.8, spawnBase:96,  spawnMin:38 },
-  impossible: { base:5.2, scale:0.14, grav:1.08, force:-12.5, spawnBase:68,  spawnMin:26 },
+  easy:       { base:1.8, exponent:1.4, scale:0.012, grav:0.48, force:-7.8,  spawnBase:180, spawnMin:90,  spawnDecay:22 },
+  normal:     { base:2.4, exponent:1.5, scale:0.018, grav:0.65, force:-9.2,  spawnBase:150, spawnMin:58,  spawnDecay:28 },
+  hard:       { base:3.2, exponent:1.6, scale:0.025, grav:0.82, force:-10.5, spawnBase:120, spawnMin:40,  spawnDecay:34 },
+  impossible: { base:4.2, exponent:1.8, scale:0.038, grav:1.00, force:-12.0, spawnBase:90,  spawnMin:26,  spawnDecay:42 },
 };
+
+// Score milestones that trigger events
+const MILESTONES = [
+  { score:5,   msg:'⭐ Getting Warmed Up!',  color:'#ffe566' },
+  { score:10,  msg:'🔥 On a Roll!',           color:'#ff9040' },
+  { score:20,  msg:'💥 Danger Zone!',         color:'#ff4060' },
+  { score:35,  msg:'🌈 Speed Demon!',         color:'#c084fc' },
+  { score:50,  msg:'⚡ INSANE MODE!',         color:'#60d0ff' },
+  { score:75,  msg:'🏆 LEGENDARY!',           color:'#ffe566' },
+  { score:100, msg:'👑 GLOOP MASTER!',        color:'#ff6eb4' },
+];
+let nextMilestoneIdx = 0;
 const cfg = () => DIFF[difficulty];
 
 let GROUND_Y = 0;
@@ -3527,17 +3552,39 @@ const gloop = {
 };
 
 // Obstacles
-function spawnObstacle() {
-  const types = ['spike','wall','floater','bouncer'];
-  const type = types[Math.floor(Math.random() * types.length)];
+function _makeObstacle(type) {
   const minH = GROUND_Y * 0.12, maxH = GROUND_Y * 0.42;
-  const h = minH + Math.random() * (maxH - minH);
+  // Obstacles get taller as score rises (harder to jump over)
+  const heightBonus = Math.min(GROUND_Y * 0.18, score * 0.8);
+  const h = minH + Math.random() * (maxH - minH) + heightBonus;
   const w = 18 + Math.random() * 16;
   const colors = { spike:'#ff4d6d', wall:'#a78bfa', floater:'#60d0ff', bouncer:'#ffe066' };
-  const yPos = type === 'floater'
-    ? GROUND_Y - h * 0.5 - Math.random() * (GROUND_Y * 0.3)
-    : GROUND_Y;
-  obstacles.push({ x: GW + 30, y: yPos, w, h, type, color: colors[type], bounceDir: 1 });
+  // Floaters appear higher up as score rises (harder to dodge)
+  const floatHeight = score >= 30
+    ? GROUND_Y * 0.55 + Math.random() * (GROUND_Y * 0.35) // high up — forces precision
+    : GROUND_Y - h * 0.5 - Math.random() * (GROUND_Y * 0.25);
+  const yPos = type === 'floater' ? floatHeight : GROUND_Y;
+  return { x: GW + 30, y: yPos, w, h, type, color: colors[type], bounceDir: 1 };
+}
+
+function spawnObstacle() {
+  // Obstacle variety scales with score (Flappy Bird → Temple Run → Angry Birds precision)
+  let typePool;
+  if (score < 5)       typePool = ['spike','spike','spike','wall'];            // Gentle: mostly spikes
+  else if (score < 15) typePool = ['spike','spike','wall','floater'];          // Intro floaters
+  else if (score < 30) typePool = ['spike','wall','floater','bouncer'];        // All types
+  else if (score < 50) typePool = ['spike','wall','floater','bouncer','spike','floater']; // Floater-heavy
+  else                 typePool = ['spike','wall','floater','bouncer','spike','wall','floater','bouncer']; // Max chaos
+  const type = typePool[Math.floor(Math.random() * typePool.length)];
+  obstacles.push(_makeObstacle(type));
+  // Double obstacle at score 25+ (Temple Run-style gauntlet)
+  const doubleChance = score >= 50 ? 0.35 : score >= 25 ? 0.18 : 0;
+  if (Math.random() < doubleChance) {
+    const type2 = typePool[Math.floor(Math.random() * typePool.length)];
+    const o2 = _makeObstacle(type2);
+    o2.x = GW + 30 + (w => w)(60 + Math.random() * 40); // stagger behind
+    obstacles.push(o2);
+  }
 }
 
 function updateObstacles() {
@@ -4142,6 +4189,7 @@ function startGame(continueRun = false) {
   speed = cfg().base;
   frameCount = 0; obstacles = []; particles = []; floatingWords = []; collectibles = [];
   nextObstacleIn = 100; nextCollectibleIn = 60; idleTime = 0; deathFlash = 0;
+  nextMilestoneIdx = 0;
   // Reset power-up effects
   for (const k of Object.keys(activePowerups)) activePowerups[k] = 0;
   shieldActive = false; scoreMultiplier = 1;
@@ -4507,18 +4555,27 @@ function gameLoop(timestamp) {
 
   if (gameState === 'playing') {
     const c = cfg();
-    speed = c.base + score * c.scale;
+    // Exponential speed ramp: very slow start, then accelerates like Temple Run
+    const rawSpeed = c.base + Math.pow(score, c.exponent) * c.scale;
+    speed = Math.min(rawSpeed, c.base * 5.5); // cap at 5.5x base speed
     nextObstacleIn -= dt;
     if (nextObstacleIn <= 0) {
       spawnObstacle();
-      const base = Math.max(c.spawnMin, c.spawnBase - Math.floor(score / 3) * 4);
-      nextObstacleIn = base + Math.random() * 38;
+      // Logarithmic tightening: gaps shrink fast early, then plateau
+      const base = Math.max(c.spawnMin, c.spawnBase - Math.log(score + 1) * c.spawnDecay);
+      nextObstacleIn = base + Math.random() * 30;
     }
     scoreAccum += dt;
     if (scoreAccum >= 6) {
       score += Math.floor(scoreAccum / 6);
       scoreAccum %= 6;
       document.getElementById('g-score').textContent = score;
+      // Check milestones
+      if (nextMilestoneIdx < MILESTONES.length && score >= MILESTONES[nextMilestoneIdx].score) {
+        const m = MILESTONES[nextMilestoneIdx];
+        spawnWord(GW / 2, GH * 0.3, [m.msg], m.color);
+        nextMilestoneIdx++;
+      }
     }
     if (inputHeld && !gloop.grounded && frameCount % 40 === 0) spawnWord(gloop.x, gloop.top - 15, STRETCH_W, '#ffe066');
     updateObstacles(); gloop.update();
