@@ -1346,7 +1346,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
 <!-- ════════════════════════════════════════════════════════
      HUB SCREEN (Candy Crush-style start)
 ════════════════════════════════════════════════════════ -->
-<div id="hub-screen" class="screen" style="overflow:hidden;padding:0;position:relative;">
+<div id="hub-screen" class="screen" style="overflow:hidden;padding:0;position:fixed;inset:0;display:flex;flex-direction:column;">
 
   <!-- ── PINK TOP BAR (Candy Crush style) ───────────────────────── -->
   <div id="hub-topbar" style="
@@ -1403,7 +1403,7 @@ body.device-phone.orient-landscape #orient-overlay{display:flex;}
   <span class="cur-energy" style="display:none">5/5</span>
 
   <!-- ── FULL-SCREEN CANDY WORLD CANVAS ───────────────────────── -->
-  <div style="position:relative;flex:1;overflow:hidden;">
+  <div style="position:relative;flex:1;overflow:hidden;min-height:0;">
     <canvas id="hub-canvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
 
     <!-- Hanging logo -->
@@ -2122,6 +2122,7 @@ function showScreen(id) {
   if (id === 'shop-screen') renderShop('video');
   if (id === 'pass-screen') renderPassTrack();
   if (id === 'campaign-screen') setTimeout(buildCampaignMap, 60);
+  if (id === 'hub-screen') setTimeout(() => { initHubCanvas(); }, 60);
   if (id === 'wardrobe-screen') {
     setTimeout(() => {
       if (!wardrobeCtx) initWardrobeCanvas();
@@ -4269,8 +4270,11 @@ let hubTime = 0;
 const hubGloops = [];
 
 function initHubCanvas() {
-  hubCanvas.width = hubCanvas.offsetWidth || 400;
-  hubCanvas.height = hubCanvas.offsetHeight || 200;
+  const parent = hubCanvas.parentElement;
+  const W = parent ? parent.offsetWidth : (window.innerWidth || 400);
+  const H = parent ? parent.offsetHeight : (window.innerHeight * 0.7 || 400);
+  hubCanvas.width  = W || 400;
+  hubCanvas.height = H || 400;
   for (let i = 0; i < 6; i++) {
     hubGloops.push({
       x: Math.random() * hubCanvas.width,
@@ -4505,11 +4509,20 @@ renderQuests('daily');
 renderShop('video');
 renderPassTrack();
 
-// Start hub canvas
-setTimeout(() => {
+// Start hub canvas — wait for layout to complete
+function startHubCanvas() {
+  const parent = hubCanvas.parentElement;
+  const W = parent ? parent.offsetWidth : 0;
+  const H = parent ? parent.offsetHeight : 0;
+  if (!W || !H) {
+    // Layout not ready yet, retry
+    setTimeout(startHubCanvas, 80);
+    return;
+  }
   initHubCanvas();
   animateHub();
-}, 100);
+}
+setTimeout(startHubCanvas, 200);
 
 // ══════════════════════════════════════════
 //  PERSISTENCE (localStorage)
