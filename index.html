@@ -859,6 +859,159 @@ body.orient-landscape.force-portrait #orient-overlay{display:flex;}
 .ad-reward-box .ad-sub{font-size:calc(12px * var(--font-scale));color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;margin-top:2px;}
 
 /* ══════════════════════════════════════════
+   ★ TUTORIAL OVERLAY
+══════════════════════════════════════════ */
+#tutorial-overlay {
+  position: absolute; inset: 0;
+  z-index: 50;
+  pointer-events: all;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding-bottom: 20px;
+}
+#tutorial-overlay.hidden { display: none; }
+
+#tutorial-spotlight-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+/* Speech bubble */
+#tutorial-bubble {
+  position: relative;
+  width: min(92%, 420px);
+  background: linear-gradient(135deg, #2a0a4e 0%, #1a0535 100%);
+  border: 2.5px solid rgba(255,110,180,0.6);
+  border-radius: 22px;
+  box-shadow: 0 0 32px rgba(255,110,180,0.35), 0 8px 32px rgba(0,0,0,0.6);
+  padding: 16px 18px 14px;
+  margin-bottom: 8px;
+  animation: tutBubblePop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes tutBubblePop {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+#tutorial-bubble-inner {
+  display: flex; align-items: flex-start; gap: 14px;
+}
+#tutorial-char-face {
+  width: 64px; height: 64px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+}
+#tutorial-char-face canvas {
+  width: 64px; height: 64px;
+}
+#tutorial-text-area { flex: 1; }
+#tutorial-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px; color: #ff80c8;
+  margin-bottom: 5px;
+  text-shadow: 0 0 10px rgba(255,110,180,0.5);
+}
+#tutorial-body {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700; font-size: 14px;
+  color: #e8d0ff; line-height: 1.5;
+}
+#tutorial-bubble-tail {
+  position: absolute; bottom: -14px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 14px solid rgba(255,110,180,0.6);
+}
+
+/* Action bar */
+#tutorial-action-bar {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  margin-top: 18px;
+}
+#tutorial-next-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 17px; color: #1a0535;
+  background: linear-gradient(135deg, #ff80c8, #ff4d8b);
+  border: none; border-radius: 50px;
+  padding: 10px 32px; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255,80,140,0.5);
+  animation: tutPulse 1.1s ease-in-out infinite alternate;
+  transition: transform 0.12s;
+}
+#tutorial-next-btn:active { transform: scale(0.93); }
+@keyframes tutPulse {
+  from { box-shadow: 0 4px 18px rgba(255,80,140,0.4); }
+  to   { box-shadow: 0 4px 28px rgba(255,80,140,0.8); }
+}
+#tutorial-action-hint {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900; font-size: 13px;
+  color: rgba(255,200,240,0.7);
+  letter-spacing: 0.5px;
+  min-height: 18px;
+}
+
+/* Step dots */
+#tutorial-dots {
+  display: flex; gap: 7px;
+  margin-top: 10px;
+}
+.tut-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,110,180,0.25);
+  transition: background 0.25s, transform 0.25s;
+}
+.tut-dot.active {
+  background: #ff80c8;
+  transform: scale(1.35);
+  box-shadow: 0 0 8px rgba(255,110,180,0.7);
+}
+.tut-dot.done {
+  background: rgba(255,110,180,0.55);
+}
+
+/* Skip button */
+#tutorial-skip-btn {
+  position: absolute; top: 14px; right: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900; font-size: 12px;
+  color: rgba(255,200,240,0.55);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 5px 14px;
+  cursor: pointer; letter-spacing: 0.5px;
+}
+#tutorial-skip-btn:hover { color: rgba(255,200,240,0.9); }
+
+/* Tutorial completion burst */
+#tutorial-complete-burst {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+  z-index: 55;
+}
+#tutorial-complete-burst.hidden { display: none; }
+.tut-complete-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 42px; color: #ffe566;
+  text-shadow: 0 0 30px #ffe566, 0 0 60px rgba(255,229,102,0.5);
+  animation: tutBubblePop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.tut-complete-sub {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900; font-size: 18px;
+  color: #fff; margin-top: 8px;
+  text-shadow: 0 0 12px rgba(255,255,255,0.4);
+}
+
+/* ══════════════════════════════════════════
    ★ CAMPAIGN SCREEN
 ══════════════════════════════════════════ */
 #campaign-screen{background:transparent;}
@@ -1780,6 +1933,13 @@ body.orient-landscape.force-portrait #orient-overlay{display:flex;}
           font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
           cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.15);
         ">📺 Daily Bonus</button>
+        <button onclick="startTutorial()" style="
+          background:rgba(192,132,252,0.35);backdrop-filter:blur(8px);
+          border:2px solid rgba(192,132,252,0.7);
+          border-radius:30px;padding:8px 18px;
+          font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
+          cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.15);
+        ">❓ How to Play</button>
       </div>
     </div>
   </div><!-- /.canvas-wrapper -->
@@ -1880,6 +2040,7 @@ body.orient-landscape.force-portrait #orient-overlay{display:flex;}
       <div style="display:flex;gap:8px;margin-top:8px;pointer-events:all;">
         <button class="btn sm" onclick="showScreen('hub-screen')">🏠 Hub</button>
         <button class="btn sm" onclick="openGameSettings()">⚙ Settings</button>
+        <button class="btn sm" onclick="startTutorial()" style="background:linear-gradient(135deg,#c084fc,#7c3aed);color:#fff;">❓ How to Play</button>
       </div>
     </div>
 
@@ -1918,6 +2079,36 @@ body.orient-landscape.force-portrait #orient-overlay{display:flex;}
         </div>
       </div>
       <button class="btn sm" onclick="quitToMenu()" style="margin-top:4px;">🏠 Hub</button>
+    </div>
+
+    <!-- ── TUTORIAL OVERLAY ──────────────────────────────────────── -->
+    <div id="tutorial-overlay" class="hidden">
+      <!-- Dark dimmed backdrop with spotlight cutout -->
+      <canvas id="tutorial-spotlight-canvas"></canvas>
+
+      <!-- Speech bubble from Blobby -->
+      <div id="tutorial-bubble">
+        <div id="tutorial-bubble-inner">
+          <div id="tutorial-char-face"></div>
+          <div id="tutorial-text-area">
+            <div id="tutorial-title"></div>
+            <div id="tutorial-body"></div>
+          </div>
+        </div>
+        <div id="tutorial-bubble-tail"></div>
+      </div>
+
+      <!-- Action prompt / tap-to-continue -->
+      <div id="tutorial-action-bar">
+        <button id="tutorial-next-btn" onclick="tutorialNext()">Tap to continue ›</button>
+        <div id="tutorial-action-hint"></div>
+      </div>
+
+      <!-- Step dots -->
+      <div id="tutorial-dots"></div>
+
+      <!-- Skip button -->
+      <button id="tutorial-skip-btn" onclick="tutorialSkip()">Skip Tutorial</button>
     </div>
 
     <!-- Settings Overlay -->
@@ -2349,6 +2540,7 @@ const STATE = {
   trophiesEarned: 0,
   firstLaunch: true,
   nightlifeMode: false,
+  tutorialDone: false,
 };
 
 // ══════════════════════════════════════════
@@ -3096,6 +3288,498 @@ function watchAdForContinue() {
       showToast('✨', '2x Score activated! Keep going!', 'gold');
     }
   });
+}
+
+// ══════════════════════════════════════════
+//  TUTORIAL SYSTEM
+// ══════════════════════════════════════════
+
+const TUTORIAL_STEPS = [
+  {
+    id: 'welcome',
+    title: "Hey there! I'm Blobby! 👋",
+    body: "Welcome to Silly Gloop! I'll teach you everything you need to know. Ready to bounce?",
+    tapToContinue: true,
+    spotlight: null,
+  },
+  {
+    id: 'squish',
+    title: 'SQUISH to float up! ⬆️',
+    body: 'Hold the <b>LEFT side</b> of the screen (or hold Space) to SQUISH me and float upward! Try it 3 times!',
+    tapToContinue: false,
+    actionHint: 'Hold left side of screen → float up!',
+    spotlight: 'gloop',
+    waitFor: 'squish3',   // wait for 3 squish actions
+    counter: 0,
+    target: 3,
+  },
+  {
+    id: 'stretch',
+    title: 'STRETCH to fall down! ⬇️',
+    body: 'Release to STRETCH and drop back down. Land on the ground to get a bounce bonus!',
+    tapToContinue: false,
+    actionHint: 'Release → fall and land!',
+    spotlight: 'gloop',
+    waitFor: 'land',
+  },
+  {
+    id: 'obstacle',
+    title: 'Dodge the candy cane! 🍭',
+    body: "A candy obstacle is coming! Squish up or stay low to dodge it. Don't get hit!",
+    tapToContinue: false,
+    actionHint: 'Dodge the obstacle!',
+    spotlight: 'obstacle',
+    waitFor: 'dodgeObstacle',
+    spawnTutorialObstacle: true,
+  },
+  {
+    id: 'collect',
+    title: 'Grab the candy! 🍬',
+    body: 'Fly into the glowing candy to collect gold and power-ups. Yum!',
+    tapToContinue: false,
+    actionHint: 'Collect the candy!',
+    spotlight: 'collectible',
+    waitFor: 'collectItem',
+    spawnTutorialCollectible: true,
+  },
+  {
+    id: 'score',
+    title: 'Your score goes up! ⬆️',
+    body: 'Your score increases the longer you survive. Dodge obstacles, grab candy, and beat your best!',
+    tapToContinue: true,
+    spotlight: 'hud',
+  },
+  {
+    id: 'complete',
+    title: "You're ready! 🎉",
+    body: "Amazing! Here's <b style='color:#ffe566'>100 Gold</b> to get you started. Now go show those candy canes who's boss!",
+    tapToContinue: true,
+    spotlight: null,
+    isComplete: true,
+  },
+];
+
+let tutorialActive = false;
+let tutorialStepIdx = 0;
+let tutorialFaceCanvas = null;
+let tutorialFaceCtx = null;
+let tutorialFaceAnim = null;
+let tutorialSpotCanvas = null;
+let tutorialSpotCtx = null;
+let tutorialSpotAnim = null;
+let tutorialObstacleSpawned = false;
+let tutorialCollectibleSpawned = false;
+let tutorialSquishCount = 0;
+let tutorialLanded = false;
+let tutorialDodged = false;
+let tutorialCollected = false;
+let tutorialLastInputHeld = false;
+
+function startTutorial() {
+  // Ensure we're on the game screen and game is set up
+  showScreen('game-screen');
+  // Small delay to let canvas resize
+  setTimeout(() => {
+    tutorialActive = true;
+    tutorialStepIdx = 0;
+    tutorialSquishCount = 0;
+    tutorialLanded = false;
+    tutorialDodged = false;
+    tutorialCollected = false;
+    tutorialObstacleSpawned = false;
+    tutorialCollectibleSpawned = false;
+    tutorialLastInputHeld = false;
+
+    // Start game in tutorial mode (slow, no obstacle spawning)
+    gameState = 'playing';
+    speed = 1.2;
+    score = 0; scoreAccum = 0;
+    frameCount = 0; obstacles = []; particles = []; floatingWords = []; collectibles = [];
+    nextObstacleIn = 99999; nextCollectibleIn = 99999;
+    idleTime = 0; deathFlash = 0; nextMilestoneIdx = 0;
+    for (const k of Object.keys(activePowerups)) activePowerups[k] = 0;
+    shieldActive = false; scoreMultiplier = 1;
+    gloop.bw = null; gloop.bh = null;
+    gloop.reset();
+    document.getElementById('menu-overlay').classList.add('hidden');
+    document.getElementById('death-overlay').classList.add('hidden');
+    document.getElementById('game-pause-btn').style.display = 'none';
+
+    // Setup spotlight canvas
+    tutorialSpotCanvas = document.getElementById('tutorial-spotlight-canvas');
+    tutorialSpotCtx = tutorialSpotCanvas.getContext('2d');
+    tutorialSpotCanvas.width = GW;
+    tutorialSpotCanvas.height = GH;
+
+    // Setup face canvas inside the bubble
+    const faceDiv = document.getElementById('tutorial-char-face');
+    faceDiv.innerHTML = '';
+    tutorialFaceCanvas = document.createElement('canvas');
+    tutorialFaceCanvas.width = 128;
+    tutorialFaceCanvas.height = 128;
+    tutorialFaceCanvas.style.width = '64px';
+    tutorialFaceCanvas.style.height = '64px';
+    faceDiv.appendChild(tutorialFaceCanvas);
+    tutorialFaceCtx = tutorialFaceCanvas.getContext('2d');
+    startTutorialFaceAnim();
+
+    // Build dots
+    const dotsEl = document.getElementById('tutorial-dots');
+    dotsEl.innerHTML = '';
+    TUTORIAL_STEPS.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'tut-dot' + (i === 0 ? ' active' : '');
+      d.id = 'tut-dot-' + i;
+      dotsEl.appendChild(d);
+    });
+
+    document.getElementById('tutorial-overlay').classList.remove('hidden');
+    showTutorialStep(0);
+    startTutorialSpotAnim();
+  }, 120);
+}
+
+function showTutorialStep(idx) {
+  tutorialStepIdx = idx;
+  const step = TUTORIAL_STEPS[idx];
+
+  // Update dots
+  TUTORIAL_STEPS.forEach((_, i) => {
+    const d = document.getElementById('tut-dot-' + i);
+    if (!d) return;
+    d.className = 'tut-dot' + (i === idx ? ' active' : (i < idx ? ' done' : ''));
+  });
+
+  // Update bubble text (re-trigger animation)
+  const bubble = document.getElementById('tutorial-bubble');
+  bubble.style.animation = 'none';
+  requestAnimationFrame(() => { bubble.style.animation = ''; });
+
+  document.getElementById('tutorial-title').textContent = step.title;
+  document.getElementById('tutorial-body').innerHTML = step.body;
+
+  // Show/hide next button vs action hint
+  const nextBtn = document.getElementById('tutorial-next-btn');
+  const actionHint = document.getElementById('tutorial-action-hint');
+  if (step.tapToContinue) {
+    nextBtn.style.display = '';
+    actionHint.textContent = '';
+  } else {
+    nextBtn.style.display = 'none';
+    actionHint.textContent = step.actionHint || '';
+  }
+
+  // Spawn tutorial-specific items
+  if (step.spawnTutorialObstacle && !tutorialObstacleSpawned) {
+    tutorialObstacleSpawned = true;
+    setTimeout(() => {
+      // Spawn a single slow wall obstacle
+      const oh = GH * 0.45;
+      obstacles.push({
+        type: 'wall', x: GW + 60,
+        y: GROUND_Y, w: 28, h: oh,
+        isTutorial: true,
+      });
+    }, 1200);
+  }
+  if (step.spawnTutorialCollectible && !tutorialCollectibleSpawned) {
+    tutorialCollectibleSpawned = true;
+    setTimeout(() => {
+      collectibles.push({
+        x: GW * 0.7,
+        y: GROUND_Y - GH * 0.35,
+        r: 18, type: 'candy',
+        isTutorial: true,
+      });
+    }, 600);
+  }
+
+  // Reset per-step counters
+  if (step.id === 'squish') tutorialSquishCount = 0;
+  if (step.id === 'stretch') tutorialLanded = false;
+  if (step.id === 'obstacle') tutorialDodged = false;
+  if (step.id === 'collect') tutorialCollected = false;
+}
+
+function tutorialNext() {
+  const step = TUTORIAL_STEPS[tutorialStepIdx];
+  if (!step) return;
+  if (step.isComplete) {
+    completeTutorial();
+    return;
+  }
+  const next = tutorialStepIdx + 1;
+  if (next < TUTORIAL_STEPS.length) {
+    showTutorialStep(next);
+  } else {
+    completeTutorial();
+  }
+}
+
+function tutorialSkip() {
+  completeTutorial();
+}
+
+function completeTutorial() {
+  tutorialActive = false;
+  STATE.tutorialDone = true;
+  saveGame();
+
+  // Award 100 gold bonus
+  earnGold(100);
+  showToast('🎉', '+100 Gold! Tutorial complete!', 'gold');
+
+  // Hide tutorial overlay
+  document.getElementById('tutorial-overlay').classList.add('hidden');
+  stopTutorialFaceAnim();
+  stopTutorialSpotAnim();
+
+  // Show confetti burst then go to menu
+  spawnTutorialConfetti();
+  setTimeout(() => {
+    quitToMenu();
+    document.getElementById('menu-title').textContent = 'GLOOP!';
+    document.getElementById('menu-prompt').textContent = 'TAP or PRESS SPACE to play';
+    document.getElementById('menu-overlay').classList.remove('hidden');
+    document.getElementById('game-pause-btn').style.display = 'none';
+  }, 1800);
+}
+
+function spawnTutorialConfetti() {
+  // Spawn a burst of colorful particles
+  const cx = GW / 2, cy = GH / 2;
+  const colors = ['#ff80c8','#ffe566','#60d0ff','#7dff8f','#c084fc','#ff9040'];
+  for (let i = 0; i < 60; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const spd = 4 + Math.random() * 8;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * spd,
+      vy: Math.sin(angle) * spd - 4,
+      life: 1, decay: 0.018 + Math.random() * 0.012,
+      r: 5 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    });
+  }
+}
+
+// Called every frame from gameLoop when tutorialActive
+function updateTutorial() {
+  if (!tutorialActive) return;
+  const step = TUTORIAL_STEPS[tutorialStepIdx];
+  if (!step || step.tapToContinue) return;
+
+  // Detect squish: count each new press of the input (rising edge)
+  if (step.id === 'squish') {
+    if (inputHeld && !tutorialLastInputHeld) {
+      tutorialSquishCount++;
+      // Show progress
+      const hint = document.getElementById('tutorial-action-hint');
+      if (hint) hint.textContent = `Hold to float! (${tutorialSquishCount}/3)`;
+      if (tutorialSquishCount >= 3) {
+        setTimeout(() => tutorialNext(), 600);
+      }
+    }
+    tutorialLastInputHeld = inputHeld;
+  }
+
+  // Detect land
+  if (step.id === 'stretch') {
+    if (gloop.grounded && !tutorialLanded && frameCount > 10) {
+      tutorialLanded = true;
+      setTimeout(() => tutorialNext(), 500);
+    }
+  }
+
+  // Detect obstacle dodge (obstacle passed gloop.x without collision)
+  if (step.id === 'obstacle') {
+    for (const o of obstacles) {
+      if (o.isTutorial && o.x < gloop.x - 30 && !tutorialDodged) {
+        tutorialDodged = true;
+        setTimeout(() => tutorialNext(), 400);
+      }
+    }
+  }
+
+  // Detect collectible pickup
+  if (step.id === 'collect') {
+    if (tutorialCollected) {
+      setTimeout(() => tutorialNext(), 400);
+      tutorialCollected = false; // prevent double-fire
+    }
+  }
+}
+
+// Called from checkCollectibles when a tutorial collectible is grabbed
+function onTutorialCollect() {
+  if (tutorialActive && TUTORIAL_STEPS[tutorialStepIdx]?.id === 'collect') {
+    tutorialCollected = true;
+  }
+}
+
+// Prevent death during tutorial
+function tutorialInterceptDie() {
+  if (!tutorialActive) return false;
+  // Flash red but don't die — show a hint instead
+  deathFlash = 8;
+  spawnWord(gloop.x, gloop.y - gloop.h - 20, ['Oops! Try again!'], '#ff9040');
+  gloop.reset();
+  obstacles = obstacles.filter(o => !o.isTutorial);
+  tutorialObstacleSpawned = false;
+  // Re-spawn the obstacle after a short delay
+  if (TUTORIAL_STEPS[tutorialStepIdx]?.id === 'obstacle') {
+    setTimeout(() => {
+      obstacles.push({
+        type: 'wall', x: GW + 60,
+        y: GROUND_Y, w: 28, h: GH * 0.45,
+        isTutorial: true,
+      });
+    }, 1500);
+  }
+  return true; // intercepted
+}
+
+// Spotlight renderer
+function startTutorialSpotAnim() {
+  let spotFrame = 0;
+  function drawSpot() {
+    if (!tutorialActive) return;
+    tutorialSpotAnim = requestAnimationFrame(drawSpot);
+    spotFrame++;
+    const sc = tutorialSpotCtx;
+    const sw = tutorialSpotCanvas.width;
+    const sh = tutorialSpotCanvas.height;
+    sc.clearRect(0, 0, sw, sh);
+
+    const step = TUTORIAL_STEPS[tutorialStepIdx];
+    if (!step || !step.spotlight) {
+      // Full dim
+      sc.fillStyle = 'rgba(10,2,26,0.62)';
+      sc.fillRect(0, 0, sw, sh);
+      return;
+    }
+
+    // Determine spotlight target rect
+    let sx, sy, srad;
+    if (step.spotlight === 'gloop') {
+      sx = gloop.x; sy = gloop.y - gloop.h / 2;
+      srad = gloop.w * 1.8 + Math.sin(spotFrame * 0.05) * 4;
+    } else if (step.spotlight === 'hud') {
+      sx = sw / 2; sy = 28; srad = sw * 0.45;
+    } else if (step.spotlight === 'obstacle') {
+      const o = obstacles.find(o => o.isTutorial);
+      if (o) { sx = o.x; sy = o.y - o.h / 2; srad = o.w * 2.5 + 30; }
+      else { sx = sw * 0.7; sy = sh * 0.5; srad = 60; }
+    } else if (step.spotlight === 'collectible') {
+      const c = collectibles.find(c => c.isTutorial);
+      if (c) { sx = c.x; sy = c.y; srad = c.r * 2.5 + 20; }
+      else { sx = sw * 0.7; sy = sh * 0.5; srad = 50; }
+    } else {
+      sc.fillStyle = 'rgba(10,2,26,0.62)';
+      sc.fillRect(0, 0, sw, sh);
+      return;
+    }
+
+    // Draw dim overlay with radial cutout
+    sc.save();
+    sc.fillStyle = 'rgba(10,2,26,0.62)';
+    sc.fillRect(0, 0, sw, sh);
+    // Cut out spotlight circle
+    const grad = sc.createRadialGradient(sx, sy, srad * 0.4, sx, sy, srad);
+    grad.addColorStop(0, 'rgba(10,2,26,0)');
+    grad.addColorStop(1, 'rgba(10,2,26,0.62)');
+    sc.globalCompositeOperation = 'destination-out';
+    sc.fillStyle = 'rgba(255,255,255,1)';
+    sc.beginPath();
+    sc.arc(sx, sy, srad, 0, Math.PI * 2);
+    sc.fill();
+    sc.globalCompositeOperation = 'source-over';
+    // Soft glow ring
+    sc.strokeStyle = 'rgba(255,110,180,0.5)';
+    sc.lineWidth = 3;
+    sc.beginPath();
+    sc.arc(sx, sy, srad + 2 + Math.sin(spotFrame * 0.07) * 3, 0, Math.PI * 2);
+    sc.stroke();
+    sc.restore();
+  }
+  drawSpot();
+}
+
+function stopTutorialSpotAnim() {
+  if (tutorialSpotAnim) { cancelAnimationFrame(tutorialSpotAnim); tutorialSpotAnim = null; }
+  if (tutorialSpotCtx) tutorialSpotCtx.clearRect(0, 0, tutorialSpotCanvas.width, tutorialSpotCanvas.height);
+}
+
+// Blobby face animation in the speech bubble
+function startTutorialFaceAnim() {
+  let faceFrame = 0;
+  function drawFace() {
+    if (!tutorialActive) return;
+    tutorialFaceAnim = requestAnimationFrame(drawFace);
+    faceFrame++;
+    const fc = tutorialFaceCtx;
+    const fs = 128;
+    fc.clearRect(0, 0, fs, fs);
+    const char = BASE_CHARS[STATE.baseCharacter] || BASE_CHARS[0];
+    const skin = COSMETICS.skins[STATE.equippedSkin] || COSMETICS.skins[0];
+    const bodyLight = skin.id === 0 ? char.bodyLight : skin.light;
+    const bodyMid   = skin.id === 0 ? char.bodyMid   : skin.mid;
+    const bodyDark  = skin.id === 0 ? char.bodyDark  : skin.dark;
+    const blush     = char.blush;
+
+    const cx = fs / 2, cy = fs / 2;
+    const r = fs * 0.38;
+    const jiggle = Math.sin(faceFrame * 0.07) * 3;
+    const rw = r + jiggle * 0.5;
+    const rh = r - jiggle * 0.3;
+
+    // Body
+    const bg = fc.createRadialGradient(cx - rw*0.3, cy - rh*0.3, 2, cx, cy, rw * 1.1);
+    bg.addColorStop(0, bodyLight); bg.addColorStop(0.55, bodyMid); bg.addColorStop(1, bodyDark);
+    fc.beginPath();
+    fc.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2);
+    fc.fillStyle = bg; fc.fill();
+
+    // Shine
+    fc.beginPath();
+    fc.ellipse(cx - rw*0.28, cy - rh*0.3, rw*0.28, rh*0.18, -0.4, 0, Math.PI*2);
+    fc.fillStyle = 'rgba(255,255,255,0.45)'; fc.fill();
+
+    // Eyes
+    const eyeSpread = rw * 0.34;
+    const eyeY = cy - rh * 0.12 + Math.sin(faceFrame * 0.05) * 2;
+    const eyeR = rw * 0.17;
+    [-1, 1].forEach(side => {
+      const ex = cx + side * eyeSpread;
+      fc.beginPath(); fc.arc(ex, eyeY, eyeR, 0, Math.PI*2);
+      fc.fillStyle = '#fff'; fc.fill();
+      fc.beginPath(); fc.arc(ex + 1.5, eyeY + 1, eyeR * 0.62, 0, Math.PI*2);
+      fc.fillStyle = '#1a0535'; fc.fill();
+      fc.beginPath(); fc.arc(ex + eyeR*0.25, eyeY - eyeR*0.3, eyeR*0.22, 0, Math.PI*2);
+      fc.fillStyle = 'rgba(255,255,255,0.9)'; fc.fill();
+    });
+
+    // Blush
+    fc.globalAlpha = 0.55;
+    fc.beginPath(); fc.ellipse(cx - rw*0.52, cy + rh*0.18, rw*0.18, rh*0.1, 0, 0, Math.PI*2);
+    fc.fillStyle = blush; fc.fill();
+    fc.beginPath(); fc.ellipse(cx + rw*0.52, cy + rh*0.18, rw*0.18, rh*0.1, 0, 0, Math.PI*2);
+    fc.fillStyle = blush; fc.fill();
+    fc.globalAlpha = 1;
+
+    // Mouth (happy open)
+    fc.beginPath();
+    fc.arc(cx, cy + rh * 0.32, rw * 0.2, 0.1, Math.PI - 0.1);
+    fc.strokeStyle = '#1a0535'; fc.lineWidth = 2.5; fc.lineCap = 'round'; fc.stroke();
+    fc.beginPath();
+    fc.ellipse(cx, cy + rh * 0.42, rw * 0.14, rh * 0.07, 0, 0, Math.PI);
+    fc.fillStyle = '#ff6eb4'; fc.fill();
+  }
+  drawFace();
+}
+
+function stopTutorialFaceAnim() {
+  if (tutorialFaceAnim) { cancelAnimationFrame(tutorialFaceAnim); tutorialFaceAnim = null; }
 }
 
 // ══════════════════════════════════════════
@@ -4064,11 +4748,32 @@ function updateCollectibles() {
       }
     }
   }
-  collectibles = collectibles.filter(c => c.x > -60 && c.alpha > 0);
+  collectibles = collectibles.filter(c => {
+    if (c.isTutorial) return !c.collected; // keep tutorial collectibles until grabbed
+    return c.x > -60 && c.alpha > 0;
+  });
 }
 
 function drawCollectibles() {
   for (let c of collectibles) {
+    // Tutorial collectible: simple glowing candy
+    if (c.isTutorial) {
+      if (c.collected) continue;
+      ctx.save();
+      const tr = c.r * (1 + Math.sin(frameCount * 0.08) * 0.12);
+      ctx.shadowColor = '#ff80c8'; ctx.shadowBlur = 18;
+      const tgrd = ctx.createRadialGradient(c.x - tr*0.25, c.y - tr*0.25, 1, c.x, c.y, tr);
+      tgrd.addColorStop(0, '#ffb8e8'); tgrd.addColorStop(0.5, '#ff6eb4'); tgrd.addColorStop(1, '#c0306e');
+      ctx.fillStyle = tgrd;
+      ctx.beginPath(); ctx.arc(c.x, c.y, tr, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath(); ctx.ellipse(c.x - tr*0.28, c.y - tr*0.28, tr*0.22, tr*0.14, -0.4, 0, Math.PI*2); ctx.fill();
+      // Pulsing ring
+      ctx.strokeStyle = 'rgba(255,110,180,0.6)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(c.x, c.y, tr * 1.5 + Math.sin(frameCount * 0.1) * 4, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+      continue;
+    }
     if (c.alpha <= 0) continue;
     ctx.save();
     ctx.globalAlpha = c.alpha;
@@ -4157,6 +4862,7 @@ function drawCollectibles() {
 
 function collectItem(c) {
   c.collected = true;
+  if (c.isTutorial) { onTutorialCollect(); return; }
   spawnSplat(c.x, c.y);
   if (c.type === 'coin')  { earnGold(c.value); spawnWord(c.x, c.y-20, [c.label], '#ffe566'); }
   else if (c.type === 'coin2') { earnGold(c.value); spawnWord(c.x, c.y-20, [c.label], '#ffd700'); }
@@ -4182,7 +4888,7 @@ function checkCollectibles() {
     if (c.collected) continue;
     const dx = gloop.x - c.x, dy = (gloop.y - gloop.h*0.5) - c.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
-    const grabR = c.size * 1.8 + (activePowerups.magnet > 0 ? 20 : 0);
+    const grabR = (c.size || c.r || 18) * 1.8 + (activePowerups.magnet > 0 ? 20 : 0);
     if (dist < grabR) collectItem(c);
   }
 }
@@ -4950,6 +5656,9 @@ function gameLoop(timestamp) {
     if (scoreMultiplier > 1) {
       scoreAccum += (scoreMultiplier - 1) * dt * 0.5; // extra score ticks
     }
+    // Tutorial update (action detection)
+    if (tutorialActive) updateTutorial();
+
     // Rainbow = invincible
     if (activePowerups.rainbow > 0) { /* skip collision */ }
     else if (checkCollisions()) {
@@ -4957,6 +5666,8 @@ function gameLoop(timestamp) {
         shieldActive = false;
         spawnWord(gloop.x, gloop.y - gloop.h - 20, ['🛡️ BLOCKED!'], '#60d0ff');
         spawnSplat(gloop.x, gloop.y);
+      } else if (tutorialActive) {
+        tutorialInterceptDie();
       } else { die(); }
     }
 
@@ -5050,6 +5761,7 @@ function saveGame() {
       firstLaunch: false,
       nightlifeMode: STATE.nightlifeMode,
       baseCharacter: STATE.baseCharacter,
+      tutorialDone: STATE.tutorialDone,
       lastSave: Date.now(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -5095,6 +5807,7 @@ function loadGame() {
     if (d.unlockedTrails) STATE.unlockedTrails = new Set(d.unlockedTrails);
     STATE.firstLaunch = d.firstLaunch ?? false;
     STATE.nightlifeMode = d.nightlifeMode ?? false;
+    STATE.tutorialDone = d.tutorialDone ?? false;
     STATE.baseCharacter = d.baseCharacter ?? 0;
     // Apply nightlife mode on load
     if (STATE.nightlifeMode) {
@@ -5147,8 +5860,12 @@ if (STATE.firstLaunch) {
   setTimeout(() => showToast('🎨', 'Customize your Gloop in the Wardrobe!', 'purple'), 2500);
   setTimeout(() => showToast('📺', 'Watch videos to earn rare rewards!', 'green'), 4200);
   saveGame(); // Mark first launch done
+  // Auto-start tutorial on first play
+  if (!STATE.tutorialDone) {
+    setTimeout(() => startTutorial(), 5500);
+  }
 } else {
-  setTimeout(() => showToast('🫧', 'Welcome back to Silly Gloop!', 'green'), 500);
+  setTimeout(() => showToast('🪷', 'Welcome back to Silly Gloop!', 'green'), 500);
   setTimeout(() => showToast('📺', 'Watch videos to earn FREE rewards!', 'gold'), 2000);
 }
 
